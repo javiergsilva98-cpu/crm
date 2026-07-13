@@ -1,14 +1,35 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { createOpportunity } from "./actions";
 import { OpportunityRow } from "./opportunity-row";
 
-export default async function OportunidadesPage() {
+const STAGES = ["nuevo", "calificado", "propuesta", "negociacion", "ganado", "perdido"];
+
+export default async function OportunidadesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; empresa?: string; etapa?: string }>;
+}) {
+  const { q, empresa, etapa } = await searchParams;
   const supabase = await createClient();
+
+  let query = supabase
+    .from("opportunities")
+    .select("id, title, stage, amount, company_id, companies(name)")
+    .order("created_at", { ascending: false });
+
+  if (q) {
+    query = query.ilike("title", `%${q}%`);
+  }
+  if (empresa) {
+    query = query.eq("company_id", empresa);
+  }
+  if (etapa) {
+    query = query.eq("stage", etapa);
+  }
+
   const [{ data: opportunities }, { data: companies }] = await Promise.all([
-    supabase
-      .from("opportunities")
-      .select("id, title, stage, amount, company_id, companies(name)")
-      .order("created_at", { ascending: false }),
+    query,
     supabase.from("companies").select("id, name").order("name"),
   ]);
 
@@ -30,6 +51,40 @@ export default async function OportunidadesPage() {
         <button type="submit" className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white">
           Agregar
         </button>
+      </form>
+
+      <form method="get" className="mb-4 flex flex-wrap gap-2">
+        <input
+          type="text"
+          name="q"
+          defaultValue={q ?? ""}
+          placeholder="Buscar por título..."
+          className="w-full max-w-sm rounded-md border border-gray-300 px-3 py-2 text-sm"
+        />
+        <select name="empresa" defaultValue={empresa ?? ""} className="rounded-md border border-gray-300 px-3 py-2 text-sm">
+          <option value="">Todas las empresas</option>
+          {companies?.map((company) => (
+            <option key={company.id} value={company.id}>
+              {company.name}
+            </option>
+          ))}
+        </select>
+        <select name="etapa" defaultValue={etapa ?? ""} className="rounded-md border border-gray-300 px-3 py-2 text-sm">
+          <option value="">Todas las etapas</option>
+          {STAGES.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
+        <button type="submit" className="rounded-md border border-gray-300 px-4 py-2 text-sm">
+          Buscar
+        </button>
+        {(q || empresa || etapa) && (
+          <Link href="/oportunidades" className="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-600">
+            Limpiar
+          </Link>
+        )}
       </form>
 
       <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
@@ -57,7 +112,7 @@ export default async function OportunidadesPage() {
             {opportunities?.length === 0 && (
               <tr>
                 <td colSpan={5} className="px-4 py-6 text-center text-gray-400">
-                  No hay oportunidades todavía.
+                  {q || empresa || etapa ? "No se encontraron oportunidades." : "No hay oportunidades todavía."}
                 </td>
               </tr>
             )}

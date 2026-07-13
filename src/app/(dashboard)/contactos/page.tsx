@@ -1,14 +1,30 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { createContact } from "./actions";
 import { ContactRow } from "./contact-row";
 
-export default async function ContactosPage() {
+export default async function ContactosPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; empresa?: string }>;
+}) {
+  const { q, empresa } = await searchParams;
   const supabase = await createClient();
+
+  let query = supabase
+    .from("contacts")
+    .select("id, full_name, email, phone, company_id, companies(name)")
+    .order("created_at", { ascending: false });
+
+  if (q) {
+    query = query.or(`full_name.ilike.%${q}%,email.ilike.%${q}%`);
+  }
+  if (empresa) {
+    query = query.eq("company_id", empresa);
+  }
+
   const [{ data: contacts }, { data: companies }] = await Promise.all([
-    supabase
-      .from("contacts")
-      .select("id, full_name, email, phone, company_id, companies(name)")
-      .order("created_at", { ascending: false }),
+    query,
     supabase.from("companies").select("id, name").order("name"),
   ]);
 
@@ -31,6 +47,32 @@ export default async function ContactosPage() {
         <button type="submit" className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white">
           Agregar
         </button>
+      </form>
+
+      <form method="get" className="mb-4 flex flex-wrap gap-2">
+        <input
+          type="text"
+          name="q"
+          defaultValue={q ?? ""}
+          placeholder="Buscar por nombre o email..."
+          className="w-full max-w-sm rounded-md border border-gray-300 px-3 py-2 text-sm"
+        />
+        <select name="empresa" defaultValue={empresa ?? ""} className="rounded-md border border-gray-300 px-3 py-2 text-sm">
+          <option value="">Todas las empresas</option>
+          {companies?.map((company) => (
+            <option key={company.id} value={company.id}>
+              {company.name}
+            </option>
+          ))}
+        </select>
+        <button type="submit" className="rounded-md border border-gray-300 px-4 py-2 text-sm">
+          Buscar
+        </button>
+        {(q || empresa) && (
+          <Link href="/contactos" className="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-600">
+            Limpiar
+          </Link>
+        )}
       </form>
 
       <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
@@ -58,7 +100,7 @@ export default async function ContactosPage() {
             {contacts?.length === 0 && (
               <tr>
                 <td colSpan={5} className="px-4 py-6 text-center text-gray-400">
-                  No hay contactos todavía.
+                  {q || empresa ? "No se encontraron contactos." : "No hay contactos todavía."}
                 </td>
               </tr>
             )}

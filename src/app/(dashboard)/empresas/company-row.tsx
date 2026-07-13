@@ -9,6 +9,8 @@ type Company = {
   name: string;
   website: string | null;
   industry: string | null;
+  tax_id: string | null;
+  fiscal_address: string | null;
 };
 
 export function CompanyRow({ company }: { company: Company }) {
@@ -42,6 +44,18 @@ export function CompanyRow({ company }: { company: Company }) {
               name="industry"
               defaultValue={company.industry ?? ""}
               placeholder="Industria"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <input
+              name="tax_id"
+              defaultValue={company.tax_id ?? ""}
+              placeholder="NIF / CIF"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <input
+              name="fiscal_address"
+              defaultValue={company.fiscal_address ?? ""}
+              placeholder="Dirección fiscal"
               className="rounded-md border border-border px-2 py-1 text-sm"
             />
             <button type="submit" className="rounded-md bg-calm px-3 py-1 text-sm text-ink transition-colors hover:bg-calm-hover">

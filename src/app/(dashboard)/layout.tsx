@@ -30,7 +30,21 @@ export default async function DashboardLayout({
             </Link>
             <Nav isAdmin={profile?.role === "admin"} />
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
+            <Link
+              href="/configuracion"
+              aria-label="Configuración"
+              title="Configuración"
+              className="flex h-8 w-8 items-center justify-center rounded-md text-ink-soft transition-colors hover:text-ink"
+            >
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <circle cx="10" cy="10" r="2.5" />
+                <path
+                  d="M10 2.5v2M10 15.5v2M17.5 10h-2M4.5 10h-2M15.1 4.9l-1.4 1.4M6.3 13.7l-1.4 1.4M15.1 15.1l-1.4-1.4M6.3 6.3L4.9 4.9"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </Link>
             <form action="/auth/signout" method="post">
               <button className="text-sm text-ink-soft underline" type="submit">
                 Salir

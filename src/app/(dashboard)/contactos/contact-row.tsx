@@ -12,6 +12,8 @@ type Contact = {
   company_id: string | null;
   source: Channel | null;
   source_detail: string | null;
+  tax_id: string | null;
+  fiscal_address: string | null;
   companies: { name: string } | null;
 };
 
@@ -83,6 +85,18 @@ export function ContactRow({
               name="source_detail"
               defaultValue={contact.source_detail ?? ""}
               placeholder="Detalle del canal"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <input
+              name="tax_id"
+              defaultValue={contact.tax_id ?? ""}
+              placeholder="NIF (si es autónomo)"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <input
+              name="fiscal_address"
+              defaultValue={contact.fiscal_address ?? ""}
+              placeholder="Dirección fiscal"
               className="rounded-md border border-border px-2 py-1 text-sm"
             />
             <button type="submit" className="rounded-md bg-calm px-3 py-1 text-sm text-ink transition-colors hover:bg-calm-hover">

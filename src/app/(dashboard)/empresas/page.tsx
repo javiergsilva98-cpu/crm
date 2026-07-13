@@ -14,7 +14,7 @@ export default async function EmpresasPage({
 
   let query = supabase
     .from("companies")
-    .select("id, name, website, industry, created_at")
+    .select("id, name, website, industry, tax_id, fiscal_address, created_at")
     .order("created_at", { ascending: false });
 
   if (q) {

@@ -18,6 +18,8 @@ export async function createCompany(formData: FormData) {
     name,
     website: String(formData.get("website") ?? "").trim() || null,
     industry: String(formData.get("industry") ?? "").trim() || null,
+    tax_id: String(formData.get("tax_id") ?? "").trim() || null,
+    fiscal_address: String(formData.get("fiscal_address") ?? "").trim() || null,
   });
 
   revalidatePath("/empresas");
@@ -35,6 +37,8 @@ export async function updateCompany(formData: FormData) {
       name,
       website: String(formData.get("website") ?? "").trim() || null,
       industry: String(formData.get("industry") ?? "").trim() || null,
+      tax_id: String(formData.get("tax_id") ?? "").trim() || null,
+      fiscal_address: String(formData.get("fiscal_address") ?? "").trim() || null,
     })
     .eq("id", id);
 

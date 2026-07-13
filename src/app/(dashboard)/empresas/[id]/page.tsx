@@ -13,7 +13,11 @@ export default async function CompanyDetailPage({
 
   const [{ data: company }, { data: contacts }, { data: opportunities }, { data: activities }, { data: taggables }] =
     await Promise.all([
-      supabase.from("companies").select("id, name, website, industry, notes").eq("id", id).single(),
+      supabase
+        .from("companies")
+        .select("id, name, website, industry, notes, tax_id, fiscal_address")
+        .eq("id", id)
+        .single(),
       supabase
         .from("contacts")
         .select("id, full_name, email, phone")
@@ -89,6 +93,14 @@ export default async function CompanyDetailPage({
           <div>
             <dt className="text-ink-mute">Pipeline total</dt>
             <dd>${totalPipeline.toLocaleString()}</dd>
+          </div>
+          <div>
+            <dt className="text-ink-mute">NIF / CIF</dt>
+            <dd>{company.tax_id || "—"}</dd>
+          </div>
+          <div className="sm:col-span-2">
+            <dt className="text-ink-mute">Dirección fiscal</dt>
+            <dd>{company.fiscal_address || "—"}</dd>
           </div>
         </dl>
       </div>

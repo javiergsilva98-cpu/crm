@@ -27,6 +27,27 @@ export async function createOpportunity(formData: FormData) {
   revalidatePath("/oportunidades");
 }
 
+export async function updateOpportunity(formData: FormData) {
+  const supabase = await createClient();
+  const id = String(formData.get("id"));
+  const title = String(formData.get("title") ?? "").trim();
+  if (!title) return;
+
+  const companyId = String(formData.get("company_id") ?? "").trim();
+  const amount = Number(formData.get("amount") ?? 0);
+
+  await supabase
+    .from("opportunities")
+    .update({
+      title,
+      company_id: companyId || null,
+      amount: Number.isFinite(amount) ? amount : 0,
+    })
+    .eq("id", id);
+
+  revalidatePath("/oportunidades");
+}
+
 export async function updateStage(formData: FormData) {
   const supabase = await createClient();
   const id = String(formData.get("id"));

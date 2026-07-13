@@ -1,12 +1,13 @@
 import { createClient } from "@/lib/supabase/server";
-import { createContact, deleteContact } from "./actions";
+import { createContact } from "./actions";
+import { ContactRow } from "./contact-row";
 
 export default async function ContactosPage() {
   const supabase = await createClient();
   const [{ data: contacts }, { data: companies }] = await Promise.all([
     supabase
       .from("contacts")
-      .select("id, full_name, email, phone, companies(name)")
+      .select("id, full_name, email, phone, company_id, companies(name)")
       .order("created_at", { ascending: false }),
     supabase.from("companies").select("id, name").order("name"),
   ]);
@@ -45,20 +46,14 @@ export default async function ContactosPage() {
           </thead>
           <tbody>
             {contacts?.map((contact) => (
-              <tr key={contact.id} className="border-t border-gray-100">
-                <td className="px-4 py-2">{contact.full_name}</td>
-                <td className="px-4 py-2">{contact.email}</td>
-                <td className="px-4 py-2">{contact.phone}</td>
-                <td className="px-4 py-2">{(contact.companies as unknown as { name: string } | null)?.name}</td>
-                <td className="px-4 py-2 text-right">
-                  <form action={deleteContact}>
-                    <input type="hidden" name="id" value={contact.id} />
-                    <button type="submit" className="text-red-600 hover:underline">
-                      Eliminar
-                    </button>
-                  </form>
-                </td>
-              </tr>
+              <ContactRow
+                key={contact.id}
+                contact={{
+                  ...contact,
+                  companies: (contact.companies as unknown as { name: string } | null) ?? null,
+                }}
+                companies={companies ?? []}
+              />
             ))}
             {contacts?.length === 0 && (
               <tr>

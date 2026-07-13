@@ -1,13 +1,13 @@
 import { createClient } from "@/lib/supabase/server";
-import { createOpportunity, deleteOpportunity } from "./actions";
-import { StageSelect } from "./stage-select";
+import { createOpportunity } from "./actions";
+import { OpportunityRow } from "./opportunity-row";
 
 export default async function OportunidadesPage() {
   const supabase = await createClient();
   const [{ data: opportunities }, { data: companies }] = await Promise.all([
     supabase
       .from("opportunities")
-      .select("id, title, stage, amount, companies(name)")
+      .select("id, title, stage, amount, company_id, companies(name)")
       .order("created_at", { ascending: false }),
     supabase.from("companies").select("id, name").order("name"),
   ]);
@@ -45,22 +45,14 @@ export default async function OportunidadesPage() {
           </thead>
           <tbody>
             {opportunities?.map((opp) => (
-              <tr key={opp.id} className="border-t border-gray-100">
-                <td className="px-4 py-2">{opp.title}</td>
-                <td className="px-4 py-2">{(opp.companies as unknown as { name: string } | null)?.name}</td>
-                <td className="px-4 py-2">${Number(opp.amount).toLocaleString()}</td>
-                <td className="px-4 py-2">
-                  <StageSelect id={opp.id} stage={opp.stage} />
-                </td>
-                <td className="px-4 py-2 text-right">
-                  <form action={deleteOpportunity}>
-                    <input type="hidden" name="id" value={opp.id} />
-                    <button type="submit" className="text-red-600 hover:underline">
-                      Eliminar
-                    </button>
-                  </form>
-                </td>
-              </tr>
+              <OpportunityRow
+                key={opp.id}
+                opportunity={{
+                  ...opp,
+                  companies: (opp.companies as unknown as { name: string } | null) ?? null,
+                }}
+                companies={companies ?? []}
+              />
             ))}
             {opportunities?.length === 0 && (
               <tr>

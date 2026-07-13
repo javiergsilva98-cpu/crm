@@ -23,6 +23,24 @@ export async function createCompany(formData: FormData) {
   revalidatePath("/empresas");
 }
 
+export async function updateCompany(formData: FormData) {
+  const supabase = await createClient();
+  const id = String(formData.get("id"));
+  const name = String(formData.get("name") ?? "").trim();
+  if (!name) return;
+
+  await supabase
+    .from("companies")
+    .update({
+      name,
+      website: String(formData.get("website") ?? "").trim() || null,
+      industry: String(formData.get("industry") ?? "").trim() || null,
+    })
+    .eq("id", id);
+
+  revalidatePath("/empresas");
+}
+
 export async function deleteCompany(formData: FormData) {
   const supabase = await createClient();
   const id = String(formData.get("id"));

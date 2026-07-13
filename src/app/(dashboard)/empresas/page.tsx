@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
-import { createCompany, deleteCompany } from "./actions";
+import { createCompany } from "./actions";
+import { CompanyRow } from "./company-row";
 
 export default async function EmpresasPage() {
   const supabase = await createClient();
@@ -33,19 +34,7 @@ export default async function EmpresasPage() {
           </thead>
           <tbody>
             {companies?.map((company) => (
-              <tr key={company.id} className="border-t border-gray-100">
-                <td className="px-4 py-2">{company.name}</td>
-                <td className="px-4 py-2">{company.website}</td>
-                <td className="px-4 py-2">{company.industry}</td>
-                <td className="px-4 py-2 text-right">
-                  <form action={deleteCompany}>
-                    <input type="hidden" name="id" value={company.id} />
-                    <button type="submit" className="text-red-600 hover:underline">
-                      Eliminar
-                    </button>
-                  </form>
-                </td>
-              </tr>
+              <CompanyRow key={company.id} company={company} />
             ))}
             {companies?.length === 0 && (
               <tr>

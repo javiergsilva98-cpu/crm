@@ -26,6 +26,27 @@ export async function createContact(formData: FormData) {
   revalidatePath("/contactos");
 }
 
+export async function updateContact(formData: FormData) {
+  const supabase = await createClient();
+  const id = String(formData.get("id"));
+  const fullName = String(formData.get("full_name") ?? "").trim();
+  if (!fullName) return;
+
+  const companyId = String(formData.get("company_id") ?? "").trim();
+
+  await supabase
+    .from("contacts")
+    .update({
+      full_name: fullName,
+      email: String(formData.get("email") ?? "").trim() || null,
+      phone: String(formData.get("phone") ?? "").trim() || null,
+      company_id: companyId || null,
+    })
+    .eq("id", id);
+
+  revalidatePath("/contactos");
+}
+
 export async function deleteContact(formData: FormData) {
   const supabase = await createClient();
   const id = String(formData.get("id"));

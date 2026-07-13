@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createCompany } from "./actions";
 import { CompanyRow } from "./company-row";
 import { EmptyStateRow } from "@/components/empty-state";
+import { AddDisclosure } from "@/components/add-disclosure";
 
 export default async function EmpresasPage({
   searchParams,
@@ -21,7 +22,7 @@ export default async function EmpresasPage({
     query = query.or(`name.ilike.%${q}%,industry.ilike.%${q}%`);
   }
 
-  const { data: companies } = await query;
+  const { data: companies, error: companiesError } = await query;
 
   return (
     <div>
@@ -35,14 +36,16 @@ export default async function EmpresasPage({
         </Link>
       </div>
 
-      <form action={createCompany} className="mb-6 flex flex-col gap-3 rounded-lg border border-border bg-raised p-4 sm:flex-row sm:flex-wrap">
-        <input name="name" placeholder="Nombre" required className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
-        <input name="website" placeholder="Sitio web" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
-        <input name="industry" placeholder="Industria" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
-        <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover sm:w-auto">
-          Agregar empresa
-        </button>
-      </form>
+      <AddDisclosure label="Agregar empresa">
+        <form action={createCompany} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <input name="name" placeholder="Nombre" required className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
+          <input name="website" placeholder="Sitio web" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
+          <input name="industry" placeholder="Industria" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
+          <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover sm:w-auto">
+            Agregar
+          </button>
+        </form>
+      </AddDisclosure>
 
       <form method="get" className="mb-6 flex flex-col gap-2 sm:flex-row">
         <input
@@ -61,6 +64,12 @@ export default async function EmpresasPage({
           </Link>
         )}
       </form>
+
+      {companiesError && (
+        <div className="mb-6 rounded-lg border border-danger bg-raised p-4 text-sm text-danger">
+          Error al cargar las empresas: {companiesError.message}
+        </div>
+      )}
 
       <div className="overflow-x-auto rounded-lg border border-border bg-raised">
         <table className="w-full text-left text-sm">
@@ -83,7 +92,7 @@ export default async function EmpresasPage({
                 <EmptyStateRow
                   colSpan={4}
                   title="Todavía no tienes empresas"
-                  body="Añade la primera arriba — nombre y, si lo sabes, su sitio web (así los contactos con ese dominio de email se vinculan solos)."
+                  body="Añade la primera con el botón + de arriba — nombre y, si lo sabes, su sitio web (así los contactos con ese dominio de email se vinculan solos)."
                 />
               ))}
           </tbody>

@@ -1,9 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { createTask, toggleTask, deleteTask } from "./actions";
+import { AddDisclosure } from "@/components/add-disclosure";
 
 export default async function TareasPage() {
   const supabase = await createClient();
-  const [{ data: tasks }, { data: companies }] = await Promise.all([
+  const [{ data: tasks, error: tasksError }, { data: companies }] = await Promise.all([
     supabase
       .from("tasks")
       .select("id, title, due_date, completed, companies(name)")
@@ -17,21 +18,29 @@ export default async function TareasPage() {
       <h1 className="mb-1 font-heading text-3xl font-semibold text-ink">Tareas</h1>
       <p className="mb-8 text-sm text-ink-mute">Lo que tienes pendiente con tus clientes.</p>
 
-      <form action={createTask} className="mb-6 flex flex-col gap-3 rounded-lg border border-border bg-raised p-4 sm:flex-row sm:flex-wrap">
-        <input name="title" placeholder="¿Qué hay que hacer?" required className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
-        <input name="due_date" type="date" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
-        <select name="company_id" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
-          <option value="">Sin empresa</option>
-          {companies?.map((company) => (
-            <option key={company.id} value={company.id}>
-              {company.name}
-            </option>
-          ))}
-        </select>
-        <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover sm:w-auto">
-          Agregar tarea
-        </button>
-      </form>
+      <AddDisclosure label="Agregar tarea">
+        <form action={createTask} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <input name="title" placeholder="¿Qué hay que hacer?" required className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
+          <input name="due_date" type="date" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
+          <select name="company_id" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
+            <option value="">Sin empresa</option>
+            {companies?.map((company) => (
+              <option key={company.id} value={company.id}>
+                {company.name}
+              </option>
+            ))}
+          </select>
+          <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover sm:w-auto">
+            Agregar
+          </button>
+        </form>
+      </AddDisclosure>
+
+      {tasksError && (
+        <div className="mb-6 rounded-lg border border-danger bg-raised p-4 text-sm text-danger">
+          Error al cargar las tareas: {tasksError.message}
+        </div>
+      )}
 
       <div className="flex flex-col gap-2">
         {tasks?.map((task) => (
@@ -75,7 +84,7 @@ export default async function TareasPage() {
           <div className="rounded-lg border border-border bg-raised px-4 py-12 text-center">
             <p className="font-heading text-base text-ink">Nada pendiente por ahora</p>
             <p className="mx-auto mt-1 max-w-sm text-sm text-ink-mute">
-              Añade arriba tu primera tarea — una llamada, un presupuesto por enviar — y aparecerá aquí.
+              Añade tu primera tarea con el botón + de arriba — una llamada, un presupuesto por enviar — y aparecerá aquí.
             </p>
           </div>
         )}

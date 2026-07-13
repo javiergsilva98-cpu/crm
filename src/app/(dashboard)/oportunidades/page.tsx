@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createOpportunity } from "./actions";
 import { OpportunityRow } from "./opportunity-row";
 import { EmptyStateRow } from "@/components/empty-state";
+import { AddDisclosure } from "@/components/add-disclosure";
 
 const STAGES = ["nuevo", "calificado", "propuesta", "negociacion", "ganado", "perdido"];
 
@@ -29,7 +30,7 @@ export default async function OportunidadesPage({
     query = query.eq("stage", etapa);
   }
 
-  const [{ data: opportunities }, { data: companies }] = await Promise.all([
+  const [{ data: opportunities, error: opportunitiesError }, { data: companies }] = await Promise.all([
     query,
     supabase.from("companies").select("id, name").order("name"),
   ]);
@@ -51,21 +52,23 @@ export default async function OportunidadesPage({
         </div>
       </div>
 
-      <form action={createOpportunity} className="mb-6 flex flex-col gap-3 rounded-lg border border-border bg-raised p-4 sm:flex-row sm:flex-wrap">
-        <input name="title" placeholder="Título" required className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
-        <input name="amount" type="number" step="0.01" placeholder="Monto" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-32" />
-        <select name="company_id" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
-          <option value="">Sin empresa</option>
-          {companies?.map((company) => (
-            <option key={company.id} value={company.id}>
-              {company.name}
-            </option>
-          ))}
-        </select>
-        <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover sm:w-auto">
-          Agregar oportunidad
-        </button>
-      </form>
+      <AddDisclosure label="Agregar oportunidad">
+        <form action={createOpportunity} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <input name="title" placeholder="Título" required className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
+          <input name="amount" type="number" step="0.01" placeholder="Monto" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-32" />
+          <select name="company_id" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
+            <option value="">Sin empresa</option>
+            {companies?.map((company) => (
+              <option key={company.id} value={company.id}>
+                {company.name}
+              </option>
+            ))}
+          </select>
+          <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover sm:w-auto">
+            Agregar
+          </button>
+        </form>
+      </AddDisclosure>
 
       <form method="get" className="mb-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         <input
@@ -100,6 +103,12 @@ export default async function OportunidadesPage({
           </Link>
         )}
       </form>
+
+      {opportunitiesError && (
+        <div className="mb-6 rounded-lg border border-danger bg-raised p-4 text-sm text-danger">
+          Error al cargar las oportunidades: {opportunitiesError.message}
+        </div>
+      )}
 
       <div className="overflow-x-auto rounded-lg border border-border bg-raised">
         <table className="w-full text-left text-sm">

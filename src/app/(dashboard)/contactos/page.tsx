@@ -5,6 +5,7 @@ import { ContactRow } from "./contact-row";
 import { ImportButton } from "./import-button";
 import { CHANNELS, CHANNEL_LABELS } from "@/lib/channels";
 import { EmptyStateRow } from "@/components/empty-state";
+import { AddDisclosure } from "@/components/add-disclosure";
 
 export default async function ContactosPage({
   searchParams,
@@ -49,38 +50,40 @@ export default async function ContactosPage({
         </div>
       </div>
 
-      <form action={createContact} className="mb-2 flex flex-col gap-3 rounded-lg border border-border bg-raised p-4 sm:flex-row sm:flex-wrap">
-        <input name="full_name" placeholder="Nombre completo" required className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
-        <input name="email" type="email" placeholder="Email" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
-        <input name="phone" placeholder="Teléfono" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
-        <select name="company_id" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
-          <option value="">Detectar por email / sin empresa</option>
-          {companies?.map((company) => (
-            <option key={company.id} value={company.id}>
-              {company.name}
-            </option>
-          ))}
-        </select>
-        <select name="source" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
-          <option value="">¿De dónde vino?</option>
-          {CHANNELS.map((c) => (
-            <option key={c} value={c}>
-              {CHANNEL_LABELS[c]}
-            </option>
-          ))}
-        </select>
-        <input
-          name="source_detail"
-          placeholder="Detalle (ej. post reels enero, Miguel...)"
-          className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto"
-        />
-        <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover sm:w-auto">
-          Agregar contacto
-        </button>
-      </form>
-      <p className="mb-6 text-xs text-ink-mute">
-        Si dejas &quot;Detectar por email&quot;, se vincula automáticamente a la empresa cuyo sitio web coincida con el dominio del email (ej. juan@acme.com → Acme, si su sitio web es acme.com).
-      </p>
+      <AddDisclosure label="Agregar contacto">
+        <form action={createContact} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <input name="full_name" placeholder="Nombre completo" required className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
+          <input name="email" type="email" placeholder="Email" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
+          <input name="phone" placeholder="Teléfono" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
+          <select name="company_id" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
+            <option value="">Detectar por email / sin empresa</option>
+            {companies?.map((company) => (
+              <option key={company.id} value={company.id}>
+                {company.name}
+              </option>
+            ))}
+          </select>
+          <select name="source" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
+            <option value="">¿De dónde vino?</option>
+            {CHANNELS.map((c) => (
+              <option key={c} value={c}>
+                {CHANNEL_LABELS[c]}
+              </option>
+            ))}
+          </select>
+          <input
+            name="source_detail"
+            placeholder="Detalle (ej. post reels enero, Miguel...)"
+            className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto"
+          />
+          <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover sm:w-auto">
+            Agregar
+          </button>
+        </form>
+        <p className="mt-2 text-xs text-ink-mute">
+          Si dejas &quot;Detectar por email&quot;, se vincula automáticamente a la empresa cuyo sitio web coincida con el dominio del email (ej. juan@acme.com → Acme, si su sitio web es acme.com).
+        </p>
+      </AddDisclosure>
 
       <form method="get" className="mb-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         <input

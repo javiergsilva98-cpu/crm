@@ -4,13 +4,14 @@ import { AddDisclosure } from "@/components/add-disclosure";
 
 export default async function TareasPage() {
   const supabase = await createClient();
-  const [{ data: tasks, error: tasksError }, { data: companies }] = await Promise.all([
+  const [{ data: tasks, error: tasksError }, { data: companies }, { data: opportunities }] = await Promise.all([
     supabase
       .from("tasks")
-      .select("id, title, due_date, completed, companies(name)")
+      .select("id, title, due_date, completed, companies(name), opportunities(title)")
       .order("completed", { ascending: true })
       .order("due_date", { ascending: true, nullsFirst: false }),
     supabase.from("companies").select("id, name").order("name"),
+    supabase.from("opportunities").select("id, title").order("created_at", { ascending: false }),
   ]);
 
   return (
@@ -27,6 +28,14 @@ export default async function TareasPage() {
             {companies?.map((company) => (
               <option key={company.id} value={company.id}>
                 {company.name}
+              </option>
+            ))}
+          </select>
+          <select name="opportunity_id" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
+            <option value="">Sin oportunidad</option>
+            {opportunities?.map((opp) => (
+              <option key={opp.id} value={opp.id}>
+                {opp.title}
               </option>
             ))}
           </select>
@@ -67,7 +76,12 @@ export default async function TareasPage() {
               <div>
                 <p className={`text-sm text-ink ${task.completed ? "line-through" : ""}`}>{task.title}</p>
                 <p className="text-xs text-ink-mute">
-                  {(task.companies as unknown as { name: string } | null)?.name}
+                  {[
+                    (task.companies as unknown as { name: string } | null)?.name,
+                    (task.opportunities as unknown as { title: string } | null)?.title,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")}
                   {task.due_date && ` · ${new Date(task.due_date + "T00:00:00").toLocaleDateString("es-ES")}`}
                 </p>
               </div>

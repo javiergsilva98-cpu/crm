@@ -2,6 +2,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { addActivity, deleteActivity, addTagToCompany, removeTagFromCompany } from "./actions";
+import { calculateTotals } from "@/lib/invoice";
+
+const STATUS_LABELS: Record<string, string> = {
+  draft: "Borrador",
+  issued: "Emitida",
+  paid: "Pagada",
+  cancelled: "Anulada",
+};
 
 export default async function CompanyDetailPage({
   params,
@@ -11,7 +19,7 @@ export default async function CompanyDetailPage({
   const { id } = await params;
   const supabase = await createClient();
 
-  const [{ data: company }, { data: contacts }, { data: opportunities }, { data: activities }, { data: taggables }] =
+  const [{ data: company }, { data: contacts }, { data: opportunities }, { data: activities }, { data: taggables }, { data: invoices }] =
     await Promise.all([
       supabase
         .from("companies")
@@ -34,6 +42,11 @@ export default async function CompanyDetailPage({
         .eq("company_id", id)
         .order("created_at", { ascending: false }),
       supabase.from("taggables").select("tag_id, tags(id, name, color)").eq("company_id", id),
+      supabase
+        .from("invoices")
+        .select("id, invoice_number, issue_date, status, tax_rate, invoice_items(quantity, unit_price)")
+        .eq("company_id", id)
+        .order("invoice_number", { ascending: false }),
     ]);
 
   if (!company) {
@@ -159,6 +172,51 @@ export default async function CompanyDetailPage({
                 <tr>
                   <td colSpan={3} className="px-4 py-6 text-center text-ink-mute">
                     Sin oportunidades asociadas.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="mb-8">
+        <h2 className="mb-3 font-heading text-lg font-semibold text-ink">Facturas ({invoices?.length ?? 0})</h2>
+        <div className="overflow-x-auto rounded-lg border border-border bg-raised">
+          <table className="w-full text-left text-sm">
+            <thead className="border-b border-border-strong bg-sunken">
+              <tr>
+                <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Número</th>
+                <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Fecha</th>
+                <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Estado</th>
+                <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {invoices?.map((invoice) => {
+                const { total } = calculateTotals(
+                  (invoice.invoice_items as unknown as { quantity: number; unit_price: number }[]) ?? [],
+                  Number(invoice.tax_rate),
+                );
+                return (
+                  <tr key={invoice.id} className="border-t border-border transition-colors hover:bg-sunken">
+                    <td className="px-4 py-2">
+                      <Link href={`/facturas/${invoice.id}`} className="text-ink hover:underline">
+                        {invoice.invoice_number}
+                      </Link>
+                    </td>
+                    <td className="px-4 py-2 text-ink-soft">
+                      {new Date(invoice.issue_date + "T00:00:00").toLocaleDateString("es-ES")}
+                    </td>
+                    <td className="px-4 py-2 text-ink-soft">{STATUS_LABELS[invoice.status] ?? invoice.status}</td>
+                    <td className="px-4 py-2 text-ink">{total.toFixed(2)}€</td>
+                  </tr>
+                );
+              })}
+              {invoices?.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="px-4 py-6 text-center text-ink-mute">
+                    Sin facturas todavía.
                   </td>
                 </tr>
               )}

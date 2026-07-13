@@ -14,12 +14,14 @@ export async function createTask(formData: FormData) {
   if (!title) return;
 
   const companyId = String(formData.get("company_id") ?? "").trim();
+  const opportunityId = String(formData.get("opportunity_id") ?? "").trim();
   const dueDate = String(formData.get("due_date") ?? "").trim();
 
   await supabase.from("tasks").insert({
     owner_id: user.id,
     title,
     company_id: companyId || null,
+    opportunity_id: opportunityId || null,
     due_date: dueDate || null,
   });
 

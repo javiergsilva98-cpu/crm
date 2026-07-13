@@ -37,9 +37,14 @@ export default async function OportunidadesPage({
     <div>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Oportunidades</h1>
-        <Link href="/oportunidades/pipeline" className="text-sm text-gray-600 hover:underline">
-          Ver como pipeline
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link href="/oportunidades/export" className="text-sm text-gray-600 hover:underline">
+            Exportar CSV
+          </Link>
+          <Link href="/oportunidades/pipeline" className="text-sm text-gray-600 hover:underline">
+            Ver como pipeline
+          </Link>
+        </div>
       </div>
 
       <form action={createOpportunity} className="mb-8 flex flex-wrap gap-3 rounded-lg border border-gray-200 bg-white p-4">

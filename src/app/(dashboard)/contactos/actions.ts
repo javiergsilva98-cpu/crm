@@ -64,3 +64,58 @@ export async function deleteContact(formData: FormData) {
   await supabase.from("contacts").delete().eq("id", id);
   revalidatePath("/contactos");
 }
+
+type ImportRow = { full_name: string; email: string; phone: string; empresa: string };
+
+export async function importContacts(
+  rows: ImportRow[],
+): Promise<{ imported: number; skipped: number }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { imported: 0, skipped: rows.length };
+
+  const { data: companies } = await supabase.from("companies").select("id, name, website");
+
+  let imported = 0;
+  let skipped = 0;
+
+  for (const row of rows) {
+    const fullName = row.full_name.trim();
+    if (!fullName) {
+      skipped++;
+      continue;
+    }
+
+    const email = row.email.trim();
+    let companyId: string | null = null;
+
+    if (row.empresa.trim()) {
+      const byName = companies?.find(
+        (c) => c.name.toLowerCase() === row.empresa.trim().toLowerCase(),
+      );
+      companyId = byName?.id ?? null;
+    }
+    if (!companyId && email) {
+      companyId = await findCompanyByEmailDomain(supabase, email);
+    }
+
+    const { error } = await supabase.from("contacts").insert({
+      owner_id: user.id,
+      full_name: fullName,
+      email: email || null,
+      phone: row.phone.trim() || null,
+      company_id: companyId,
+    });
+
+    if (error) {
+      skipped++;
+    } else {
+      imported++;
+    }
+  }
+
+  revalidatePath("/contactos");
+  return { imported, skipped };
+}

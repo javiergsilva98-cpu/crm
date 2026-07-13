@@ -49,7 +49,6 @@ export default async function DashboardLayout({
             )}
           </nav>
           <div className="flex items-center gap-3">
-            <span className="text-sm text-ink-mute">{user.email}</span>
             <form action="/auth/signout" method="post">
               <button className="text-sm text-ink-soft underline" type="submit">
                 Salir

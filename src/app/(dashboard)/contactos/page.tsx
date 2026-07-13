@@ -29,7 +29,7 @@ export default async function ContactosPage({
     query = query.eq("source", canal);
   }
 
-  const [{ data: contacts }, { data: companies }] = await Promise.all([
+  const [{ data: contacts, error: contactsError }, { data: companies }] = await Promise.all([
     query,
     supabase.from("companies").select("id, name").order("name"),
   ]);
@@ -115,6 +115,12 @@ export default async function ContactosPage({
           </Link>
         )}
       </form>
+
+      {contactsError && (
+        <div className="mb-6 rounded-lg border border-danger bg-raised p-4 text-sm text-danger">
+          Error al cargar los contactos: {contactsError.message}
+        </div>
+      )}
 
       <div className="overflow-hidden rounded-lg border border-border bg-raised">
         <table className="w-full text-left text-sm">

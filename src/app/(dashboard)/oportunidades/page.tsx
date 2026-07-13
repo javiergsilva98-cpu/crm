@@ -35,7 +35,12 @@ export default async function OportunidadesPage({
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-semibold">Oportunidades</h1>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-semibold">Oportunidades</h1>
+        <Link href="/oportunidades/pipeline" className="text-sm text-gray-600 hover:underline">
+          Ver como pipeline
+        </Link>
+      </div>
 
       <form action={createOpportunity} className="mb-8 flex flex-wrap gap-3 rounded-lg border border-gray-200 bg-white p-4">
         <input name="title" placeholder="Título" required className="rounded-md border border-gray-300 px-3 py-2 text-sm" />

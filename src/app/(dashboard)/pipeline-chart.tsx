@@ -35,21 +35,27 @@ export function PipelineChart({
   const max = Math.max(1, ...rows.map((r) => r.amount));
 
   return (
-    <div className="rounded-lg border border-border bg-raised p-6">
+    <div className="rounded-lg border border-border bg-raised p-6 transition-colors hover:border-border-strong">
       <h2 className="mb-4 text-sm font-semibold text-ink">Valor del pipeline por etapa</h2>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-1">
         {rows.map((row) => {
           const widthPct = Math.max(2, (row.amount / max) * 100);
           return (
-            <div key={row.stage} className="flex items-center gap-3">
-              <span className="w-24 shrink-0 text-xs text-ink-soft">{STAGE_LABELS[row.stage]}</span>
+            <div
+              key={row.stage}
+              title={`${STAGE_LABELS[row.stage]}: $${row.amount.toLocaleString()}`}
+              className="group flex items-center gap-3 rounded-md px-1 py-1 transition-colors hover:bg-sunken"
+            >
+              <span className="w-24 shrink-0 text-xs text-ink-soft transition-colors group-hover:text-ink">
+                {STAGE_LABELS[row.stage]}
+              </span>
               <div className="h-4 flex-1 rounded-sm bg-sunken">
                 <div
-                  className="h-4 rounded-sm"
+                  className="h-4 rounded-sm transition-[width,filter] duration-300 group-hover:brightness-125"
                   style={{ width: `${widthPct}%`, backgroundColor: STAGE_COLORS[row.stage] }}
                 />
               </div>
-              <span className="w-24 shrink-0 text-right text-xs text-ink-soft">
+              <span className="w-24 shrink-0 text-right text-xs text-ink-soft transition-colors group-hover:text-ink">
                 ${row.amount.toLocaleString()}
               </span>
             </div>

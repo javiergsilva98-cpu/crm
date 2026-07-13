@@ -22,7 +22,7 @@ export default async function UsuariosPage() {
         Los administradores ven y gestionan todos los datos. Los usuarios normales solo ven lo que ellos mismos crean.
       </p>
 
-      <div className="overflow-hidden rounded-lg border border-border bg-raised">
+      <div className="overflow-x-auto rounded-lg border border-border bg-raised">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-border-strong bg-sunken">
             <tr>
@@ -33,7 +33,7 @@ export default async function UsuariosPage() {
           </thead>
           <tbody>
             {users?.map((u) => (
-              <tr key={u.id} className="border-t border-border">
+              <tr key={u.id} className="border-t border-border transition-colors hover:bg-sunken">
                 <td className="px-4 py-2">{u.email}</td>
                 <td className="px-4 py-2 capitalize">{u.role}</td>
                 <td className="px-4 py-2 text-right">

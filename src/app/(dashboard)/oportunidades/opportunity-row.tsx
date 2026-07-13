@@ -76,7 +76,7 @@ export function OpportunityRow({
   }
 
   return (
-    <tr className="border-t border-border">
+    <tr className="border-t border-border transition-colors hover:bg-sunken">
       <td className="px-4 py-2">{opportunity.title}</td>
       <td className="px-4 py-2">{opportunity.companies?.name}</td>
       <td className="px-4 py-2">${Number(opportunity.amount).toLocaleString()}</td>

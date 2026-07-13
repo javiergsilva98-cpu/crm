@@ -65,7 +65,7 @@ export default async function CanalesPage() {
       <p className="mb-6 text-sm text-ink-mute">De dónde vienen tus contactos este mes y cuánto te cuesta cada uno.</p>
 
       <div
-        className="mb-8 rounded-lg border p-6"
+        className="mb-8 rounded-lg border p-6 transition-shadow hover:shadow-lg hover:shadow-black/20"
         style={
           hasInsight
             ? { borderColor: "var(--accent-signal)", background: "var(--accent-signal-wash)" }
@@ -96,7 +96,7 @@ export default async function CanalesPage() {
         <p className="mt-3 pl-6 text-xs text-ink-mute">{totalContacts} contactos nuevos este mes en total.</p>
       </div>
 
-      <form action={saveChannelSpend} className="overflow-hidden rounded-lg border border-border bg-raised">
+      <form action={saveChannelSpend} className="overflow-x-auto rounded-lg border border-border bg-raised">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-border-strong bg-sunken">
             <tr>
@@ -108,7 +108,7 @@ export default async function CanalesPage() {
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.channel} className="border-t border-border">
+              <tr key={row.channel} className="border-t border-border transition-colors hover:bg-sunken">
                 <td className="px-4 py-2 text-ink">{CHANNEL_LABELS[row.channel]}</td>
                 <td className="px-4 py-2 text-ink-soft">{row.count}</td>
                 <td className="px-4 py-2">
@@ -133,7 +133,7 @@ export default async function CanalesPage() {
           </tbody>
         </table>
         <div className="border-t border-border p-4">
-          <button type="submit" className="rounded-md bg-calm px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover">
+          <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover sm:w-auto">
             Guardar gasto del mes
           </button>
         </div>

@@ -102,7 +102,7 @@ export function ContactRow({
   }
 
   return (
-    <tr className="border-t border-border">
+    <tr className="border-t border-border transition-colors hover:bg-sunken">
       <td className="px-4 py-2">{contact.full_name}</td>
       <td className="px-4 py-2">{contact.email}</td>
       <td className="px-4 py-2">{contact.phone}</td>

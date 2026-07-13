@@ -95,7 +95,7 @@ export default async function CompanyDetailPage({
 
       <div className="mb-8">
         <h2 className="mb-3 font-heading text-lg font-semibold text-ink">Contactos ({contacts?.length ?? 0})</h2>
-        <div className="overflow-hidden rounded-lg border border-border bg-raised">
+        <div className="overflow-x-auto rounded-lg border border-border bg-raised">
           <table className="w-full text-left text-sm">
             <thead className="border-b border-border-strong bg-sunken">
               <tr>
@@ -106,7 +106,7 @@ export default async function CompanyDetailPage({
             </thead>
             <tbody>
               {contacts?.map((contact) => (
-                <tr key={contact.id} className="border-t border-border">
+                <tr key={contact.id} className="border-t border-border transition-colors hover:bg-sunken">
                   <td className="px-4 py-2">{contact.full_name}</td>
                   <td className="px-4 py-2">{contact.email}</td>
                   <td className="px-4 py-2">{contact.phone}</td>
@@ -126,7 +126,7 @@ export default async function CompanyDetailPage({
 
       <div className="mb-8">
         <h2 className="mb-3 font-heading text-lg font-semibold text-ink">Oportunidades ({opportunities?.length ?? 0})</h2>
-        <div className="overflow-hidden rounded-lg border border-border bg-raised">
+        <div className="overflow-x-auto rounded-lg border border-border bg-raised">
           <table className="w-full text-left text-sm">
             <thead className="border-b border-border-strong bg-sunken">
               <tr>
@@ -137,7 +137,7 @@ export default async function CompanyDetailPage({
             </thead>
             <tbody>
               {opportunities?.map((opp) => (
-                <tr key={opp.id} className="border-t border-border">
+                <tr key={opp.id} className="border-t border-border transition-colors hover:bg-sunken">
                   <td className="px-4 py-2">{opp.title}</td>
                   <td className="px-4 py-2 capitalize">{opp.stage}</td>
                   <td className="px-4 py-2">${Number(opp.amount).toLocaleString()}</td>
@@ -165,7 +165,7 @@ export default async function CompanyDetailPage({
             required
             className="flex-1 rounded-md border border-border px-3 py-2 text-sm"
           />
-          <button type="submit" className="rounded-md bg-calm px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover">
+          <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover sm:w-auto">
             Añadir
           </button>
         </form>

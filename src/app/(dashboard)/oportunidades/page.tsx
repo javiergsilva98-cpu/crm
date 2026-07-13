@@ -36,7 +36,7 @@ export default async function OportunidadesPage({
 
   return (
     <div>
-      <div className="mb-8 flex items-start justify-between">
+      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="font-heading text-3xl font-semibold text-ink">Oportunidades</h1>
           <p className="mt-1 text-sm text-ink-mute">Tu pipeline de ventas, de nuevo a ganado.</p>
@@ -51,10 +51,10 @@ export default async function OportunidadesPage({
         </div>
       </div>
 
-      <form action={createOpportunity} className="mb-6 flex flex-wrap gap-3 rounded-lg border border-border bg-raised p-4">
-        <input name="title" placeholder="Título" required className="rounded-md border border-border bg-base px-3 py-2 text-sm text-ink" />
-        <input name="amount" type="number" step="0.01" placeholder="Monto" className="w-32 rounded-md border border-border bg-base px-3 py-2 text-sm text-ink" />
-        <select name="company_id" className="rounded-md border border-border bg-base px-3 py-2 text-sm text-ink">
+      <form action={createOpportunity} className="mb-6 flex flex-col gap-3 rounded-lg border border-border bg-raised p-4 sm:flex-row sm:flex-wrap">
+        <input name="title" placeholder="Título" required className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
+        <input name="amount" type="number" step="0.01" placeholder="Monto" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-32" />
+        <select name="company_id" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
           <option value="">Sin empresa</option>
           {companies?.map((company) => (
             <option key={company.id} value={company.id}>
@@ -62,20 +62,20 @@ export default async function OportunidadesPage({
             </option>
           ))}
         </select>
-        <button type="submit" className="rounded-md bg-calm px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover">
+        <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover sm:w-auto">
           Agregar oportunidad
         </button>
       </form>
 
-      <form method="get" className="mb-6 flex flex-wrap gap-2">
+      <form method="get" className="mb-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         <input
           type="text"
           name="q"
           defaultValue={q ?? ""}
           placeholder="Buscar por título..."
-          className="w-full max-w-sm rounded-full border-none bg-sunken px-4 py-1.5 text-sm text-ink-soft outline-none focus:text-ink"
+          className="w-full rounded-full border-none bg-sunken px-4 py-1.5 text-sm text-ink-soft outline-none focus:text-ink sm:max-w-sm"
         />
-        <select name="empresa" defaultValue={empresa ?? ""} className="rounded-full border-none bg-sunken px-4 py-1.5 text-sm text-ink-soft">
+        <select name="empresa" defaultValue={empresa ?? ""} className="w-full rounded-full border-none bg-sunken px-4 py-1.5 text-sm text-ink-soft sm:w-auto">
           <option value="">Todas las empresas</option>
           {companies?.map((company) => (
             <option key={company.id} value={company.id}>
@@ -83,7 +83,7 @@ export default async function OportunidadesPage({
             </option>
           ))}
         </select>
-        <select name="etapa" defaultValue={etapa ?? ""} className="rounded-full border-none bg-sunken px-4 py-1.5 text-sm text-ink-soft">
+        <select name="etapa" defaultValue={etapa ?? ""} className="w-full rounded-full border-none bg-sunken px-4 py-1.5 text-sm text-ink-soft sm:w-auto">
           <option value="">Todas las etapas</option>
           {STAGES.map((s) => (
             <option key={s} value={s}>
@@ -91,17 +91,17 @@ export default async function OportunidadesPage({
             </option>
           ))}
         </select>
-        <button type="submit" className="rounded-full bg-sunken px-4 py-1.5 text-sm text-ink-soft hover:text-ink">
+        <button type="submit" className="w-full rounded-full bg-sunken px-4 py-1.5 text-sm text-ink-soft hover:text-ink sm:w-auto">
           Buscar
         </button>
         {(q || empresa || etapa) && (
-          <Link href="/oportunidades" className="rounded-full px-4 py-1.5 text-sm text-ink-mute hover:text-ink">
+          <Link href="/oportunidades" className="w-full rounded-full px-4 py-1.5 text-sm text-ink-mute hover:text-ink sm:w-auto">
             Limpiar
           </Link>
         )}
       </form>
 
-      <div className="overflow-hidden rounded-lg border border-border bg-raised">
+      <div className="overflow-x-auto rounded-lg border border-border bg-raised">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-border-strong bg-sunken">
             <tr>

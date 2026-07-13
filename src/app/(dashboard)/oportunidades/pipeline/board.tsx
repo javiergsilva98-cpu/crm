@@ -25,6 +25,7 @@ type Opportunity = {
 export function PipelineBoard({ opportunities }: { opportunities: Opportunity[] }) {
   const [items, setItems] = useState(opportunities);
   const [dragId, setDragId] = useState<string | null>(null);
+  const [dragOverStage, setDragOverStage] = useState<string | null>(null);
   const [, startTransition] = useTransition();
 
   function moveTo(id: string, stage: string) {
@@ -46,12 +47,19 @@ export function PipelineBoard({ opportunities }: { opportunities: Opportunity[] 
         return (
           <div
             key={stage}
-            onDragOver={(e) => e.preventDefault()}
+            onDragOver={(e) => {
+              e.preventDefault();
+              setDragOverStage(stage);
+            }}
+            onDragLeave={() => setDragOverStage((s) => (s === stage ? null : s))}
             onDrop={(e) => {
               e.preventDefault();
               if (dragId) moveTo(dragId, stage);
+              setDragOverStage(null);
             }}
-            className="w-64 shrink-0 rounded-lg border border-border bg-sunken"
+            className={`w-64 shrink-0 rounded-lg border bg-sunken transition-colors ${
+              dragOverStage === stage ? "border-calm" : "border-border"
+            }`}
           >
             <div className="border-b border-border px-3 py-2">
               <p className="flex items-center gap-1.5 text-sm font-semibold text-ink">
@@ -69,8 +77,11 @@ export function PipelineBoard({ opportunities }: { opportunities: Opportunity[] 
                   key={opp.id}
                   draggable
                   onDragStart={() => setDragId(opp.id)}
-                  onDragEnd={() => setDragId(null)}
-                  className="cursor-grab rounded-md border border-border bg-raised p-3 text-sm shadow-sm active:cursor-grabbing"
+                  onDragEnd={() => {
+                    setDragId(null);
+                    setDragOverStage(null);
+                  }}
+                  className="cursor-grab rounded-md border border-border bg-raised p-3 text-sm shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-md active:cursor-grabbing active:scale-[0.98]"
                 >
                   <p className="font-medium text-ink">{opp.title}</p>
                   {opp.companies?.name && <p className="text-xs text-ink-mute">{opp.companies.name}</p>}

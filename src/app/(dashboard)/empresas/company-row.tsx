@@ -61,7 +61,7 @@ export function CompanyRow({ company }: { company: Company }) {
   }
 
   return (
-    <tr className="border-t border-border">
+    <tr className="border-t border-border transition-colors hover:bg-sunken">
       <td className="px-4 py-2">
         <Link href={`/empresas/${company.id}`} className="text-ink hover:underline">
           {company.name}

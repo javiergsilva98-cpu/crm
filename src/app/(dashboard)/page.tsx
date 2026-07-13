@@ -56,7 +56,10 @@ export default async function DashboardHome() {
 
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         {cards.map((card) => (
-          <div key={card.label} className="rounded-lg border border-border bg-raised p-6">
+          <div
+            key={card.label}
+            className="rounded-lg border border-border bg-raised p-6 transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-lg hover:shadow-black/20"
+          >
             <p className="text-sm text-ink-mute">{card.label}</p>
             <p className="mt-2 text-2xl font-semibold text-ink">{card.value}</p>
           </div>
@@ -65,7 +68,7 @@ export default async function DashboardHome() {
 
       <Link
         href="/canales"
-        className="mb-8 block rounded-lg border p-6 transition-colors"
+        className="mb-8 block rounded-lg border p-6 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/20"
         style={
           breakdownPhrase
             ? { borderColor: "var(--accent-signal)", background: "var(--accent-signal-wash)" }

@@ -36,7 +36,7 @@ export default async function ContactosPage({
 
   return (
     <div>
-      <div className="mb-8 flex items-start justify-between">
+      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="font-heading text-3xl font-semibold text-ink">Contactos</h1>
           <p className="mt-1 text-sm text-ink-mute">Las personas que han llegado a tu negocio.</p>
@@ -49,11 +49,11 @@ export default async function ContactosPage({
         </div>
       </div>
 
-      <form action={createContact} className="mb-2 flex flex-wrap gap-3 rounded-lg border border-border bg-raised p-4">
-        <input name="full_name" placeholder="Nombre completo" required className="rounded-md border border-border bg-base px-3 py-2 text-sm text-ink" />
-        <input name="email" type="email" placeholder="Email" className="rounded-md border border-border bg-base px-3 py-2 text-sm text-ink" />
-        <input name="phone" placeholder="Teléfono" className="rounded-md border border-border bg-base px-3 py-2 text-sm text-ink" />
-        <select name="company_id" className="rounded-md border border-border bg-base px-3 py-2 text-sm text-ink">
+      <form action={createContact} className="mb-2 flex flex-col gap-3 rounded-lg border border-border bg-raised p-4 sm:flex-row sm:flex-wrap">
+        <input name="full_name" placeholder="Nombre completo" required className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
+        <input name="email" type="email" placeholder="Email" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
+        <input name="phone" placeholder="Teléfono" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
+        <select name="company_id" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
           <option value="">Detectar por email / sin empresa</option>
           {companies?.map((company) => (
             <option key={company.id} value={company.id}>
@@ -61,7 +61,7 @@ export default async function ContactosPage({
             </option>
           ))}
         </select>
-        <select name="source" className="rounded-md border border-border bg-base px-3 py-2 text-sm text-ink">
+        <select name="source" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
           <option value="">¿De dónde vino?</option>
           {CHANNELS.map((c) => (
             <option key={c} value={c}>
@@ -72,9 +72,9 @@ export default async function ContactosPage({
         <input
           name="source_detail"
           placeholder="Detalle (ej. post reels enero, Miguel...)"
-          className="rounded-md border border-border bg-base px-3 py-2 text-sm text-ink"
+          className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto"
         />
-        <button type="submit" className="rounded-md bg-calm px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover">
+        <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover sm:w-auto">
           Agregar contacto
         </button>
       </form>
@@ -82,15 +82,15 @@ export default async function ContactosPage({
         Si dejas &quot;Detectar por email&quot;, se vincula automáticamente a la empresa cuyo sitio web coincida con el dominio del email (ej. juan@acme.com → Acme, si su sitio web es acme.com).
       </p>
 
-      <form method="get" className="mb-6 flex flex-wrap gap-2">
+      <form method="get" className="mb-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         <input
           type="text"
           name="q"
           defaultValue={q ?? ""}
           placeholder="Buscar por nombre o email..."
-          className="w-full max-w-sm rounded-full border-none bg-sunken px-4 py-1.5 text-sm text-ink-soft outline-none focus:text-ink"
+          className="w-full rounded-full border-none bg-sunken px-4 py-1.5 text-sm text-ink-soft outline-none focus:text-ink sm:max-w-sm"
         />
-        <select name="empresa" defaultValue={empresa ?? ""} className="rounded-full border-none bg-sunken px-4 py-1.5 text-sm text-ink-soft">
+        <select name="empresa" defaultValue={empresa ?? ""} className="w-full rounded-full border-none bg-sunken px-4 py-1.5 text-sm text-ink-soft sm:w-auto">
           <option value="">Todas las empresas</option>
           {companies?.map((company) => (
             <option key={company.id} value={company.id}>
@@ -98,7 +98,7 @@ export default async function ContactosPage({
             </option>
           ))}
         </select>
-        <select name="canal" defaultValue={canal ?? ""} className="rounded-full border-none bg-sunken px-4 py-1.5 text-sm text-ink-soft">
+        <select name="canal" defaultValue={canal ?? ""} className="w-full rounded-full border-none bg-sunken px-4 py-1.5 text-sm text-ink-soft sm:w-auto">
           <option value="">Todos los canales</option>
           {CHANNELS.map((c) => (
             <option key={c} value={c}>
@@ -106,11 +106,11 @@ export default async function ContactosPage({
             </option>
           ))}
         </select>
-        <button type="submit" className="rounded-full bg-sunken px-4 py-1.5 text-sm text-ink-soft hover:text-ink">
+        <button type="submit" className="w-full rounded-full bg-sunken px-4 py-1.5 text-sm text-ink-soft hover:text-ink sm:w-auto">
           Buscar
         </button>
         {(q || empresa || canal) && (
-          <Link href="/contactos" className="rounded-full px-4 py-1.5 text-sm text-ink-mute hover:text-ink">
+          <Link href="/contactos" className="w-full rounded-full px-4 py-1.5 text-sm text-ink-mute hover:text-ink sm:w-auto">
             Limpiar
           </Link>
         )}
@@ -122,7 +122,7 @@ export default async function ContactosPage({
         </div>
       )}
 
-      <div className="overflow-hidden rounded-lg border border-border bg-raised">
+      <div className="overflow-x-auto rounded-lg border border-border bg-raised">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-border-strong bg-sunken">
             <tr>

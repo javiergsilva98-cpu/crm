@@ -99,7 +99,7 @@ export function ContactRow({
               placeholder="Dirección fiscal"
               className="rounded-md border border-border px-2 py-1 text-sm"
             />
-            <button type="submit" className="rounded-md bg-calm px-3 py-1 text-sm text-ink transition-colors hover:bg-calm-hover">
+            <button type="submit" className="rounded-md bg-calm px-3 py-1 text-sm text-base transition-colors hover:bg-calm-hover">
               Guardar
             </button>
             <button

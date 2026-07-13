@@ -65,7 +65,7 @@ export default async function CanalesPage() {
       <p className="mb-6 text-sm text-ink-mute">De dónde vienen tus contactos este mes y cuánto te cuesta cada uno.</p>
 
       <div
-        className="mb-8 rounded-lg border p-6 transition-shadow hover:shadow-lg hover:shadow-black/20"
+        className="mb-8 rounded-lg border p-6 transition-shadow hover:shadow-lg hover:shadow-black/10"
         style={
           hasInsight
             ? { borderColor: "var(--accent-signal)", background: "var(--accent-signal-wash)" }
@@ -133,7 +133,7 @@ export default async function CanalesPage() {
           </tbody>
         </table>
         <div className="border-t border-border p-4">
-          <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover sm:w-auto">
+          <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-base transition-colors hover:bg-calm-hover sm:w-auto">
             Guardar gasto del mes
           </button>
         </div>

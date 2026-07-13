@@ -119,7 +119,7 @@ export default async function ConfiguracionPage() {
         </div>
         <button
           type="submit"
-          className="mt-6 w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover sm:w-auto"
+          className="mt-6 w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-base transition-colors hover:bg-calm-hover sm:w-auto"
         >
           Guardar datos fiscales
         </button>
@@ -174,7 +174,7 @@ export default async function ConfiguracionPage() {
               <option value="user">Usuario</option>
               <option value="admin">Administrador</option>
             </select>
-            <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover sm:w-auto">
+            <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-base transition-colors hover:bg-calm-hover sm:w-auto">
               Generar enlace de invitación
             </button>
           </form>

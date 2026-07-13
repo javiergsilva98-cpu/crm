@@ -9,14 +9,14 @@ const STAGE_LABELS: Record<string, string> = {
   perdido: "Perdido",
 };
 
-// Rampa secuencial en el color de marca "calm" (etapas abiertas) + colores de estado (ganado/perdido).
+// Rampa secuencial en el verde oliva de marca (etapas abiertas) + colores de estado (ganado/perdido).
 const STAGE_COLORS: Record<string, string> = {
-  nuevo: "#7fb3b3",
-  calificado: "#5c9c9c",
-  propuesta: "#3d8686",
-  negociacion: "#2b6e6e",
-  ganado: "#7fa37a",
-  perdido: "#c1553b",
+  nuevo: "#b7c1a3",
+  calificado: "#93a374",
+  propuesta: "#6e8250",
+  negociacion: "#4a5b33",
+  ganado: "#6f9450",
+  perdido: "#a8342a",
 };
 
 export function PipelineChart({
@@ -51,7 +51,7 @@ export function PipelineChart({
               </span>
               <div className="h-4 flex-1 rounded-sm bg-sunken">
                 <div
-                  className="h-4 rounded-sm transition-[width,filter] duration-300 group-hover:brightness-125"
+                  className="h-4 rounded-sm transition-[width,filter] duration-300 group-hover:brightness-90"
                   style={{ width: `${widthPct}%`, backgroundColor: STAGE_COLORS[row.stage] }}
                 />
               </div>

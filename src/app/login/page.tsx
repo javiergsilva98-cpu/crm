@@ -99,7 +99,7 @@ function LoginForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-md bg-calm px-3 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover disabled:opacity-50"
+          className="w-full rounded-md bg-calm px-3 py-2 text-sm font-medium text-base transition-colors hover:bg-calm-hover disabled:opacity-50"
         >
           {loading ? "Cargando..." : mode === "signin" ? "Entrar" : "Registrarme"}
         </button>

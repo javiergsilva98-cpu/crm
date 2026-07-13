@@ -76,7 +76,7 @@ export default async function ContactosPage({
             placeholder="Detalle (ej. post reels enero, Miguel...)"
             className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto"
           />
-          <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover sm:w-auto">
+          <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-base transition-colors hover:bg-calm-hover sm:w-auto">
             Agregar
           </button>
         </form>

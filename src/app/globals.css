@@ -1,25 +1,25 @@
 @import "tailwindcss";
 
 :root {
-  --bg-base: #1b1b22;
-  --bg-raised: #232330;
-  --bg-sunken: #17171d;
-  --border-subtle: #34343f;
-  --border-strong: #46465a;
+  --bg-base: #ffffff;
+  --bg-raised: #ffffff;
+  --bg-sunken: #f2f3ee;
+  --border-subtle: #e1e4d8;
+  --border-strong: #c7cbb8;
 
-  --text-primary: #f2efea;
-  --text-secondary: #b8b5ac;
-  --text-muted: #8a877e;
+  --text-primary: #4a5b33;
+  --text-secondary: #6b7a54;
+  --text-muted: #8b9678;
 
-  --accent-signal: #e8a33d;
-  --accent-signal-wash: rgba(232, 163, 61, 0.12);
-  --accent-calm: #2b6e6e;
-  --accent-calm-hover: #357f7f;
-  --accent-calm-wash: rgba(43, 110, 110, 0.14);
+  --accent-signal: #c1653f;
+  --accent-signal-wash: rgba(193, 101, 63, 0.08);
+  --accent-calm: #4a5b33;
+  --accent-calm-hover: #3a4828;
+  --accent-calm-wash: rgba(74, 91, 51, 0.08);
 
-  --success: #7fa37a;
-  --danger: #c1553b;
-  --danger-hover: #a8492f;
+  --success: #6f9450;
+  --danger: #a8342a;
+  --danger-hover: #8c2b22;
 }
 
 @theme inline {
@@ -54,7 +54,7 @@ body {
 
 ::selection {
   background: var(--accent-calm);
-  color: var(--text-primary);
+  color: var(--bg-base);
 }
 
 input::placeholder {

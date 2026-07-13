@@ -30,7 +30,7 @@ export default async function TareasPage() {
               </option>
             ))}
           </select>
-          <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover sm:w-auto">
+          <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-base transition-colors hover:bg-calm-hover sm:w-auto">
             Agregar
           </button>
         </form>
@@ -60,7 +60,7 @@ export default async function TareasPage() {
                       task.completed ? "border-success bg-success" : "border-border-strong"
                     }`}
                   >
-                    {task.completed && <span className="text-xs text-ink">✓</span>}
+                    {task.completed && <span className="text-xs text-base">✓</span>}
                   </span>
                 </button>
               </form>

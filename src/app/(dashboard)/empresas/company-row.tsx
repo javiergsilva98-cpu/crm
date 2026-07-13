@@ -16,7 +16,7 @@ export function CompanyRow({ company }: { company: Company }) {
 
   if (editing) {
     return (
-      <tr className="border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-950">
+      <tr className="border-t border-border bg-sunken">
         <td className="px-4 py-2" colSpan={4}>
           <form
             action={async (formData) => {
@@ -30,27 +30,27 @@ export function CompanyRow({ company }: { company: Company }) {
               name="name"
               defaultValue={company.name}
               required
-              className="rounded-md border border-gray-300 dark:border-gray-700 px-2 py-1 text-sm"
+              className="rounded-md border border-border px-2 py-1 text-sm"
             />
             <input
               name="website"
               defaultValue={company.website ?? ""}
               placeholder="Sitio web"
-              className="rounded-md border border-gray-300 dark:border-gray-700 px-2 py-1 text-sm"
+              className="rounded-md border border-border px-2 py-1 text-sm"
             />
             <input
               name="industry"
               defaultValue={company.industry ?? ""}
               placeholder="Industria"
-              className="rounded-md border border-gray-300 dark:border-gray-700 px-2 py-1 text-sm"
+              className="rounded-md border border-border px-2 py-1 text-sm"
             />
-            <button type="submit" className="rounded-md bg-gray-900 px-3 py-1 text-sm text-white">
+            <button type="submit" className="rounded-md bg-calm px-3 py-1 text-sm text-ink transition-colors hover:bg-calm-hover">
               Guardar
             </button>
             <button
               type="button"
               onClick={() => setEditing(false)}
-              className="text-sm text-gray-600 dark:text-gray-400 underline"
+              className="text-sm text-ink-soft underline"
             >
               Cancelar
             </button>
@@ -61,9 +61,9 @@ export function CompanyRow({ company }: { company: Company }) {
   }
 
   return (
-    <tr className="border-t border-gray-100 dark:border-gray-800">
+    <tr className="border-t border-border">
       <td className="px-4 py-2">
-        <Link href={`/empresas/${company.id}`} className="text-gray-900 dark:text-gray-100 hover:underline">
+        <Link href={`/empresas/${company.id}`} className="text-ink hover:underline">
           {company.name}
         </Link>
       </td>
@@ -71,12 +71,12 @@ export function CompanyRow({ company }: { company: Company }) {
       <td className="px-4 py-2">{company.industry}</td>
       <td className="px-4 py-2 text-right">
         <div className="flex justify-end gap-3">
-          <button type="button" onClick={() => setEditing(true)} className="text-gray-600 dark:text-gray-400 hover:underline">
+          <button type="button" onClick={() => setEditing(true)} className="text-ink-soft hover:underline">
             Editar
           </button>
           <form action={deleteCompany}>
             <input type="hidden" name="id" value={company.id} />
-            <button type="submit" className="text-red-600 hover:underline">
+            <button type="submit" className="text-danger hover:underline">
               Eliminar
             </button>
           </form>

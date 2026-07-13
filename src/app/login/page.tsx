@@ -48,38 +48,38 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-950 px-4">
-      <div className="w-full max-w-sm rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-8 shadow-sm">
-        <h1 className="mb-6 text-xl font-semibold text-gray-900 dark:text-gray-100">
+    <div className="flex min-h-screen items-center justify-center bg-sunken px-4">
+      <div className="w-full max-w-sm rounded-lg border border-border bg-raised p-8 shadow-sm">
+        <h1 className="mb-6 font-heading text-2xl font-semibold text-ink">
           {mode === "signin" ? "Iniciar sesión" : "Crear cuenta"}
         </h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+            <label className="mb-1 block text-sm font-medium text-ink-soft">Email</label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-md border border-gray-300 dark:border-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100"
+              className="w-full rounded-md border border-border px-3 py-2 text-sm text-ink"
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Contraseña</label>
+            <label className="mb-1 block text-sm font-medium text-ink-soft">Contraseña</label>
             <input
               type="password"
               required
               minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-md border border-gray-300 dark:border-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 tracking-widest"
+              className="w-full rounded-md border border-border px-3 py-2 text-sm text-ink tracking-widest"
             />
           </div>
-          {message && <p className="text-sm text-red-600">{message}</p>}
+          {message && <p className="text-sm text-danger">{message}</p>}
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white disabled:opacity-50"
+            className="w-full rounded-md bg-calm px-3 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover disabled:opacity-50"
           >
             {loading ? "Cargando..." : mode === "signin" ? "Entrar" : "Registrarme"}
           </button>
@@ -87,7 +87,7 @@ export default function LoginPage() {
         <button
           type="button"
           onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-          className="mt-4 text-sm text-gray-600 dark:text-gray-400 underline"
+          className="mt-4 text-sm text-ink-soft underline"
         >
           {mode === "signin" ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Inicia sesión"}
         </button>

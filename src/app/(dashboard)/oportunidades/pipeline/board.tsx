@@ -51,11 +51,15 @@ export function PipelineBoard({ opportunities }: { opportunities: Opportunity[] 
               e.preventDefault();
               if (dragId) moveTo(dragId, stage);
             }}
-            className="w-64 shrink-0 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950"
+            className="w-64 shrink-0 rounded-lg border border-border bg-sunken"
           >
-            <div className="border-b border-gray-200 dark:border-gray-800 px-3 py-2">
-              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{STAGE_LABELS[stage]}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-500">
+            <div className="border-b border-border px-3 py-2">
+              <p className="flex items-center gap-1.5 text-sm font-semibold text-ink">
+                {stage === "ganado" && <span className="h-1.5 w-1.5 rounded-full bg-success" />}
+                {stage === "perdido" && <span className="h-1.5 w-1.5 rounded-full bg-danger" />}
+                {STAGE_LABELS[stage]}
+              </p>
+              <p className="text-xs text-ink-mute">
                 {stageItems.length} · ${stageTotal.toLocaleString()}
               </p>
             </div>
@@ -66,15 +70,15 @@ export function PipelineBoard({ opportunities }: { opportunities: Opportunity[] 
                   draggable
                   onDragStart={() => setDragId(opp.id)}
                   onDragEnd={() => setDragId(null)}
-                  className="cursor-grab rounded-md border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-3 text-sm shadow-sm active:cursor-grabbing"
+                  className="cursor-grab rounded-md border border-border bg-raised p-3 text-sm shadow-sm active:cursor-grabbing"
                 >
-                  <p className="font-medium text-gray-900 dark:text-gray-100">{opp.title}</p>
-                  {opp.companies?.name && <p className="text-xs text-gray-500 dark:text-gray-500">{opp.companies.name}</p>}
-                  <p className="mt-1 text-xs text-gray-700 dark:text-gray-300">${Number(opp.amount).toLocaleString()}</p>
+                  <p className="font-medium text-ink">{opp.title}</p>
+                  {opp.companies?.name && <p className="text-xs text-ink-mute">{opp.companies.name}</p>}
+                  <p className="mt-1 text-xs text-ink-soft">${Number(opp.amount).toLocaleString()}</p>
                 </div>
               ))}
               {stageItems.length === 0 && (
-                <p className="px-1 py-4 text-center text-xs text-gray-400 dark:text-gray-600">Sin oportunidades</p>
+                <p className="px-1 py-4 text-center text-xs text-ink-mute">Sin oportunidades</p>
               )}
             </div>
           </div>

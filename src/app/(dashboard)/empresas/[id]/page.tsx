@@ -43,12 +43,12 @@ export default async function CompanyDetailPage({
 
   return (
     <div>
-      <Link href="/empresas" className="mb-4 inline-block text-sm text-gray-600 dark:text-gray-400 hover:underline">
+      <Link href="/empresas" className="mb-4 inline-block text-sm text-ink-soft hover:underline">
         ← Volver a empresas
       </Link>
 
-      <div className="mb-8 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
-        <h1 className="text-2xl font-semibold">{company.name}</h1>
+      <div className="mb-8 rounded-lg border border-border bg-raised p-6">
+        <h1 className="font-heading text-3xl font-semibold text-ink">{company.name}</h1>
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {tags.map((tag) => (
@@ -72,41 +72,41 @@ export default async function CompanyDetailPage({
             <input
               name="tag_name"
               placeholder="+ etiqueta"
-              className="w-24 rounded-full border border-gray-300 dark:border-gray-700 px-2 py-0.5 text-xs"
+              className="w-24 rounded-full border border-border px-2 py-0.5 text-xs"
             />
           </form>
         </div>
 
         <dl className="mt-4 grid grid-cols-1 gap-3 text-sm sm:grid-cols-3">
           <div>
-            <dt className="text-gray-500 dark:text-gray-500">Sitio web</dt>
+            <dt className="text-ink-mute">Sitio web</dt>
             <dd>{company.website || "—"}</dd>
           </div>
           <div>
-            <dt className="text-gray-500 dark:text-gray-500">Industria</dt>
+            <dt className="text-ink-mute">Industria</dt>
             <dd>{company.industry || "—"}</dd>
           </div>
           <div>
-            <dt className="text-gray-500 dark:text-gray-500">Pipeline total</dt>
+            <dt className="text-ink-mute">Pipeline total</dt>
             <dd>${totalPipeline.toLocaleString()}</dd>
           </div>
         </dl>
       </div>
 
       <div className="mb-8">
-        <h2 className="mb-3 text-lg font-semibold">Contactos ({contacts?.length ?? 0})</h2>
-        <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+        <h2 className="mb-3 font-heading text-lg font-semibold text-ink">Contactos ({contacts?.length ?? 0})</h2>
+        <div className="overflow-hidden rounded-lg border border-border bg-raised">
           <table className="w-full text-left text-sm">
-            <thead className="bg-gray-50 dark:bg-gray-950 text-gray-500 dark:text-gray-500">
+            <thead className="border-b border-border-strong bg-sunken">
               <tr>
-                <th className="px-4 py-2">Nombre</th>
-                <th className="px-4 py-2">Email</th>
-                <th className="px-4 py-2">Teléfono</th>
+                <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Nombre</th>
+                <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Email</th>
+                <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Teléfono</th>
               </tr>
             </thead>
             <tbody>
               {contacts?.map((contact) => (
-                <tr key={contact.id} className="border-t border-gray-100 dark:border-gray-800">
+                <tr key={contact.id} className="border-t border-border">
                   <td className="px-4 py-2">{contact.full_name}</td>
                   <td className="px-4 py-2">{contact.email}</td>
                   <td className="px-4 py-2">{contact.phone}</td>
@@ -114,7 +114,7 @@ export default async function CompanyDetailPage({
               ))}
               {contacts?.length === 0 && (
                 <tr>
-                  <td colSpan={3} className="px-4 py-6 text-center text-gray-400 dark:text-gray-600">
+                  <td colSpan={3} className="px-4 py-6 text-center text-ink-mute">
                     Sin contactos asociados.
                   </td>
                 </tr>
@@ -125,19 +125,19 @@ export default async function CompanyDetailPage({
       </div>
 
       <div className="mb-8">
-        <h2 className="mb-3 text-lg font-semibold">Oportunidades ({opportunities?.length ?? 0})</h2>
-        <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+        <h2 className="mb-3 font-heading text-lg font-semibold text-ink">Oportunidades ({opportunities?.length ?? 0})</h2>
+        <div className="overflow-hidden rounded-lg border border-border bg-raised">
           <table className="w-full text-left text-sm">
-            <thead className="bg-gray-50 dark:bg-gray-950 text-gray-500 dark:text-gray-500">
+            <thead className="border-b border-border-strong bg-sunken">
               <tr>
-                <th className="px-4 py-2">Título</th>
-                <th className="px-4 py-2">Etapa</th>
-                <th className="px-4 py-2">Monto</th>
+                <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Título</th>
+                <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Etapa</th>
+                <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Monto</th>
               </tr>
             </thead>
             <tbody>
               {opportunities?.map((opp) => (
-                <tr key={opp.id} className="border-t border-gray-100 dark:border-gray-800">
+                <tr key={opp.id} className="border-t border-border">
                   <td className="px-4 py-2">{opp.title}</td>
                   <td className="px-4 py-2 capitalize">{opp.stage}</td>
                   <td className="px-4 py-2">${Number(opp.amount).toLocaleString()}</td>
@@ -145,7 +145,7 @@ export default async function CompanyDetailPage({
               ))}
               {opportunities?.length === 0 && (
                 <tr>
-                  <td colSpan={3} className="px-4 py-6 text-center text-gray-400 dark:text-gray-600">
+                  <td colSpan={3} className="px-4 py-6 text-center text-ink-mute">
                     Sin oportunidades asociadas.
                   </td>
                 </tr>
@@ -156,16 +156,16 @@ export default async function CompanyDetailPage({
       </div>
 
       <div>
-        <h2 className="mb-3 text-lg font-semibold">Actividad ({activities?.length ?? 0})</h2>
+        <h2 className="mb-3 font-heading text-lg font-semibold text-ink">Actividad ({activities?.length ?? 0})</h2>
         <form action={addActivity} className="mb-3 flex gap-2">
           <input type="hidden" name="company_id" value={id} />
           <input
             name="body"
             placeholder="Añadir una nota (llamada, reunión, email...)"
             required
-            className="flex-1 rounded-md border border-gray-300 dark:border-gray-700 px-3 py-2 text-sm"
+            className="flex-1 rounded-md border border-border px-3 py-2 text-sm"
           />
-          <button type="submit" className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white">
+          <button type="submit" className="rounded-md bg-calm px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover">
             Añadir
           </button>
         </form>
@@ -173,25 +173,25 @@ export default async function CompanyDetailPage({
           {activities?.map((activity) => (
             <div
               key={activity.id}
-              className="flex items-center justify-between rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-3 text-sm"
+              className="flex items-center justify-between rounded-lg border border-border bg-raised px-4 py-3 text-sm"
             >
               <div>
                 <p>{activity.body}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-500">
+                <p className="text-xs text-ink-mute">
                   {new Date(activity.created_at).toLocaleString("es-ES")}
                 </p>
               </div>
               <form action={deleteActivity}>
                 <input type="hidden" name="id" value={activity.id} />
                 <input type="hidden" name="company_id" value={id} />
-                <button type="submit" className="text-red-600 hover:underline">
+                <button type="submit" className="text-danger hover:underline">
                   Eliminar
                 </button>
               </form>
             </div>
           ))}
           {activities?.length === 0 && (
-            <p className="rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-6 text-center text-gray-400 dark:text-gray-600">
+            <p className="rounded-lg border border-border bg-raised px-4 py-6 text-center text-ink-mute">
               Sin actividad registrada todavía.
             </p>
           )}

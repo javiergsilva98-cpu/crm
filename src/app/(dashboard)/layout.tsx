@@ -21,37 +21,37 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+      <header className="border-b border-border bg-raised">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
           <nav className="flex items-center gap-6">
-            <Link href="/" className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+            <Link href="/" className="text-sm font-semibold text-ink">
               CRM
             </Link>
-            <Link href="/empresas" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+            <Link href="/empresas" className="text-sm text-ink-soft hover:text-ink">
               Empresas
             </Link>
-            <Link href="/contactos" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+            <Link href="/contactos" className="text-sm text-ink-soft hover:text-ink">
               Contactos
             </Link>
-            <Link href="/oportunidades" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+            <Link href="/oportunidades" className="text-sm text-ink-soft hover:text-ink">
               Oportunidades
             </Link>
-            <Link href="/canales" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+            <Link href="/canales" className="text-sm text-ink-soft hover:text-ink">
               Canales
             </Link>
-            <Link href="/tareas" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+            <Link href="/tareas" className="text-sm text-ink-soft hover:text-ink">
               Tareas
             </Link>
             {profile?.role === "admin" && (
-              <Link href="/usuarios" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+              <Link href="/usuarios" className="text-sm text-ink-soft hover:text-ink">
                 Usuarios
               </Link>
             )}
           </nav>
           <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500 dark:text-gray-500">{user.email}</span>
+            <span className="text-sm text-ink-mute">{user.email}</span>
             <form action="/auth/signout" method="post">
-              <button className="text-sm text-gray-600 dark:text-gray-400 underline" type="submit">
+              <button className="text-sm text-ink-soft underline" type="submit">
                 Salir
               </button>
             </form>

@@ -17,23 +17,23 @@ export default async function UsuariosPage() {
 
   return (
     <div>
-      <h1 className="mb-2 text-2xl font-semibold">Usuarios</h1>
-      <p className="mb-6 text-sm text-gray-500 dark:text-gray-500">
+      <h1 className="mb-2 font-heading text-3xl font-semibold text-ink">Usuarios</h1>
+      <p className="mb-6 text-sm text-ink-mute">
         Los administradores ven y gestionan todos los datos. Los usuarios normales solo ven lo que ellos mismos crean.
       </p>
 
-      <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+      <div className="overflow-hidden rounded-lg border border-border bg-raised">
         <table className="w-full text-left text-sm">
-          <thead className="bg-gray-50 dark:bg-gray-950 text-gray-500 dark:text-gray-500">
+          <thead className="border-b border-border-strong bg-sunken">
             <tr>
-              <th className="px-4 py-2">Email</th>
-              <th className="px-4 py-2">Rol</th>
-              <th className="px-4 py-2" />
+              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Email</th>
+              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Rol</th>
+              <th className="px-4 py-2.5" />
             </tr>
           </thead>
           <tbody>
             {users?.map((u) => (
-              <tr key={u.id} className="border-t border-gray-100 dark:border-gray-800">
+              <tr key={u.id} className="border-t border-border">
                 <td className="px-4 py-2">{u.email}</td>
                 <td className="px-4 py-2 capitalize">{u.role}</td>
                 <td className="px-4 py-2 text-right">
@@ -42,12 +42,12 @@ export default async function UsuariosPage() {
                     <select
                       name="role"
                       defaultValue={u.role}
-                      className="rounded-md border border-gray-300 dark:border-gray-700 px-2 py-1 text-sm"
+                      className="rounded-md border border-border px-2 py-1 text-sm"
                     >
                       <option value="user">Usuario</option>
                       <option value="admin">Administrador</option>
                     </select>
-                    <button type="submit" className="rounded-md border border-gray-300 dark:border-gray-700 px-3 py-1 text-sm">
+                    <button type="submit" className="rounded-md border border-border px-3 py-1 text-sm">
                       Guardar
                     </button>
                   </form>

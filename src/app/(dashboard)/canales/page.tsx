@@ -57,55 +57,63 @@ export default async function CanalesPage() {
           .join(", ")
       : null;
 
+  const hasInsight = breakdownPhrase !== null;
+
   return (
     <div>
-      <h1 className="mb-2 text-2xl font-semibold">Canales</h1>
-      <p className="mb-6 text-sm text-gray-500 dark:text-gray-500">
-        De dónde vienen tus contactos este mes y cuánto te cuesta cada uno.
-      </p>
+      <h1 className="mb-2 font-heading text-3xl font-semibold text-ink">Canales</h1>
+      <p className="mb-6 text-sm text-ink-mute">De dónde vienen tus contactos este mes y cuánto te cuesta cada uno.</p>
 
-      <div className="mb-8 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
+      <div
+        className="mb-8 rounded-lg border p-6"
+        style={
+          hasInsight
+            ? { borderColor: "var(--accent-signal)", background: "var(--accent-signal-wash)" }
+            : { borderColor: "var(--border-subtle)", background: "var(--bg-raised)" }
+        }
+      >
         {breakdownPhrase ? (
-          <p className="text-sm">
-            De cada 10 contactos este mes, <strong>{breakdownPhrase}</strong>
-            {withoutSource > 0 && ` (${withoutSource} sin canal indicado)`}.
+          <p className="flex items-start gap-2 text-sm text-ink">
+            <span className="mt-0.5 text-signal">✦</span>
+            <span>
+              De cada 10 contactos este mes, <strong>{breakdownPhrase}</strong>
+              {withoutSource > 0 && ` (${withoutSource} sin canal indicado)`}.
+            </span>
           </p>
         ) : (
-          <p className="text-sm text-gray-500 dark:text-gray-500">
-            Todavía no hay contactos con canal de origen este mes. Indica de dónde vino cada contacto nuevo al crearlo.
+          <p className="text-sm text-ink-mute">
+            Todavía no hay contactos con canal de origen este mes. Indica de dónde vino cada contacto nuevo al crearlo y esta pantalla se rellenará sola.
           </p>
         )}
         {cheapest && priciest && cheapest.channel !== priciest.channel && (
-          <p className="mt-2 text-sm">
+          <p className="mt-2 pl-6 text-sm text-ink">
             Los contactos de <strong>{CHANNEL_LABELS[cheapest.channel]}</strong> te cuestan{" "}
             {priciest.costPerContact! / cheapest.costPerContact! >= 1.8 ? "menos de la mitad" : "menos"} que los de{" "}
             <strong>{CHANNEL_LABELS[priciest.channel]}</strong> este mes (
             {cheapest.costPerContact!.toFixed(2)}€ vs {priciest.costPerContact!.toFixed(2)}€ por contacto).
           </p>
         )}
-        <p className="mt-3 text-xs text-gray-500 dark:text-gray-500">
-          {totalContacts} contactos nuevos este mes en total.
-        </p>
+        <p className="mt-3 pl-6 text-xs text-ink-mute">{totalContacts} contactos nuevos este mes en total.</p>
       </div>
 
-      <form action={saveChannelSpend} className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+      <form action={saveChannelSpend} className="overflow-hidden rounded-lg border border-border bg-raised">
         <table className="w-full text-left text-sm">
-          <thead className="bg-gray-50 dark:bg-gray-950 text-gray-500 dark:text-gray-500">
+          <thead className="border-b border-border-strong bg-sunken">
             <tr>
-              <th className="px-4 py-2">Canal</th>
-              <th className="px-4 py-2">Contactos este mes</th>
-              <th className="px-4 py-2">Gasto este mes</th>
-              <th className="px-4 py-2">Coste por contacto</th>
+              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Canal</th>
+              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Contactos este mes</th>
+              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Gasto este mes</th>
+              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Coste por contacto</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.channel} className="border-t border-gray-100 dark:border-gray-800">
-                <td className="px-4 py-2">{CHANNEL_LABELS[row.channel]}</td>
-                <td className="px-4 py-2">{row.count}</td>
+              <tr key={row.channel} className="border-t border-border">
+                <td className="px-4 py-2 text-ink">{CHANNEL_LABELS[row.channel]}</td>
+                <td className="px-4 py-2 text-ink-soft">{row.count}</td>
                 <td className="px-4 py-2">
                   <div className="flex items-center gap-1">
-                    <span className="text-gray-500 dark:text-gray-500">€</span>
+                    <span className="text-ink-mute">€</span>
                     <input
                       name={`spend_${row.channel}`}
                       type="number"
@@ -113,19 +121,19 @@ export default async function CanalesPage() {
                       min="0"
                       defaultValue={row.amount || ""}
                       placeholder="0"
-                      className="w-24 rounded-md border border-gray-300 dark:border-gray-700 px-2 py-1 text-sm"
+                      className="w-24 rounded-md border border-border bg-base px-2 py-1 text-sm text-ink"
                     />
                   </div>
                 </td>
-                <td className="px-4 py-2">
+                <td className="px-4 py-2 text-ink">
                   {row.costPerContact !== null ? `${row.costPerContact.toFixed(2)}€` : "—"}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        <div className="border-t border-gray-100 dark:border-gray-800 p-4">
-          <button type="submit" className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white">
+        <div className="border-t border-border p-4">
+          <button type="submit" className="rounded-md bg-calm px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover">
             Guardar gasto del mes
           </button>
         </div>

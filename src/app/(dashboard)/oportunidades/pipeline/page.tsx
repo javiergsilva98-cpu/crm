@@ -11,9 +11,12 @@ export default async function PipelinePage() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Pipeline</h1>
-        <Link href="/oportunidades" className="text-sm text-gray-600 dark:text-gray-400 hover:underline">
+      <div className="mb-8 flex items-start justify-between">
+        <div>
+          <h1 className="font-heading text-3xl font-semibold text-ink">Pipeline</h1>
+          <p className="mt-1 text-sm text-ink-mute">Arrastra una tarjeta para cambiarla de etapa.</p>
+        </div>
+        <Link href="/oportunidades" className="text-sm text-ink-soft hover:text-ink hover:underline">
           Ver como lista
         </Link>
       </div>

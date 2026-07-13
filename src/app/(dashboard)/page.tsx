@@ -51,28 +51,37 @@ export default async function DashboardHome() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-semibold">Resumen</h1>
-      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+      <h1 className="mb-1 font-heading text-3xl font-semibold text-ink">Resumen</h1>
+      <p className="mb-8 text-sm text-ink-mute">Cómo va tu negocio hoy.</p>
+
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         {cards.map((card) => (
-          <div key={card.label} className="rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
-            <p className="text-sm text-gray-500 dark:text-gray-500">{card.label}</p>
-            <p className="mt-2 text-2xl font-semibold">{card.value}</p>
+          <div key={card.label} className="rounded-lg border border-border bg-raised p-6">
+            <p className="text-sm text-ink-mute">{card.label}</p>
+            <p className="mt-2 text-2xl font-semibold text-ink">{card.value}</p>
           </div>
         ))}
       </div>
 
       <Link
         href="/canales"
-        className="mb-8 block rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 hover:border-gray-300 dark:hover:border-gray-700"
+        className="mb-8 block rounded-lg border p-6 transition-colors"
+        style={
+          breakdownPhrase
+            ? { borderColor: "var(--accent-signal)", background: "var(--accent-signal-wash)" }
+            : { borderColor: "var(--border-subtle)", background: "var(--bg-raised)" }
+        }
       >
-        <h2 className="mb-1 text-sm font-semibold text-gray-900 dark:text-gray-100">¿De dónde vienen tus contactos?</h2>
+        <h2 className="mb-1 flex items-center gap-1.5 text-sm font-semibold text-ink">
+          {breakdownPhrase && <span className="text-signal">✦</span>} ¿De dónde vienen tus contactos?
+        </h2>
         {breakdownPhrase ? (
-          <p className="text-sm">
+          <p className="text-sm text-ink">
             De cada 10 contactos este mes, <strong>{breakdownPhrase}</strong>.{" "}
-            <span className="text-gray-500 dark:text-gray-500">Ver coste por canal →</span>
+            <span className="text-ink-mute">Ver coste por canal →</span>
           </p>
         ) : (
-          <p className="text-sm text-gray-500 dark:text-gray-500">
+          <p className="text-sm text-ink-mute">
             Todavía no hay contactos con canal de origen este mes. Ver canales →
           </p>
         )}

@@ -26,7 +26,7 @@ export function ContactRow({
 
   if (editing) {
     return (
-      <tr className="border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-950">
+      <tr className="border-t border-border bg-sunken">
         <td className="px-4 py-2" colSpan={6}>
           <form
             action={async (formData) => {
@@ -40,25 +40,25 @@ export function ContactRow({
               name="full_name"
               defaultValue={contact.full_name}
               required
-              className="rounded-md border border-gray-300 dark:border-gray-700 px-2 py-1 text-sm"
+              className="rounded-md border border-border px-2 py-1 text-sm"
             />
             <input
               name="email"
               type="email"
               defaultValue={contact.email ?? ""}
               placeholder="Email"
-              className="rounded-md border border-gray-300 dark:border-gray-700 px-2 py-1 text-sm"
+              className="rounded-md border border-border px-2 py-1 text-sm"
             />
             <input
               name="phone"
               defaultValue={contact.phone ?? ""}
               placeholder="Teléfono"
-              className="rounded-md border border-gray-300 dark:border-gray-700 px-2 py-1 text-sm"
+              className="rounded-md border border-border px-2 py-1 text-sm"
             />
             <select
               name="company_id"
               defaultValue={contact.company_id ?? ""}
-              className="rounded-md border border-gray-300 dark:border-gray-700 px-2 py-1 text-sm"
+              className="rounded-md border border-border px-2 py-1 text-sm"
             >
               <option value="">Sin empresa</option>
               {companies.map((c) => (
@@ -70,7 +70,7 @@ export function ContactRow({
             <select
               name="source"
               defaultValue={contact.source ?? ""}
-              className="rounded-md border border-gray-300 dark:border-gray-700 px-2 py-1 text-sm"
+              className="rounded-md border border-border px-2 py-1 text-sm"
             >
               <option value="">¿De dónde vino?</option>
               {CHANNELS.map((c) => (
@@ -83,15 +83,15 @@ export function ContactRow({
               name="source_detail"
               defaultValue={contact.source_detail ?? ""}
               placeholder="Detalle del canal"
-              className="rounded-md border border-gray-300 dark:border-gray-700 px-2 py-1 text-sm"
+              className="rounded-md border border-border px-2 py-1 text-sm"
             />
-            <button type="submit" className="rounded-md bg-gray-900 px-3 py-1 text-sm text-white">
+            <button type="submit" className="rounded-md bg-calm px-3 py-1 text-sm text-ink transition-colors hover:bg-calm-hover">
               Guardar
             </button>
             <button
               type="button"
               onClick={() => setEditing(false)}
-              className="text-sm text-gray-600 dark:text-gray-400 underline"
+              className="text-sm text-ink-soft underline"
             >
               Cancelar
             </button>
@@ -102,7 +102,7 @@ export function ContactRow({
   }
 
   return (
-    <tr className="border-t border-gray-100 dark:border-gray-800">
+    <tr className="border-t border-border">
       <td className="px-4 py-2">{contact.full_name}</td>
       <td className="px-4 py-2">{contact.email}</td>
       <td className="px-4 py-2">{contact.phone}</td>
@@ -111,17 +111,17 @@ export function ContactRow({
         {contact.source ? (
           <span title={contact.source_detail ?? undefined}>{CHANNEL_LABELS[contact.source]}</span>
         ) : (
-          <span className="text-gray-400 dark:text-gray-600">—</span>
+          <span className="text-ink-mute">—</span>
         )}
       </td>
       <td className="px-4 py-2 text-right">
         <div className="flex justify-end gap-3">
-          <button type="button" onClick={() => setEditing(true)} className="text-gray-600 dark:text-gray-400 hover:underline">
+          <button type="button" onClick={() => setEditing(true)} className="text-ink-soft hover:underline">
             Editar
           </button>
           <form action={deleteContact}>
             <input type="hidden" name="id" value={contact.id} />
-            <button type="submit" className="text-red-600 hover:underline">
+            <button type="submit" className="text-danger hover:underline">
               Eliminar
             </button>
           </form>

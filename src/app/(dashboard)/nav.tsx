@@ -12,15 +12,14 @@ const LINKS = [
   { href: "/tareas", label: "Tareas" },
 ];
 
-export function Nav({ isAdmin }: { isAdmin: boolean }) {
+export function Nav() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const links = isAdmin ? [...LINKS, { href: "/usuarios", label: "Usuarios" }] : LINKS;
 
   return (
     <>
       <nav className="hidden items-center gap-6 md:flex">
-        {links.map((link) => (
+        {LINKS.map((link) => (
           <Link
             key={link.href}
             href={link.href}
@@ -54,7 +53,7 @@ export function Nav({ isAdmin }: { isAdmin: boolean }) {
       {open && (
         <div className="absolute inset-x-0 top-full border-b border-border bg-raised px-4 py-3 md:hidden">
           <nav className="flex flex-col gap-1">
-            {links.map((link) => (
+            {LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}

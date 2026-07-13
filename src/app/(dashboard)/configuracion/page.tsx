@@ -1,5 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentProfile } from "@/lib/profile";
 import { saveBusinessSettings } from "./actions";
+import { updateUserRole, createInvite, deleteInvite } from "./users-actions";
+import { InviteLink } from "./invite-link";
 
 export default async function ConfiguracionPage() {
   const supabase = await createClient();
@@ -7,20 +10,35 @@ export default async function ConfiguracionPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
+  const profile = await getCurrentProfile();
+  const isAdmin = profile?.role === "admin";
+
   const { data: settings } = await supabase
     .from("business_settings")
     .select("legal_name, tax_id, address, postal_code, city, province, country, email, phone")
     .eq("owner_id", user?.id ?? "")
     .maybeSingle();
 
+  const [{ data: users }, { data: invites }] = isAdmin
+    ? await Promise.all([
+        supabase.from("profiles").select("id, email, role, created_at").order("created_at", { ascending: true }),
+        supabase
+          .from("invites")
+          .select("id, role, created_at")
+          .is("used_by", null)
+          .order("created_at", { ascending: false }),
+      ])
+    : [{ data: null }, { data: null }];
+
   return (
     <div>
       <h1 className="mb-1 font-heading text-3xl font-semibold text-ink">Configuración</h1>
-      <p className="mb-8 text-sm text-ink-mute">
-        Tus datos fiscales. Los usaremos más adelante para generar tus facturas automáticamente.
-      </p>
+      <p className="mb-8 text-sm text-ink-mute">Tus datos fiscales y quién tiene acceso al CRM.</p>
 
-      <form action={saveBusinessSettings} className="max-w-2xl rounded-lg border border-border bg-raised p-6">
+      <h2 className="mb-3 font-heading text-lg font-semibold text-ink">Datos fiscales</h2>
+      <p className="mb-3 text-sm text-ink-mute">Los usaremos más adelante para generar tus facturas automáticamente.</p>
+
+      <form action={saveBusinessSettings} className="mb-10 max-w-2xl rounded-lg border border-border bg-raised p-6">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">
             <label className="mb-1 block text-sm text-ink-soft">Razón social / Nombre</label>
@@ -106,6 +124,97 @@ export default async function ConfiguracionPage() {
           Guardar datos fiscales
         </button>
       </form>
+
+      {isAdmin && (
+        <>
+          <h2 className="mb-3 font-heading text-lg font-semibold text-ink">Usuarios</h2>
+          <p className="mb-3 text-sm text-ink-mute">
+            Los administradores ven y gestionan todos los datos. Los usuarios normales solo ven lo que ellos mismos crean.
+          </p>
+
+          <div className="mb-6 overflow-x-auto rounded-lg border border-border bg-raised">
+            <table className="w-full text-left text-sm">
+              <thead className="border-b border-border-strong bg-sunken">
+                <tr>
+                  <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Email</th>
+                  <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Rol</th>
+                  <th className="px-4 py-2.5" />
+                </tr>
+              </thead>
+              <tbody>
+                {users?.map((u) => (
+                  <tr key={u.id} className="border-t border-border transition-colors hover:bg-sunken">
+                    <td className="px-4 py-2">{u.email}</td>
+                    <td className="px-4 py-2 capitalize">{u.role}</td>
+                    <td className="px-4 py-2 text-right">
+                      <form action={updateUserRole} className="inline-flex items-center gap-2">
+                        <input type="hidden" name="id" value={u.id} />
+                        <select
+                          name="role"
+                          defaultValue={u.role}
+                          className="rounded-md border border-border px-2 py-1 text-sm"
+                        >
+                          <option value="user">Usuario</option>
+                          <option value="admin">Administrador</option>
+                        </select>
+                        <button type="submit" className="rounded-md border border-border px-3 py-1 text-sm">
+                          Guardar
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <h3 className="mb-2 text-sm font-semibold text-ink">Invitar a alguien</h3>
+          <form action={createInvite} className="mb-4 flex flex-col gap-3 rounded-lg border border-border bg-raised p-4 sm:flex-row sm:items-center">
+            <select name="role" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
+              <option value="user">Usuario</option>
+              <option value="admin">Administrador</option>
+            </select>
+            <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-calm-hover sm:w-auto">
+              Generar enlace de invitación
+            </button>
+          </form>
+
+          {invites && invites.length > 0 && (
+            <div className="overflow-x-auto rounded-lg border border-border bg-raised">
+              <table className="w-full text-left text-sm">
+                <thead className="border-b border-border-strong bg-sunken">
+                  <tr>
+                    <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Rol</th>
+                    <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Creada</th>
+                    <th className="px-4 py-2.5" />
+                  </tr>
+                </thead>
+                <tbody>
+                  {invites.map((invite) => (
+                    <tr key={invite.id} className="border-t border-border transition-colors hover:bg-sunken">
+                      <td className="px-4 py-2 capitalize">{invite.role}</td>
+                      <td className="px-4 py-2 text-ink-mute">
+                        {new Date(invite.created_at).toLocaleDateString("es-ES")}
+                      </td>
+                      <td className="px-4 py-2">
+                        <div className="flex justify-end gap-2">
+                          <InviteLink id={invite.id} />
+                          <form action={deleteInvite}>
+                            <input type="hidden" name="id" value={invite.id} />
+                            <button type="submit" className="rounded-md border border-border px-3 py-1 text-sm text-danger transition-colors hover:border-danger">
+                              Revocar
+                            </button>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }

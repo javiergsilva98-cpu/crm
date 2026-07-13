@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { getCurrentProfile } from "@/lib/profile";
 import { Nav } from "./nav";
 
 export default async function DashboardLayout({
@@ -18,8 +17,6 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
-  const profile = await getCurrentProfile();
-
   return (
     <div className="flex min-h-screen flex-col">
       <header className="relative border-b border-border bg-raised">
@@ -28,7 +25,7 @@ export default async function DashboardLayout({
             <Link href="/" className="text-sm font-semibold text-ink">
               CRM
             </Link>
-            <Nav isAdmin={profile?.role === "admin"} />
+            <Nav />
           </div>
           <div className="flex items-center gap-4">
             <Link

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentProfile } from "@/lib/profile";
 
 export default async function DashboardLayout({
   children,
@@ -15,6 +16,8 @@ export default async function DashboardLayout({
   if (!user) {
     redirect("/login");
   }
+
+  const profile = await getCurrentProfile();
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -33,6 +36,14 @@ export default async function DashboardLayout({
             <Link href="/oportunidades" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
               Oportunidades
             </Link>
+            <Link href="/tareas" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+              Tareas
+            </Link>
+            {profile?.role === "admin" && (
+              <Link href="/usuarios" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+                Usuarios
+              </Link>
+            )}
           </nav>
           <div className="flex items-center gap-3">
             <span className="text-sm text-gray-500 dark:text-gray-500">{user.email}</span>

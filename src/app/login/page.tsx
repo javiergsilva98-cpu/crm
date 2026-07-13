@@ -3,6 +3,19 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
+const AUTH_ERROR_MESSAGES: Record<string, string> = {
+  "Invalid login credentials": "Email o contraseña incorrectos.",
+  "User already registered": "Ya existe una cuenta con ese email.",
+  "Email not confirmed": "Debes confirmar tu email antes de iniciar sesión.",
+  "Password should be at least 6 characters": "La contraseña debe tener al menos 6 caracteres.",
+  "Unable to validate email address: invalid format": "El formato del email no es válido.",
+  "Email rate limit exceeded": "Se enviaron demasiadas solicitudes. Inténtalo de nuevo en unos minutos.",
+};
+
+function translateAuthError(message: string): string {
+  return AUTH_ERROR_MESSAGES[message] ?? message;
+}
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,16 +32,16 @@ export default function LoginPage() {
     if (mode === "signin") {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
-        setMessage(error.message);
+        setMessage(translateAuthError(error.message));
       } else {
         window.location.href = "/";
       }
     } else {
       const { error } = await supabase.auth.signUp({ email, password });
       if (error) {
-        setMessage(error.message);
+        setMessage(translateAuthError(error.message));
       } else {
-        setMessage("Cuenta creada. Revisá tu correo para confirmar el registro.");
+        setMessage("Cuenta creada. Revisa tu correo para confirmar el registro.");
       }
     }
     setLoading(false);
@@ -48,7 +61,7 @@ export default function LoginPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900"
             />
           </div>
           <div>
@@ -59,7 +72,7 @@ export default function LoginPage() {
               minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 tracking-widest"
             />
           </div>
           {message && <p className="text-sm text-red-600">{message}</p>}
@@ -76,7 +89,7 @@ export default function LoginPage() {
           onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
           className="mt-4 text-sm text-gray-600 underline"
         >
-          {mode === "signin" ? "¿No tenés cuenta? Registrate" : "¿Ya tenés cuenta? Iniciá sesión"}
+          {mode === "signin" ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Inicia sesión"}
         </button>
       </div>
     </div>

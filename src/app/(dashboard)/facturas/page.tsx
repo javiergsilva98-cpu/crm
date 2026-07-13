@@ -20,7 +20,7 @@ export default async function FacturasPage({
 
   let query = supabase
     .from("invoices")
-    .select("id, invoice_number, issue_date, status, tax_rate, companies(name), invoice_items(quantity, unit_price)")
+    .select("id, invoice_number, issue_date, status, paid_at, tax_rate, companies(name), invoice_items(quantity, unit_price)")
     .order("invoice_number", { ascending: false });
 
   if (empresa) query = query.eq("company_id", empresa);
@@ -107,7 +107,12 @@ export default async function FacturasPage({
                   <td className="px-4 py-2 text-ink-soft">
                     {new Date(invoice.issue_date + "T00:00:00").toLocaleDateString("es-ES")}
                   </td>
-                  <td className="px-4 py-2 text-ink-soft">{STATUS_LABELS[invoice.status] ?? invoice.status}</td>
+                  <td className="px-4 py-2 text-ink-soft">
+                    {STATUS_LABELS[invoice.status] ?? invoice.status}
+                    {invoice.status === "paid" && invoice.paid_at && (
+                      <span className="text-ink-mute"> ({new Date(invoice.paid_at + "T00:00:00").toLocaleDateString("es-ES")})</span>
+                    )}
+                  </td>
                   <td className="px-4 py-2 text-ink">{total.toFixed(2)}€</td>
                 </tr>
               );

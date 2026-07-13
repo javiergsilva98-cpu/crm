@@ -115,7 +115,29 @@ export async function updateInvoiceStatus(formData: FormData) {
   const status = String(formData.get("status"));
   if (!["draft", "issued", "paid", "cancelled"].includes(status)) return;
 
-  await supabase.from("invoices").update({ status, updated_at: new Date().toISOString() }).eq("id", id);
+  await supabase
+    .from("invoices")
+    .update({
+      status,
+      paid_at: status === "paid" ? new Date().toISOString().slice(0, 10) : null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id);
+
+  revalidatePath("/facturas");
+  revalidatePath(`/facturas/${id}`);
+}
+
+export async function updatePaidAt(formData: FormData) {
+  const supabase = await createClient();
+  const id = String(formData.get("id"));
+  const paidAt = String(formData.get("paid_at") ?? "").trim() || null;
+
+  await supabase
+    .from("invoices")
+    .update({ paid_at: paidAt, updated_at: new Date().toISOString() })
+    .eq("id", id);
+
   revalidatePath("/facturas");
   revalidatePath(`/facturas/${id}`);
 }

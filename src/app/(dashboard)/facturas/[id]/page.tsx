@@ -5,6 +5,7 @@ import { calculateTotals } from "@/lib/invoice";
 import { deleteInvoice } from "../actions";
 import { StatusSelect } from "./status-select";
 import { PrintButton } from "./print-button";
+import { PaidAtInput } from "./paid-at-input";
 
 export default async function FacturaDetailPage({
   params,
@@ -18,7 +19,7 @@ export default async function FacturaDetailPage({
     supabase
       .from("invoices")
       .select(
-        "id, invoice_number, issue_date, due_date, status, tax_rate, notes, companies(name, tax_id, fiscal_address), contacts(full_name, tax_id, fiscal_address), opportunities(title)",
+        "id, invoice_number, issue_date, due_date, status, paid_at, tax_rate, notes, companies(name, tax_id, fiscal_address), contacts(full_name, tax_id, fiscal_address), opportunities(title)",
       )
       .eq("id", id)
       .single(),
@@ -67,8 +68,18 @@ export default async function FacturaDetailPage({
             </p>
             {opportunity && <p className="mt-1 text-sm text-ink-mute">Oportunidad: {opportunity.title}</p>}
           </div>
-          <div className="print:hidden">
-            <StatusSelect id={id} status={invoice.status} />
+          <div className="text-right">
+            <div className="print:hidden">
+              <StatusSelect id={id} status={invoice.status} />
+            </div>
+            {invoice.status === "paid" && (
+              <div className="mt-2">
+                <PaidAtInput id={id} paidAt={invoice.paid_at} />
+                <p className="hidden text-sm text-ink-mute print:block">
+                  Pagada el {invoice.paid_at && new Date(invoice.paid_at + "T00:00:00").toLocaleDateString("es-ES")}
+                </p>
+              </div>
+            )}
           </div>
         </div>
 

@@ -32,12 +32,12 @@ export default async function ContactosPage({
     <div>
       <h1 className="mb-6 text-2xl font-semibold">Contactos</h1>
 
-      <form action={createContact} className="mb-8 flex flex-wrap gap-3 rounded-lg border border-gray-200 bg-white p-4">
+      <form action={createContact} className="mb-2 flex flex-wrap gap-3 rounded-lg border border-gray-200 bg-white p-4">
         <input name="full_name" placeholder="Nombre completo" required className="rounded-md border border-gray-300 px-3 py-2 text-sm" />
         <input name="email" type="email" placeholder="Email" className="rounded-md border border-gray-300 px-3 py-2 text-sm" />
         <input name="phone" placeholder="Teléfono" className="rounded-md border border-gray-300 px-3 py-2 text-sm" />
         <select name="company_id" className="rounded-md border border-gray-300 px-3 py-2 text-sm">
-          <option value="">Sin empresa</option>
+          <option value="">Detectar por email / sin empresa</option>
           {companies?.map((company) => (
             <option key={company.id} value={company.id}>
               {company.name}
@@ -48,6 +48,9 @@ export default async function ContactosPage({
           Agregar
         </button>
       </form>
+      <p className="mb-6 text-xs text-gray-500">
+        Si dejas &quot;Detectar por email&quot;, se vincula automáticamente a la empresa cuyo sitio web coincida con el dominio del email (ej. juan@acme.com → Acme, si su sitio web es acme.com).
+      </p>
 
       <form method="get" className="mb-4 flex flex-wrap gap-2">
         <input

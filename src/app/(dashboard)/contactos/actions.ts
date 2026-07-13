@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { findCompanyByEmailDomain } from "@/lib/match-company";
 
 export async function createContact(formData: FormData) {
   const supabase = await createClient();
@@ -13,14 +14,19 @@ export async function createContact(formData: FormData) {
   const fullName = String(formData.get("full_name") ?? "").trim();
   if (!fullName) return;
 
-  const companyId = String(formData.get("company_id") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim();
+  let companyId = String(formData.get("company_id") ?? "").trim() || null;
+
+  if (!companyId && email) {
+    companyId = await findCompanyByEmailDomain(supabase, email);
+  }
 
   await supabase.from("contacts").insert({
     owner_id: user.id,
     full_name: fullName,
-    email: String(formData.get("email") ?? "").trim() || null,
+    email: email || null,
     phone: String(formData.get("phone") ?? "").trim() || null,
-    company_id: companyId || null,
+    company_id: companyId,
   });
 
   revalidatePath("/contactos");
@@ -32,15 +38,20 @@ export async function updateContact(formData: FormData) {
   const fullName = String(formData.get("full_name") ?? "").trim();
   if (!fullName) return;
 
-  const companyId = String(formData.get("company_id") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim();
+  let companyId = String(formData.get("company_id") ?? "").trim() || null;
+
+  if (!companyId && email) {
+    companyId = await findCompanyByEmailDomain(supabase, email);
+  }
 
   await supabase
     .from("contacts")
     .update({
       full_name: fullName,
-      email: String(formData.get("email") ?? "").trim() || null,
+      email: email || null,
       phone: String(formData.get("phone") ?? "").trim() || null,
-      company_id: companyId || null,
+      company_id: companyId,
     })
     .eq("id", id);
 

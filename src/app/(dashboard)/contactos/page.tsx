@@ -3,18 +3,19 @@ import { createClient } from "@/lib/supabase/server";
 import { createContact } from "./actions";
 import { ContactRow } from "./contact-row";
 import { ImportButton } from "./import-button";
+import { CHANNELS, CHANNEL_LABELS } from "@/lib/channels";
 
 export default async function ContactosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; empresa?: string }>;
+  searchParams: Promise<{ q?: string; empresa?: string; canal?: string }>;
 }) {
-  const { q, empresa } = await searchParams;
+  const { q, empresa, canal } = await searchParams;
   const supabase = await createClient();
 
   let query = supabase
     .from("contacts")
-    .select("id, full_name, email, phone, company_id, companies(name)")
+    .select("id, full_name, email, phone, company_id, source, source_detail, companies(name)")
     .order("created_at", { ascending: false });
 
   if (q) {
@@ -22,6 +23,9 @@ export default async function ContactosPage({
   }
   if (empresa) {
     query = query.eq("company_id", empresa);
+  }
+  if (canal) {
+    query = query.eq("source", canal);
   }
 
   const [{ data: contacts }, { data: companies }] = await Promise.all([
@@ -53,6 +57,19 @@ export default async function ContactosPage({
             </option>
           ))}
         </select>
+        <select name="source" className="rounded-md border border-gray-300 dark:border-gray-700 px-3 py-2 text-sm">
+          <option value="">¿De dónde vino?</option>
+          {CHANNELS.map((c) => (
+            <option key={c} value={c}>
+              {CHANNEL_LABELS[c]}
+            </option>
+          ))}
+        </select>
+        <input
+          name="source_detail"
+          placeholder="Detalle (ej. post reels enero, Miguel...)"
+          className="rounded-md border border-gray-300 dark:border-gray-700 px-3 py-2 text-sm"
+        />
         <button type="submit" className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white">
           Agregar
         </button>
@@ -77,10 +94,18 @@ export default async function ContactosPage({
             </option>
           ))}
         </select>
+        <select name="canal" defaultValue={canal ?? ""} className="rounded-md border border-gray-300 dark:border-gray-700 px-3 py-2 text-sm">
+          <option value="">Todos los canales</option>
+          {CHANNELS.map((c) => (
+            <option key={c} value={c}>
+              {CHANNEL_LABELS[c]}
+            </option>
+          ))}
+        </select>
         <button type="submit" className="rounded-md border border-gray-300 dark:border-gray-700 px-4 py-2 text-sm">
           Buscar
         </button>
-        {(q || empresa) && (
+        {(q || empresa || canal) && (
           <Link href="/contactos" className="rounded-md border border-gray-300 dark:border-gray-700 px-4 py-2 text-sm text-gray-600 dark:text-gray-400">
             Limpiar
           </Link>
@@ -95,6 +120,7 @@ export default async function ContactosPage({
               <th className="px-4 py-2">Email</th>
               <th className="px-4 py-2">Teléfono</th>
               <th className="px-4 py-2">Empresa</th>
+              <th className="px-4 py-2">Canal</th>
               <th className="px-4 py-2" />
             </tr>
           </thead>
@@ -111,8 +137,8 @@ export default async function ContactosPage({
             ))}
             {contacts?.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-6 text-center text-gray-400 dark:text-gray-600">
-                  {q || empresa ? "No se encontraron contactos." : "No hay contactos todavía."}
+                <td colSpan={6} className="px-4 py-6 text-center text-gray-400 dark:text-gray-600">
+                  {q || empresa || canal ? "No se encontraron contactos." : "No hay contactos todavía."}
                 </td>
               </tr>
             )}

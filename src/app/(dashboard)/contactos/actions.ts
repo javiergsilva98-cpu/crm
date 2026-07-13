@@ -3,6 +3,12 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { findCompanyByEmailDomain } from "@/lib/match-company";
+import { CHANNELS } from "@/lib/channels";
+
+function parseSource(value: FormDataEntryValue | null): string | null {
+  const source = String(value ?? "").trim();
+  return (CHANNELS as readonly string[]).includes(source) ? source : null;
+}
 
 export async function createContact(formData: FormData) {
   const supabase = await createClient();
@@ -27,6 +33,8 @@ export async function createContact(formData: FormData) {
     email: email || null,
     phone: String(formData.get("phone") ?? "").trim() || null,
     company_id: companyId,
+    source: parseSource(formData.get("source")),
+    source_detail: String(formData.get("source_detail") ?? "").trim() || null,
   });
 
   revalidatePath("/contactos");
@@ -52,6 +60,8 @@ export async function updateContact(formData: FormData) {
       email: email || null,
       phone: String(formData.get("phone") ?? "").trim() || null,
       company_id: companyId,
+      source: parseSource(formData.get("source")),
+      source_detail: String(formData.get("source_detail") ?? "").trim() || null,
     })
     .eq("id", id);
 
@@ -65,7 +75,12 @@ export async function deleteContact(formData: FormData) {
   revalidatePath("/contactos");
 }
 
-type ImportRow = { full_name: string; email: string; phone: string; empresa: string };
+type ImportRow = { full_name: string; email: string; phone: string; empresa: string; source: string };
+
+function normalizeSource(value: string): string | null {
+  const v = value.trim().toLowerCase();
+  return (CHANNELS as readonly string[]).includes(v) ? v : null;
+}
 
 export async function importContacts(
   rows: ImportRow[],
@@ -107,6 +122,7 @@ export async function importContacts(
       email: email || null,
       phone: row.phone.trim() || null,
       company_id: companyId,
+      source: normalizeSource(row.source),
     });
 
     if (error) {

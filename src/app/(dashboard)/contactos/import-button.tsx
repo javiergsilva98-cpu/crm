@@ -40,6 +40,7 @@ export function ImportButton() {
     const emailIdx = findColumn(header, ["email", "correo"]);
     const phoneIdx = findColumn(header, ["teléfono", "telefono", "phone"]);
     const companyIdx = findColumn(header, ["empresa", "company"]);
+    const sourceIdx = findColumn(header, ["canal", "source", "origen"]);
 
     if (nameIdx === -1) {
       setStatus('No se encontró una columna "Nombre" en el CSV.');
@@ -52,6 +53,7 @@ export function ImportButton() {
       email: emailIdx !== -1 ? (r[emailIdx] ?? "") : "",
       phone: phoneIdx !== -1 ? (r[phoneIdx] ?? "") : "",
       empresa: companyIdx !== -1 ? (r[companyIdx] ?? "") : "",
+      source: sourceIdx !== -1 ? (r[sourceIdx] ?? "") : "",
     }));
 
     const result = await importContacts(parsedRows);

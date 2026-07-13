@@ -36,6 +36,9 @@ export default async function DashboardLayout({
             <Link href="/oportunidades" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
               Oportunidades
             </Link>
+            <Link href="/canales" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
+              Canales
+            </Link>
             <Link href="/tareas" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
               Tareas
             </Link>

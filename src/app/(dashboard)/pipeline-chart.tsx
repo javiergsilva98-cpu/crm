@@ -35,21 +35,21 @@ export function PipelineChart({
   const max = Math.max(1, ...rows.map((r) => r.amount));
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6">
-      <h2 className="mb-4 text-sm font-semibold text-gray-900">Valor del pipeline por etapa</h2>
+    <div className="rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
+      <h2 className="mb-4 text-sm font-semibold text-gray-900 dark:text-gray-100">Valor del pipeline por etapa</h2>
       <div className="flex flex-col gap-3">
         {rows.map((row) => {
           const widthPct = Math.max(2, (row.amount / max) * 100);
           return (
             <div key={row.stage} className="flex items-center gap-3">
-              <span className="w-24 shrink-0 text-xs text-gray-600">{STAGE_LABELS[row.stage]}</span>
-              <div className="h-4 flex-1 rounded-sm bg-gray-100">
+              <span className="w-24 shrink-0 text-xs text-gray-600 dark:text-gray-400">{STAGE_LABELS[row.stage]}</span>
+              <div className="h-4 flex-1 rounded-sm bg-gray-100 dark:bg-gray-800">
                 <div
                   className="h-4 rounded-sm"
                   style={{ width: `${widthPct}%`, backgroundColor: STAGE_COLORS[row.stage] }}
                 />
               </div>
-              <span className="w-24 shrink-0 text-right text-xs text-gray-700">
+              <span className="w-24 shrink-0 text-right text-xs text-gray-700 dark:text-gray-300">
                 ${row.amount.toLocaleString()}
               </span>
             </div>

@@ -38,19 +38,19 @@ export default async function OportunidadesPage({
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Oportunidades</h1>
         <div className="flex items-center gap-4">
-          <Link href="/oportunidades/export" className="text-sm text-gray-600 hover:underline">
+          <Link href="/oportunidades/export" className="text-sm text-gray-600 dark:text-gray-400 hover:underline">
             Exportar CSV
           </Link>
-          <Link href="/oportunidades/pipeline" className="text-sm text-gray-600 hover:underline">
+          <Link href="/oportunidades/pipeline" className="text-sm text-gray-600 dark:text-gray-400 hover:underline">
             Ver como pipeline
           </Link>
         </div>
       </div>
 
-      <form action={createOpportunity} className="mb-8 flex flex-wrap gap-3 rounded-lg border border-gray-200 bg-white p-4">
-        <input name="title" placeholder="Título" required className="rounded-md border border-gray-300 px-3 py-2 text-sm" />
-        <input name="amount" type="number" step="0.01" placeholder="Monto" className="w-32 rounded-md border border-gray-300 px-3 py-2 text-sm" />
-        <select name="company_id" className="rounded-md border border-gray-300 px-3 py-2 text-sm">
+      <form action={createOpportunity} className="mb-8 flex flex-wrap gap-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4">
+        <input name="title" placeholder="Título" required className="rounded-md border border-gray-300 dark:border-gray-700 px-3 py-2 text-sm" />
+        <input name="amount" type="number" step="0.01" placeholder="Monto" className="w-32 rounded-md border border-gray-300 dark:border-gray-700 px-3 py-2 text-sm" />
+        <select name="company_id" className="rounded-md border border-gray-300 dark:border-gray-700 px-3 py-2 text-sm">
           <option value="">Sin empresa</option>
           {companies?.map((company) => (
             <option key={company.id} value={company.id}>
@@ -69,9 +69,9 @@ export default async function OportunidadesPage({
           name="q"
           defaultValue={q ?? ""}
           placeholder="Buscar por título..."
-          className="w-full max-w-sm rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="w-full max-w-sm rounded-md border border-gray-300 dark:border-gray-700 px-3 py-2 text-sm"
         />
-        <select name="empresa" defaultValue={empresa ?? ""} className="rounded-md border border-gray-300 px-3 py-2 text-sm">
+        <select name="empresa" defaultValue={empresa ?? ""} className="rounded-md border border-gray-300 dark:border-gray-700 px-3 py-2 text-sm">
           <option value="">Todas las empresas</option>
           {companies?.map((company) => (
             <option key={company.id} value={company.id}>
@@ -79,7 +79,7 @@ export default async function OportunidadesPage({
             </option>
           ))}
         </select>
-        <select name="etapa" defaultValue={etapa ?? ""} className="rounded-md border border-gray-300 px-3 py-2 text-sm">
+        <select name="etapa" defaultValue={etapa ?? ""} className="rounded-md border border-gray-300 dark:border-gray-700 px-3 py-2 text-sm">
           <option value="">Todas las etapas</option>
           {STAGES.map((s) => (
             <option key={s} value={s}>
@@ -87,19 +87,19 @@ export default async function OportunidadesPage({
             </option>
           ))}
         </select>
-        <button type="submit" className="rounded-md border border-gray-300 px-4 py-2 text-sm">
+        <button type="submit" className="rounded-md border border-gray-300 dark:border-gray-700 px-4 py-2 text-sm">
           Buscar
         </button>
         {(q || empresa || etapa) && (
-          <Link href="/oportunidades" className="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-600">
+          <Link href="/oportunidades" className="rounded-md border border-gray-300 dark:border-gray-700 px-4 py-2 text-sm text-gray-600 dark:text-gray-400">
             Limpiar
           </Link>
         )}
       </form>
 
-      <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+      <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
         <table className="w-full text-left text-sm">
-          <thead className="bg-gray-50 text-gray-500">
+          <thead className="bg-gray-50 dark:bg-gray-950 text-gray-500 dark:text-gray-500">
             <tr>
               <th className="px-4 py-2">Título</th>
               <th className="px-4 py-2">Empresa</th>
@@ -121,7 +121,7 @@ export default async function OportunidadesPage({
             ))}
             {opportunities?.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-6 text-center text-gray-400">
+                <td colSpan={5} className="px-4 py-6 text-center text-gray-400 dark:text-gray-600">
                   {q || empresa || etapa ? "No se encontraron oportunidades." : "No hay oportunidades todavía."}
                 </td>
               </tr>

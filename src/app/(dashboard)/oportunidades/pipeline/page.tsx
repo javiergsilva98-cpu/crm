@@ -13,7 +13,7 @@ export default async function PipelinePage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Pipeline</h1>
-        <Link href="/oportunidades" className="text-sm text-gray-600 hover:underline">
+        <Link href="/oportunidades" className="text-sm text-gray-600 dark:text-gray-400 hover:underline">
           Ver como lista
         </Link>
       </div>

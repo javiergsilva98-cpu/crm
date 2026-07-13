@@ -30,8 +30,8 @@ export default async function DashboardHome() {
       <h1 className="mb-6 text-2xl font-semibold">Resumen</h1>
       <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         {cards.map((card) => (
-          <div key={card.label} className="rounded-lg border border-gray-200 bg-white p-6">
-            <p className="text-sm text-gray-500">{card.label}</p>
+          <div key={card.label} className="rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
+            <p className="text-sm text-gray-500 dark:text-gray-500">{card.label}</p>
             <p className="mt-2 text-2xl font-semibold">{card.value}</p>
           </div>
         ))}

@@ -63,7 +63,7 @@ export function ImportButton() {
 
   return (
     <div className="flex items-center gap-2">
-      <label className="cursor-pointer text-sm text-gray-600 hover:underline">
+      <label className="cursor-pointer text-sm text-gray-600 dark:text-gray-400 hover:underline">
         {loading ? "Importando..." : "Importar CSV"}
         <input
           ref={inputRef}
@@ -74,7 +74,7 @@ export function ImportButton() {
           className="hidden"
         />
       </label>
-      {status && <span className="text-xs text-gray-500">{status}</span>}
+      {status && <span className="text-xs text-gray-500 dark:text-gray-500">{status}</span>}
     </div>
   );
 }

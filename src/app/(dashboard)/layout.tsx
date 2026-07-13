@@ -18,26 +18,26 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="border-b border-gray-200 bg-white">
+      <header className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
           <nav className="flex items-center gap-6">
-            <Link href="/" className="text-sm font-semibold text-gray-900">
+            <Link href="/" className="text-sm font-semibold text-gray-900 dark:text-gray-100">
               CRM
             </Link>
-            <Link href="/empresas" className="text-sm text-gray-600 hover:text-gray-900">
+            <Link href="/empresas" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
               Empresas
             </Link>
-            <Link href="/contactos" className="text-sm text-gray-600 hover:text-gray-900">
+            <Link href="/contactos" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
               Contactos
             </Link>
-            <Link href="/oportunidades" className="text-sm text-gray-600 hover:text-gray-900">
+            <Link href="/oportunidades" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
               Oportunidades
             </Link>
           </nav>
           <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500">{user.email}</span>
+            <span className="text-sm text-gray-500 dark:text-gray-500">{user.email}</span>
             <form action="/auth/signout" method="post">
-              <button className="text-sm text-gray-600 underline" type="submit">
+              <button className="text-sm text-gray-600 dark:text-gray-400 underline" type="submit">
                 Salir
               </button>
             </form>

@@ -35,17 +35,17 @@ export default async function ContactosPage({
         <h1 className="text-2xl font-semibold">Contactos</h1>
         <div className="flex items-center gap-4">
           <ImportButton />
-          <Link href="/contactos/export" className="text-sm text-gray-600 hover:underline">
+          <Link href="/contactos/export" className="text-sm text-gray-600 dark:text-gray-400 hover:underline">
             Exportar CSV
           </Link>
         </div>
       </div>
 
-      <form action={createContact} className="mb-2 flex flex-wrap gap-3 rounded-lg border border-gray-200 bg-white p-4">
-        <input name="full_name" placeholder="Nombre completo" required className="rounded-md border border-gray-300 px-3 py-2 text-sm" />
-        <input name="email" type="email" placeholder="Email" className="rounded-md border border-gray-300 px-3 py-2 text-sm" />
-        <input name="phone" placeholder="Teléfono" className="rounded-md border border-gray-300 px-3 py-2 text-sm" />
-        <select name="company_id" className="rounded-md border border-gray-300 px-3 py-2 text-sm">
+      <form action={createContact} className="mb-2 flex flex-wrap gap-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4">
+        <input name="full_name" placeholder="Nombre completo" required className="rounded-md border border-gray-300 dark:border-gray-700 px-3 py-2 text-sm" />
+        <input name="email" type="email" placeholder="Email" className="rounded-md border border-gray-300 dark:border-gray-700 px-3 py-2 text-sm" />
+        <input name="phone" placeholder="Teléfono" className="rounded-md border border-gray-300 dark:border-gray-700 px-3 py-2 text-sm" />
+        <select name="company_id" className="rounded-md border border-gray-300 dark:border-gray-700 px-3 py-2 text-sm">
           <option value="">Detectar por email / sin empresa</option>
           {companies?.map((company) => (
             <option key={company.id} value={company.id}>
@@ -57,7 +57,7 @@ export default async function ContactosPage({
           Agregar
         </button>
       </form>
-      <p className="mb-6 text-xs text-gray-500">
+      <p className="mb-6 text-xs text-gray-500 dark:text-gray-500">
         Si dejas &quot;Detectar por email&quot;, se vincula automáticamente a la empresa cuyo sitio web coincida con el dominio del email (ej. juan@acme.com → Acme, si su sitio web es acme.com).
       </p>
 
@@ -67,9 +67,9 @@ export default async function ContactosPage({
           name="q"
           defaultValue={q ?? ""}
           placeholder="Buscar por nombre o email..."
-          className="w-full max-w-sm rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="w-full max-w-sm rounded-md border border-gray-300 dark:border-gray-700 px-3 py-2 text-sm"
         />
-        <select name="empresa" defaultValue={empresa ?? ""} className="rounded-md border border-gray-300 px-3 py-2 text-sm">
+        <select name="empresa" defaultValue={empresa ?? ""} className="rounded-md border border-gray-300 dark:border-gray-700 px-3 py-2 text-sm">
           <option value="">Todas las empresas</option>
           {companies?.map((company) => (
             <option key={company.id} value={company.id}>
@@ -77,19 +77,19 @@ export default async function ContactosPage({
             </option>
           ))}
         </select>
-        <button type="submit" className="rounded-md border border-gray-300 px-4 py-2 text-sm">
+        <button type="submit" className="rounded-md border border-gray-300 dark:border-gray-700 px-4 py-2 text-sm">
           Buscar
         </button>
         {(q || empresa) && (
-          <Link href="/contactos" className="rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-600">
+          <Link href="/contactos" className="rounded-md border border-gray-300 dark:border-gray-700 px-4 py-2 text-sm text-gray-600 dark:text-gray-400">
             Limpiar
           </Link>
         )}
       </form>
 
-      <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+      <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
         <table className="w-full text-left text-sm">
-          <thead className="bg-gray-50 text-gray-500">
+          <thead className="bg-gray-50 dark:bg-gray-950 text-gray-500 dark:text-gray-500">
             <tr>
               <th className="px-4 py-2">Nombre</th>
               <th className="px-4 py-2">Email</th>
@@ -111,7 +111,7 @@ export default async function ContactosPage({
             ))}
             {contacts?.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-6 text-center text-gray-400">
+                <td colSpan={5} className="px-4 py-6 text-center text-gray-400 dark:text-gray-600">
                   {q || empresa ? "No se encontraron contactos." : "No hay contactos todavía."}
                 </td>
               </tr>

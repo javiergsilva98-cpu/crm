@@ -2,7 +2,28 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { METRICS } from "./metrics";
+import { METRICS, type MetricKey } from "./aggregate";
+import { validateSeries, type ChartType } from "./validate";
+
+type SeriesInput = { metric: MetricKey; color: string };
+
+function parseChartType(value: FormDataEntryValue | null): ChartType | null {
+  const v = String(value ?? "");
+  return (["bar", "line", "pie", "table", "kpi_card"] as const).includes(v as ChartType) ? (v as ChartType) : null;
+}
+
+function parseSeries(raw: FormDataEntryValue | null): SeriesInput[] | null {
+  try {
+    const parsed = JSON.parse(String(raw ?? "[]"));
+    if (!Array.isArray(parsed)) return null;
+    const valid = parsed.every(
+      (s) => s && typeof s.metric === "string" && METRICS.some((m) => m.key === s.metric) && typeof s.color === "string",
+    );
+    return valid ? parsed : null;
+  } catch {
+    return null;
+  }
+}
 
 export async function createReport(formData: FormData) {
   const supabase = await createClient();
@@ -12,21 +33,30 @@ export async function createReport(formData: FormData) {
   if (!user) return;
 
   const name = String(formData.get("name") ?? "").trim();
-  const metric = String(formData.get("metric") ?? "");
-  if (!name || !METRICS.some((m) => m.key === metric)) return;
+  const chartType = parseChartType(formData.get("chart_type"));
+  const series = parseSeries(formData.get("series"));
+  if (!name || !chartType || !series) return;
+
+  const validation = validateSeries(chartType, series);
+  if (!validation.ok) return;
 
   const dateFrom = String(formData.get("date_from") ?? "").trim() || null;
   const dateTo = String(formData.get("date_to") ?? "").trim() || null;
+  const comparePrevious = formData.get("compare_previous") === "on" && chartType === "kpi_card" && Boolean(dateFrom && dateTo);
 
   await supabase.from("reports").insert({
     owner_id: user.id,
     name,
-    metric,
+    metric: series[0]?.metric ?? null,
+    series,
+    chart_type: chartType,
+    compare_previous: comparePrevious,
     date_from: dateFrom,
     date_to: dateTo,
   });
 
   revalidatePath("/informes");
+  revalidatePath("/");
 }
 
 export async function deleteReport(formData: FormData) {
@@ -34,4 +64,23 @@ export async function deleteReport(formData: FormData) {
   const id = String(formData.get("id"));
   await supabase.from("reports").delete().eq("id", id);
   revalidatePath("/informes");
+  revalidatePath("/");
+}
+
+export async function setHomeReport(formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const id = String(formData.get("id") ?? "").trim() || null;
+
+  await supabase.from("reports").update({ is_home: false }).eq("owner_id", user.id).eq("is_home", true);
+  if (id) {
+    await supabase.from("reports").update({ is_home: true }).eq("id", id).eq("owner_id", user.id);
+  }
+
+  revalidatePath("/informes");
+  revalidatePath("/");
 }

@@ -3,9 +3,60 @@ import { createClient } from "@/lib/supabase/server";
 import { PipelineChart } from "./pipeline-chart";
 import { CHANNELS, CHANNEL_LABELS, type Channel } from "@/lib/channels";
 import { currentMonthRange } from "@/lib/month";
+import { aggregateMetric, metricInfo, type MetricKey } from "./informes/aggregate";
+import { fetchRawData } from "./informes/raw-data";
+import { ReportView, type ComputedSeries } from "./informes/report-view";
+import type { ChartType } from "./informes/validate";
+
+type SeriesRow = { metric: MetricKey; color: string };
 
 export default async function DashboardHome() {
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data: homeReport } = user
+    ? await supabase
+        .from("reports")
+        .select("id, name, chart_type, series, date_from, date_to")
+        .eq("owner_id", user.id)
+        .eq("is_home", true)
+        .maybeSingle()
+    : { data: null };
+
+  if (homeReport) {
+    const raw = await fetchRawData(supabase);
+    const series = ((homeReport.series as SeriesRow[] | null) ?? []).filter((s) => metricInfo(s.metric));
+    const computed: ComputedSeries[] = series.map((s) => {
+      const info = metricInfo(s.metric)!;
+      return {
+        metric: s.metric,
+        label: info.label,
+        kind: info.kind,
+        color: s.color,
+        rows: aggregateMetric(raw, s.metric, homeReport.date_from, homeReport.date_to),
+      };
+    });
+
+    return (
+      <div>
+        <div className="mb-8 flex items-start justify-between gap-4">
+          <div>
+            <h1 className="mb-1 font-heading text-3xl font-semibold text-ink">{homeReport.name}</h1>
+            <p className="text-sm text-ink-mute">Este es tu informe de inicio.</p>
+          </div>
+          <Link href="/informes" className="text-sm text-ink-soft hover:text-ink hover:underline">
+            Cambiar inicio →
+          </Link>
+        </div>
+        <div className="rounded-lg border border-border bg-raised p-5">
+          <ReportView chartType={homeReport.chart_type as ChartType} series={computed} />
+        </div>
+      </div>
+    );
+  }
+
   const { start, end } = currentMonthRange();
 
   const [{ count: companies }, { count: contacts }, { data: opportunities }, { data: monthContacts }] =

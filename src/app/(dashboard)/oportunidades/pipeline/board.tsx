@@ -2,17 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { updateStage as updateStageAction } from "../actions";
-
-const STAGES = ["nuevo", "calificado", "propuesta", "negociacion", "ganado", "perdido"] as const;
-
-const STAGE_LABELS: Record<string, string> = {
-  nuevo: "Nuevo",
-  calificado: "Calificado",
-  propuesta: "Propuesta",
-  negociacion: "Negociación",
-  ganado: "Ganado",
-  perdido: "Perdido",
-};
+import { STAGES, STAGE_LABELS } from "@/lib/stages";
 
 type Opportunity = {
   id: string;

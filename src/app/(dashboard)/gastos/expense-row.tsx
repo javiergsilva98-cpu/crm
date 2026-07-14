@@ -2,17 +2,7 @@
 
 import { useState } from "react";
 import { updateExpense, deleteExpense } from "./actions";
-
-const CATEGORIES = ["suministros", "material", "software", "transporte", "dietas", "alquiler", "otros"];
-const CATEGORY_LABELS: Record<string, string> = {
-  suministros: "Suministros",
-  material: "Material",
-  software: "Software",
-  transporte: "Transporte",
-  dietas: "Dietas",
-  alquiler: "Alquiler",
-  otros: "Otros",
-};
+import { EXPENSE_CATEGORIES as CATEGORIES, EXPENSE_CATEGORY_LABELS as CATEGORY_LABELS } from "@/lib/expenses";
 
 type Expense = {
   id: string;
@@ -103,7 +93,9 @@ export function ExpenseRow({
   return (
     <tr className="border-t border-border transition-colors hover:bg-sunken">
       <td className="px-4 py-2 text-ink">{expense.description}</td>
-      <td className="px-4 py-2 text-ink-soft">{CATEGORY_LABELS[expense.category] ?? expense.category}</td>
+      <td className="px-4 py-2 text-ink-soft">
+        {CATEGORY_LABELS[expense.category as keyof typeof CATEGORY_LABELS] ?? expense.category}
+      </td>
       <td className="px-4 py-2 text-ink-soft">{expense.companies?.name ?? "—"}</td>
       <td className="px-4 py-2 text-ink-soft">
         {new Date(expense.expense_date + "T00:00:00").toLocaleDateString("es-ES")}

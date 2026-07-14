@@ -2,8 +2,7 @@
 
 import { useRef } from "react";
 import { updateStage } from "./actions";
-
-const STAGES = ["nuevo", "calificado", "propuesta", "negociacion", "ganado", "perdido"];
+import { STAGES, STAGE_LABELS } from "@/lib/stages";
 
 export function StageSelect({ id, stage }: { id: string; stage: string }) {
   const formRef = useRef<HTMLFormElement>(null);
@@ -19,7 +18,7 @@ export function StageSelect({ id, stage }: { id: string; stage: string }) {
       >
         {STAGES.map((s) => (
           <option key={s} value={s}>
-            {s}
+            {STAGE_LABELS[s]}
           </option>
         ))}
       </select>

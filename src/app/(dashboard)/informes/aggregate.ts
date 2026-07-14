@@ -2,6 +2,10 @@
 // el servidor (con datos ya traídos de la base) como en el cliente, para la
 // vista previa en vivo del constructor avanzado de informes.
 
+import { STAGE_LABELS } from "@/lib/stages";
+import { EXPENSE_CATEGORY_LABELS } from "@/lib/expenses";
+import { CHANNEL_LABELS } from "@/lib/channels";
+
 export const METRICS = [
   { key: "opportunities_by_stage", label: "Oportunidades por etapa", kind: "count_amount", dimension: "category" },
   { key: "opportunities_by_month", label: "Oportunidades creadas por mes", kind: "count", dimension: "month" },
@@ -28,34 +32,6 @@ export type RawData = {
   opportunities: { created_at: string; stage: string; amount: number }[];
   invoices: { issue_date: string; status: string; total: number }[];
   expenses: { expense_date: string; category: string; amount: number }[];
-};
-
-const STAGE_LABELS: Record<string, string> = {
-  nuevo: "Nuevo",
-  calificado: "Calificado",
-  propuesta: "Propuesta",
-  negociacion: "Negociación",
-  ganado: "Ganado",
-  perdido: "Perdido",
-};
-
-const CATEGORY_LABELS: Record<string, string> = {
-  suministros: "Suministros",
-  material: "Material",
-  software: "Software",
-  transporte: "Transporte",
-  dietas: "Dietas",
-  alquiler: "Alquiler",
-  otros: "Otros",
-};
-
-const SOURCE_LABELS: Record<string, string> = {
-  instagram: "Instagram",
-  google: "Google",
-  whatsapp: "WhatsApp",
-  referido: "Referido",
-  tiktok: "TikTok",
-  otro: "Otro",
 };
 
 function inRange(date: string, dateFrom: string | null, dateTo: string | null) {
@@ -97,7 +73,7 @@ export function aggregateMetric(
     }
     return Object.keys(STAGE_LABELS)
       .filter((stage) => totals.has(stage))
-      .map((stage) => ({ label: STAGE_LABELS[stage], sortKey: stage, ...totals.get(stage)! }));
+      .map((stage) => ({ label: STAGE_LABELS[stage as keyof typeof STAGE_LABELS], sortKey: stage, ...totals.get(stage)! }));
   }
 
   if (metric === "opportunities_by_month") {
@@ -128,7 +104,7 @@ export function aggregateMetric(
       totals.set(key, (totals.get(key) ?? 0) + 1);
     }
     return Array.from(totals.entries())
-      .map(([key, count]) => ({ label: SOURCE_LABELS[key] ?? key, sortKey: key, count }))
+      .map(([key, count]) => ({ label: CHANNEL_LABELS[key as keyof typeof CHANNEL_LABELS] ?? key, sortKey: key, count }))
       .sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
   }
 
@@ -139,7 +115,7 @@ export function aggregateMetric(
       totals.set(row.category, (totals.get(row.category) ?? 0) + Number(row.amount ?? 0));
     }
     return Array.from(totals.entries())
-      .map(([key, amount]) => ({ label: CATEGORY_LABELS[key] ?? key, sortKey: key, amount }))
+      .map(([key, amount]) => ({ label: EXPENSE_CATEGORY_LABELS[key as keyof typeof EXPENSE_CATEGORY_LABELS] ?? key, sortKey: key, amount }))
       .sort((a, b) => (b.amount ?? 0) - (a.amount ?? 0));
   }
 

@@ -2,8 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-
-const CATEGORIES = ["suministros", "material", "software", "transporte", "dietas", "alquiler", "otros"];
+import { EXPENSE_CATEGORIES } from "@/lib/expenses";
 
 export async function createExpense(formData: FormData) {
   const supabase = await createClient();
@@ -20,7 +19,7 @@ export async function createExpense(formData: FormData) {
   await supabase.from("expenses").insert({
     owner_id: user.id,
     description,
-    category: CATEGORIES.includes(category) ? category : "otros",
+    category: (EXPENSE_CATEGORIES as readonly string[]).includes(category) ? category : "otros",
     amount: Number(formData.get("amount") ?? 0) || 0,
     tax_rate: Number(formData.get("tax_rate") ?? 21) || 0,
     expense_date: String(formData.get("expense_date") ?? "").trim() || new Date().toISOString().slice(0, 10),
@@ -43,7 +42,7 @@ export async function updateExpense(formData: FormData) {
     .from("expenses")
     .update({
       description,
-      category: CATEGORIES.includes(category) ? category : "otros",
+      category: (EXPENSE_CATEGORIES as readonly string[]).includes(category) ? category : "otros",
       amount: Number(formData.get("amount") ?? 0) || 0,
       tax_rate: Number(formData.get("tax_rate") ?? 21) || 0,
       expense_date: String(formData.get("expense_date") ?? "").trim() || new Date().toISOString().slice(0, 10),

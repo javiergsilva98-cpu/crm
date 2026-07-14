@@ -4,8 +4,7 @@ import { createOpportunity } from "./actions";
 import { OpportunityRow } from "./opportunity-row";
 import { EmptyStateRow } from "@/components/empty-state";
 import { AddDisclosure } from "@/components/add-disclosure";
-
-const STAGES = ["nuevo", "calificado", "propuesta", "negociacion", "ganado", "perdido"];
+import { STAGES, STAGE_LABELS } from "@/lib/stages";
 
 export default async function OportunidadesPage({
   searchParams,
@@ -90,7 +89,7 @@ export default async function OportunidadesPage({
           <option value="">Todas las etapas</option>
           {STAGES.map((s) => (
             <option key={s} value={s}>
-              {s}
+              {STAGE_LABELS[s]}
             </option>
           ))}
         </select>

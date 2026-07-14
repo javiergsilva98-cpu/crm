@@ -3,17 +3,7 @@ import { createExpense } from "./actions";
 import { ExpenseRow } from "./expense-row";
 import { AddDisclosure } from "@/components/add-disclosure";
 import { EmptyStateRow } from "@/components/empty-state";
-
-const CATEGORIES = ["suministros", "material", "software", "transporte", "dietas", "alquiler", "otros"];
-const CATEGORY_LABELS: Record<string, string> = {
-  suministros: "Suministros",
-  material: "Material",
-  software: "Software",
-  transporte: "Transporte",
-  dietas: "Dietas",
-  alquiler: "Alquiler",
-  otros: "Otros",
-};
+import { EXPENSE_CATEGORIES as CATEGORIES, EXPENSE_CATEGORY_LABELS as CATEGORY_LABELS } from "@/lib/expenses";
 
 export default async function GastosPage({
   searchParams,

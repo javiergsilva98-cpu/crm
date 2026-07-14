@@ -22,7 +22,10 @@ const GROUPS = [
   },
   {
     label: "Marketing",
-    links: [{ href: "/canales", label: "Canales" }],
+    links: [
+      { href: "/canales", label: "Canales" },
+      { href: "/informes", label: "Informes" },
+    ],
   },
   {
     label: "Equipo",

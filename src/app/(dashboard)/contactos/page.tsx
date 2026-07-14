@@ -17,7 +17,9 @@ export default async function ContactosPage({
 
   let query = supabase
     .from("contacts")
-    .select("id, full_name, email, phone, company_id, source, source_detail, tax_id, fiscal_address, companies!company_id(name)")
+    .select(
+      "id, full_name, email, phone, company_id, source, source_detail, source_url, tax_id, fiscal_address, last_activity_at, last_activity_by, companies!company_id(name)",
+    )
     .order("created_at", { ascending: false });
 
   if (q) {
@@ -30,10 +32,12 @@ export default async function ContactosPage({
     query = query.eq("source", canal);
   }
 
-  const [{ data: contacts, error: contactsError }, { data: companies }] = await Promise.all([
+  const [{ data: contacts, error: contactsError }, { data: companies }, { data: profiles }] = await Promise.all([
     query,
     supabase.from("companies").select("id, name").order("name"),
+    supabase.from("profiles").select("id, email"),
   ]);
+  const profileEmailById = new Map((profiles ?? []).map((p) => [p.id, p.email]));
 
   return (
     <div>
@@ -74,6 +78,12 @@ export default async function ContactosPage({
           <input
             name="source_detail"
             placeholder="Detalle (ej. post reels enero, Miguel...)"
+            className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto"
+          />
+          <input
+            name="source_url"
+            type="url"
+            placeholder="URL de origen (ej. landing, anuncio...)"
             className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto"
           />
           <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-base transition-colors hover:bg-calm-hover sm:w-auto">
@@ -134,6 +144,7 @@ export default async function ContactosPage({
               <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Teléfono</th>
               <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Empresa</th>
               <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Canal</th>
+              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Última actividad</th>
               <th className="px-4 py-2.5" />
             </tr>
           </thead>
@@ -146,14 +157,15 @@ export default async function ContactosPage({
                   companies: (contact.companies as unknown as { name: string } | null) ?? null,
                 }}
                 companies={companies ?? []}
+                lastActivityByEmail={contact.last_activity_by ? (profileEmailById.get(contact.last_activity_by) ?? null) : null}
               />
             ))}
             {contacts?.length === 0 &&
               (q || empresa || canal ? (
-                <EmptyStateRow colSpan={6} title="Sin resultados" body="Ningún contacto coincide con este filtro. Prueba a limpiarlo." />
+                <EmptyStateRow colSpan={7} title="Sin resultados" body="Ningún contacto coincide con este filtro. Prueba a limpiarlo." />
               ) : (
                 <EmptyStateRow
-                  colSpan={6}
+                  colSpan={7}
                   title="Todavía no tienes contactos"
                   body="Añade el primero arriba e indica de dónde vino — es lo que te va a permitir ver qué canal te trae más clientes."
                 />

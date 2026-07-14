@@ -35,6 +35,7 @@ export async function createContact(formData: FormData) {
     company_id: companyId,
     source: parseSource(formData.get("source")),
     source_detail: String(formData.get("source_detail") ?? "").trim() || null,
+    source_url: String(formData.get("source_url") ?? "").trim() || null,
     tax_id: String(formData.get("tax_id") ?? "").trim() || null,
     fiscal_address: String(formData.get("fiscal_address") ?? "").trim() || null,
   });
@@ -64,6 +65,7 @@ export async function updateContact(formData: FormData) {
       company_id: companyId,
       source: parseSource(formData.get("source")),
       source_detail: String(formData.get("source_detail") ?? "").trim() || null,
+      source_url: String(formData.get("source_url") ?? "").trim() || null,
       tax_id: String(formData.get("tax_id") ?? "").trim() || null,
       fiscal_address: String(formData.get("fiscal_address") ?? "").trim() || null,
     })

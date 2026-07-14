@@ -12,24 +12,29 @@ type Contact = {
   company_id: string | null;
   source: Channel | null;
   source_detail: string | null;
+  source_url: string | null;
   tax_id: string | null;
   fiscal_address: string | null;
+  last_activity_at: string | null;
+  last_activity_by: string | null;
   companies: { name: string } | null;
 };
 
 export function ContactRow({
   contact,
   companies,
+  lastActivityByEmail,
 }: {
   contact: Contact;
   companies: { id: string; name: string }[];
+  lastActivityByEmail: string | null;
 }) {
   const [editing, setEditing] = useState(false);
 
   if (editing) {
     return (
       <tr className="border-t border-border bg-sunken">
-        <td className="px-4 py-2" colSpan={6}>
+        <td className="px-4 py-2" colSpan={7}>
           <form
             action={async (formData) => {
               await updateContact(formData);
@@ -88,6 +93,13 @@ export function ContactRow({
               className="rounded-md border border-border px-2 py-1 text-sm"
             />
             <input
+              name="source_url"
+              type="url"
+              defaultValue={contact.source_url ?? ""}
+              placeholder="URL de origen"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <input
               name="tax_id"
               defaultValue={contact.tax_id ?? ""}
               placeholder="NIF (si es autónomo)"
@@ -123,7 +135,19 @@ export function ContactRow({
       <td className="px-4 py-2">{contact.companies?.name}</td>
       <td className="px-4 py-2">
         {contact.source ? (
-          <span title={contact.source_detail ?? undefined}>{CHANNEL_LABELS[contact.source]}</span>
+          <span title={[contact.source_detail, contact.source_url].filter(Boolean).join(" · ") || undefined}>
+            {CHANNEL_LABELS[contact.source]}
+          </span>
+        ) : (
+          <span className="text-ink-mute">—</span>
+        )}
+      </td>
+      <td className="px-4 py-2 text-ink-soft">
+        {contact.last_activity_at ? (
+          <span title={lastActivityByEmail ? `Por ${lastActivityByEmail}` : undefined}>
+            {new Date(contact.last_activity_at).toLocaleDateString("es-ES")}
+            {lastActivityByEmail && <span className="text-ink-mute"> · {lastActivityByEmail}</span>}
+          </span>
         ) : (
           <span className="text-ink-mute">—</span>
         )}

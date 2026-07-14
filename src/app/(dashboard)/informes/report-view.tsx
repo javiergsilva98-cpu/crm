@@ -170,6 +170,11 @@ function LineChart({ series }: { series: ComputedSeries[] }) {
           );
         })}
         {sortKeys.map((key, i) => {
+          // Con muchos puntos las etiquetas se solapan (sobre todo en móvil,
+          // donde el SVG se escala hacia abajo), así que se muestran solo
+          // unas cuantas repartidas.
+          const labelStep = Math.max(1, Math.ceil(sortKeys.length / 8));
+          if (i % labelStep !== 0 && i !== sortKeys.length - 1) return null;
           const x = sortKeys.length > 1 ? padding + (i / (sortKeys.length - 1)) * (width - padding * 2) : width / 2;
           return (
             <text key={key} x={x} y={height - 8} fontSize={10} textAnchor="middle" fill="var(--text-mute)">

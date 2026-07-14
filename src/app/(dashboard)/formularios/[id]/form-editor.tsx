@@ -262,8 +262,8 @@ export function FormEditor({
             <textarea
               readOnly
               value={embedHtml}
-              rows={16}
-              className="w-full rounded-md border border-border bg-sunken p-3 font-mono text-xs text-ink"
+              rows={12}
+              className="w-full max-h-[60vh] resize-y rounded-md border border-border bg-sunken p-3 font-mono text-xs text-ink"
               onFocus={(e) => e.target.select()}
             />
             <button

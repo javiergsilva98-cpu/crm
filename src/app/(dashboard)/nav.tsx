@@ -25,6 +25,7 @@ const GROUPS = [
     links: [
       { href: "/canales", label: "Canales" },
       { href: "/informes", label: "Informes" },
+      { href: "/formularios", label: "Formularios" },
     ],
   },
   {

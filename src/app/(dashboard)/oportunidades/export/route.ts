@@ -5,7 +5,7 @@ export async function GET() {
   const supabase = await createClient();
   const { data: opportunities } = await supabase
     .from("opportunities")
-    .select("title, stage, amount, companies(name)")
+    .select("title, stage, amount, companies!company_id(name)")
     .order("created_at", { ascending: false });
 
   const csv = toCsv(

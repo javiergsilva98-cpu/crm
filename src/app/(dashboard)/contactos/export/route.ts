@@ -6,7 +6,7 @@ export async function GET() {
   const supabase = await createClient();
   const { data: contacts } = await supabase
     .from("contacts")
-    .select("full_name, email, phone, source, source_detail, companies(name)")
+    .select("full_name, email, phone, source, source_detail, companies!company_id(name)")
     .order("created_at", { ascending: false });
 
   const csv = toCsv(

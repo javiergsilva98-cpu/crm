@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { EmptyStateRow } from "@/components/empty-state";
 import { calculateTotals } from "@/lib/invoice";
+import { deleteInvoice } from "./actions";
 
 const STATUS_LABELS: Record<string, string> = {
   draft: "Borrador",
@@ -20,7 +21,7 @@ export default async function FacturasPage({
 
   let query = supabase
     .from("invoices")
-    .select("id, invoice_number, issue_date, status, paid_at, tax_rate, companies(name), invoice_items(quantity, unit_price)")
+    .select("id, invoice_number, issue_date, status, paid_at, tax_rate, companies!company_id(name), invoice_items(quantity, unit_price)")
     .order("invoice_number", { ascending: false });
 
   if (empresa) query = query.eq("company_id", empresa);
@@ -88,6 +89,7 @@ export default async function FacturasPage({
               <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Fecha</th>
               <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Estado</th>
               <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Total</th>
+              <th className="px-4 py-2.5" />
             </tr>
           </thead>
           <tbody>
@@ -114,15 +116,25 @@ export default async function FacturasPage({
                     )}
                   </td>
                   <td className="px-4 py-2 text-ink">{total.toFixed(2)}€</td>
+                  <td className="px-4 py-2 text-right">
+                    {invoice.status === "draft" && (
+                      <form action={deleteInvoice}>
+                        <input type="hidden" name="id" value={invoice.id} />
+                        <button type="submit" className="text-sm text-danger hover:underline">
+                          Eliminar
+                        </button>
+                      </form>
+                    )}
+                  </td>
                 </tr>
               );
             })}
             {invoices?.length === 0 &&
               (empresa || estado ? (
-                <EmptyStateRow colSpan={5} title="Sin resultados" body="Ninguna factura coincide con este filtro." />
+                <EmptyStateRow colSpan={6} title="Sin resultados" body="Ninguna factura coincide con este filtro." />
               ) : (
                 <EmptyStateRow
-                  colSpan={5}
+                  colSpan={6}
                   title="Todavía no tienes facturas"
                   body="Crea la primera con el botón + Nueva factura de arriba."
                 />

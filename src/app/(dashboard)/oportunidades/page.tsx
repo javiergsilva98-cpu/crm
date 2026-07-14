@@ -17,7 +17,7 @@ export default async function OportunidadesPage({
 
   let query = supabase
     .from("opportunities")
-    .select("id, title, stage, amount, company_id, companies(name)")
+    .select("id, title, stage, amount, company_id, companies!company_id(name)")
     .order("created_at", { ascending: false });
 
   if (q) {

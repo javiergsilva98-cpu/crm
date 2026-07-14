@@ -17,7 +17,7 @@ export default async function ContactosPage({
 
   let query = supabase
     .from("contacts")
-    .select("id, full_name, email, phone, company_id, source, source_detail, tax_id, fiscal_address, companies(name)")
+    .select("id, full_name, email, phone, company_id, source, source_detail, tax_id, fiscal_address, companies!company_id(name)")
     .order("created_at", { ascending: false });
 
   if (q) {

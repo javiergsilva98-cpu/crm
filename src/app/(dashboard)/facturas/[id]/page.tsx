@@ -19,7 +19,7 @@ export default async function FacturaDetailPage({
     supabase
       .from("invoices")
       .select(
-        "id, invoice_number, issue_date, due_date, status, paid_at, tax_rate, notes, companies(name, tax_id, fiscal_address), contacts(full_name, tax_id, fiscal_address), opportunities(title)",
+        "id, invoice_number, issue_date, due_date, status, paid_at, tax_rate, notes, companies!company_id(name, tax_id, fiscal_address), contacts!contact_id(full_name, tax_id, fiscal_address), opportunities!opportunity_id(title)",
       )
       .eq("id", id)
       .single(),

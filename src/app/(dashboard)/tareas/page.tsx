@@ -7,7 +7,7 @@ export default async function TareasPage() {
   const [{ data: tasks, error: tasksError }, { data: companies }, { data: opportunities }] = await Promise.all([
     supabase
       .from("tasks")
-      .select("id, title, due_date, completed, companies(name), opportunities(title)")
+      .select("id, title, due_date, completed, companies!company_id(name), opportunities!opportunity_id(title)")
       .order("completed", { ascending: true })
       .order("due_date", { ascending: true, nullsFirst: false }),
     supabase.from("companies").select("id, name").order("name"),

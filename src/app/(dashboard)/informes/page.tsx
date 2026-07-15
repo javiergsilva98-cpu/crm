@@ -5,6 +5,7 @@ import { ReportCard } from "./report-card";
 import { AddDisclosure } from "@/components/add-disclosure";
 import { HelpButton } from "@/components/help-button";
 import { blocksFromDb, sanitizeBlocks } from "./blocks";
+import { CreateMarketingReportButton } from "./create-marketing-report-button";
 
 export default async function InformesPage() {
   const supabase = await createClient();
@@ -40,9 +41,12 @@ export default async function InformesPage() {
         Crea y guarda informes con las métricas del CRM que más te interesan. Puedes marcar uno como la pantalla de inicio o compartirlo como plantilla con el equipo.
       </p>
 
-      <AddDisclosure label="Crear informe">
-        <CreateReportForm raw={raw} />
-      </AddDisclosure>
+      <div className="mb-6 flex flex-wrap items-start gap-3">
+        <AddDisclosure label="Crear informe">
+          <CreateReportForm raw={raw} />
+        </AddDisclosure>
+        <CreateMarketingReportButton />
+      </div>
 
       {(!reports || reports.length === 0) && (
         <div className="rounded-lg border border-border bg-raised p-6 text-center">

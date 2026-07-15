@@ -64,6 +64,32 @@ Si la sincronización falla, verás el motivo exacto del error debajo del nombre
 `,
   },
   {
+    slug: "conectar-google-analytics",
+    title: "Cómo conectar Google Analytics",
+    category: "Marketing",
+    summary: "Qué credenciales necesitas y cómo se reparten las sesiones por canal.",
+    body: `
+A diferencia de Meta Ads y Google Ads, Google Analytics no mide inversión: mide sesiones (visitas) a tu web, repartidas entre varios canales a la vez.
+
+## Qué credenciales necesitas
+
+- **Property ID**: el identificador de tu propiedad de Google Analytics 4, con el formato "properties/123456789". Lo encuentras en Analytics, en Administrador > Configuración de la propiedad.
+- **Client ID, Client Secret y Refresh Token**: credenciales OAuth de un proyecto de Google Cloud con la Google Analytics Data API habilitada — el mismo tipo de credenciales que en Google Ads, pero de un proyecto/acceso distinto (Analytics no usa developer token).
+
+## Cómo conseguir las credenciales
+
+Sigue la [documentación oficial de la Google Analytics Data API](https://developers.google.com/analytics/devguides/reporting/data/v1) para habilitar la API en Google Cloud y generar las credenciales OAuth.
+
+## Cómo se reparten las sesiones por canal
+
+Analytics no usa nuestros mismos nombres de canal, así que cada sincronización agrupa el origen de cada sesión (instagram, google, tiktok, whatsapp...) por coincidencia de texto con nuestros canales; lo que no reconoce se cuenta como "Otro". Es una aproximación — conviene revisarla la primera vez que sincronices y compararla con lo que esperas ver.
+
+## Dónde se ve el dato
+
+Las sesiones por canal alimentan la métrica "Sesiones web por canal" en Informes, para poder compararla con "Contactos por canal" en el mismo informe.
+`,
+  },
+  {
     slug: "formularios-embed",
     title: "Cómo funciona el HTML de Formularios",
     category: "Marketing",

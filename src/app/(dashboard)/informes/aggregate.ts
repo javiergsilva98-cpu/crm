@@ -14,6 +14,7 @@ export const METRICS = [
   { key: "expenses_by_month", label: "Gastos por mes", kind: "amount", dimension: "month" },
   { key: "contacts_by_source", label: "Contactos por canal", kind: "count", dimension: "category" },
   { key: "companies_by_month", label: "Empresas nuevas por mes", kind: "count", dimension: "month" },
+  { key: "sessions_by_channel", label: "Sesiones web por canal", kind: "count", dimension: "category" },
 ] as const;
 
 export type MetricKey = (typeof METRICS)[number]["key"];
@@ -32,6 +33,7 @@ export type RawData = {
   opportunities: { created_at: string; stage: string; amount: number }[];
   invoices: { issue_date: string; status: string; total: number }[];
   expenses: { expense_date: string; category: string; amount: number }[];
+  channelSessions: { month: string; channel: string; sessions: number }[];
 };
 
 function inRange(date: string, dateFrom: string | null, dateTo: string | null) {
@@ -117,6 +119,17 @@ export function aggregateMetric(
     return Array.from(totals.entries())
       .map(([key, amount]) => ({ label: EXPENSE_CATEGORY_LABELS[key as keyof typeof EXPENSE_CATEGORY_LABELS] ?? key, sortKey: key, amount }))
       .sort((a, b) => (b.amount ?? 0) - (a.amount ?? 0));
+  }
+
+  if (metric === "sessions_by_channel") {
+    const totals = new Map<string, number>();
+    for (const row of raw.channelSessions) {
+      if (!inRange(row.month, dateFrom, dateTo)) continue;
+      totals.set(row.channel, (totals.get(row.channel) ?? 0) + row.sessions);
+    }
+    return Array.from(totals.entries())
+      .map(([key, count]) => ({ label: CHANNEL_LABELS[key as keyof typeof CHANNEL_LABELS] ?? key, sortKey: key, count }))
+      .sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
   }
 
   if (metric === "expenses_by_month") {

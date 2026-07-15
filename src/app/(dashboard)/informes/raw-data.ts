@@ -2,7 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { RawData } from "./aggregate";
 
 export async function fetchRawData(supabase: SupabaseClient): Promise<RawData> {
-  const [{ data: companies }, { data: contacts }, { data: opportunities }, { data: expenses }, { data: invoiceItems }] =
+  const [{ data: companies }, { data: contacts }, { data: opportunities }, { data: expenses }, { data: invoiceItems }, { data: channelSessions }] =
     await Promise.all([
       supabase.from("companies").select("created_at"),
       supabase.from("contacts").select("created_at, source"),
@@ -11,6 +11,7 @@ export async function fetchRawData(supabase: SupabaseClient): Promise<RawData> {
       supabase
         .from("invoice_items")
         .select("invoice_id, quantity, unit_price, invoices!inner(issue_date, tax_rate, status)"),
+      supabase.from("channel_sessions").select("month, channel, sessions"),
     ]);
 
   // Se agrupa por invoice_id (no por el objeto `invoices` embebido: PostgREST
@@ -33,5 +34,6 @@ export async function fetchRawData(supabase: SupabaseClient): Promise<RawData> {
     opportunities: (opportunities ?? []).map((o) => ({ ...o, amount: Number(o.amount) })),
     expenses: (expenses ?? []).map((e) => ({ ...e, amount: Number(e.amount) })),
     invoices: Array.from(perInvoice.values()),
+    channelSessions: (channelSessions ?? []).map((c) => ({ ...c, sessions: Number(c.sessions) })),
   };
 }

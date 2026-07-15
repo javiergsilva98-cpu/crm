@@ -7,10 +7,11 @@ import { providerConfig, type Provider } from "@/lib/marketing-providers";
 import { currentMonthKey } from "@/lib/month";
 import { fetchMetaAdsSpend } from "@/lib/ads-api/meta";
 import { fetchGoogleAdsSpend } from "@/lib/ads-api/google";
+import { fetchGoogleAnalyticsSessions } from "@/lib/ads-api/google-analytics";
 
 function parseProvider(value: FormDataEntryValue | null): Provider | null {
   const v = String(value ?? "");
-  return v === "meta_ads" || v === "google_ads" ? v : null;
+  return v === "meta_ads" || v === "google_ads" || v === "google_analytics" ? v : null;
 }
 
 export async function saveIntegration(formData: FormData) {
@@ -93,15 +94,28 @@ export async function syncIntegration(formData: FormData) {
   if (!integration) return;
 
   try {
-    const amount =
-      provider === "meta_ads"
-        ? await fetchMetaAdsSpend(integration.credentials as never)
-        : await fetchGoogleAdsSpend(integration.credentials as never);
+    if (provider === "google_analytics") {
+      const sessionsByChannel = await fetchGoogleAnalyticsSessions(integration.credentials as never);
+      const month = currentMonthKey();
+      await Promise.all(
+        Object.entries(sessionsByChannel).map(([channel, sessions]) =>
+          supabase.from("channel_sessions").upsert(
+            { owner_id: user.id, channel, month, sessions },
+            { onConflict: "owner_id,channel,month" },
+          ),
+        ),
+      );
+    } else {
+      const amount =
+        provider === "meta_ads"
+          ? await fetchMetaAdsSpend(integration.credentials as never)
+          : await fetchGoogleAdsSpend(integration.credentials as never);
 
-    await supabase.from("channel_spend").upsert(
-      { owner_id: user.id, channel: config.channel, month: currentMonthKey(), amount, source_type: "api" },
-      { onConflict: "owner_id,channel,month" },
-    );
+      await supabase.from("channel_spend").upsert(
+        { owner_id: user.id, channel: config.channel, month: currentMonthKey(), amount, source_type: "api" },
+        { onConflict: "owner_id,channel,month" },
+      );
+    }
 
     await supabase
       .from("marketing_integrations")
@@ -118,4 +132,6 @@ export async function syncIntegration(formData: FormData) {
 
   revalidatePath("/configuracion");
   revalidatePath("/canales");
+  revalidatePath("/informes");
+  revalidatePath("/");
 }

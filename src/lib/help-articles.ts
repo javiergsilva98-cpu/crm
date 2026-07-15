@@ -308,6 +308,31 @@ Da de alta tus oportunidades comerciales y, cuando cierres una venta, emite la f
 En Informes, prueba el modo simple para tener un vistazo rápido, y pasa al avanzado cuando quieras combinar métricas o comparar periodos.
 `,
   },
+  {
+    slug: "ficha-empresa",
+    title: "Qué hay en la ficha de una empresa",
+    category: "Ventas",
+    summary: "Etiquetas, registro de actividad, oportunidades y facturas vinculadas.",
+    body: `
+Al hacer clic en una empresa desde Empresas entras en su ficha, que reúne todo lo relacionado con ella en un solo sitio.
+
+## Etiquetas
+
+Puedes añadir etiquetas libres (por ejemplo "cliente VIP" o "moroso") escribiendo el nombre y pulsando Intro. Sirven para clasificar tus empresas a tu manera; quítalas con la × de cada una.
+
+## Registro de actividad
+
+Es un histórico de notas manuales sobre la empresa (llamadas, reuniones, acuerdos) que vas añadiendo tú mismo. No se genera automáticamente: apúntalo cuando pase algo relevante para que quede constancia.
+
+## Oportunidades y facturas vinculadas
+
+La ficha muestra automáticamente todas las oportunidades y facturas asociadas a esa empresa, con el valor total del pipeline abierto. No hace falta vincularlas a mano aquí: se enlazan al crear la oportunidad o la factura y eligiendo esta empresa.
+
+## Contactos de la empresa
+
+También aparecen los contactos que tienen esta empresa asignada, para tener a mano quién es quién sin salir de la ficha.
+`,
+  },
 ];
 
 export function helpArticle(slug: string): HelpArticle | null {

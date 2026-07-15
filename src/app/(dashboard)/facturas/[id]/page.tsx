@@ -6,6 +6,7 @@ import { deleteInvoice } from "../actions";
 import { StatusSelect } from "./status-select";
 import { PrintButton } from "./print-button";
 import { PaidAtInput } from "./paid-at-input";
+import { HelpButton } from "@/components/help-button";
 
 export default async function FacturaDetailPage({
   params,
@@ -42,9 +43,12 @@ export default async function FacturaDetailPage({
   return (
     <div>
       <div className="mb-4 flex items-center justify-between print:hidden">
-        <Link href="/facturas" className="text-sm text-ink-soft hover:underline">
-          ← Volver a facturas
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link href="/facturas" className="text-sm text-ink-soft hover:underline">
+            ← Volver a facturas
+          </Link>
+          <HelpButton slug="facturas-estados" label="Estados de factura" />
+        </div>
         <div className="flex items-center gap-3">
           <PrintButton />
           {invoice.status === "draft" && (

@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { updateInvoice } from "../../actions";
 import { InvoiceForm } from "../../invoice-form";
+import { HelpButton } from "@/components/help-button";
 
 export default async function EditarFacturaPage({
   params,
@@ -38,7 +39,10 @@ export default async function EditarFacturaPage({
       <Link href={`/facturas/${id}`} className="mb-4 inline-block text-sm text-ink-soft hover:underline">
         ← Volver a la factura
       </Link>
-      <h1 className="mb-6 font-heading text-3xl font-semibold text-ink">Editar factura</h1>
+      <h1 className="mb-6 flex items-center gap-2 font-heading text-3xl font-semibold text-ink">
+        Editar factura
+        <HelpButton slug="facturas-estados" label="Estados de factura" />
+      </h1>
 
       <InvoiceForm
         action={updateInvoice}

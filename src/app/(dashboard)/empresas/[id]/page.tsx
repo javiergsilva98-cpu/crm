@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { addActivity, deleteActivity, addTagToCompany, removeTagFromCompany } from "./actions";
 import { calculateTotals } from "@/lib/invoice";
+import { HelpButton } from "@/components/help-button";
 
 const STATUS_LABELS: Record<string, string> = {
   draft: "Borrador",
@@ -65,7 +66,10 @@ export default async function CompanyDetailPage({
       </Link>
 
       <div className="mb-8 rounded-lg border border-border bg-raised p-6">
-        <h1 className="font-heading text-3xl font-semibold text-ink">{company.name}</h1>
+        <h1 className="flex items-center gap-2 font-heading text-3xl font-semibold text-ink">
+          {company.name}
+          <HelpButton slug="ficha-empresa" label="Ficha de empresa" />
+        </h1>
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {tags.map((tag) => (

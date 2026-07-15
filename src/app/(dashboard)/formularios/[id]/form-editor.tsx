@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { updateForm } from "../actions";
 import { buildEmbedHtml } from "../embed";
+import { HelpButton } from "@/components/help-button";
 import {
   FIELD_TYPE_LABELS,
   FIXED_FIELD_TYPES,
@@ -107,9 +108,12 @@ export function FormEditor({
 
   return (
     <div>
-      <Link href="/formularios" className="mb-4 inline-block text-sm text-ink-soft hover:text-ink hover:underline">
-        ← Formularios
-      </Link>
+      <div className="mb-4 flex items-center gap-2">
+        <Link href="/formularios" className="inline-block text-sm text-ink-soft hover:text-ink hover:underline">
+          ← Formularios
+        </Link>
+        <HelpButton slug="formularios-embed" label="Formularios" />
+      </div>
 
       <form
         action={async (formData) => {

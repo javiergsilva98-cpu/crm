@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { CHANNELS, CHANNEL_LABELS, type Channel } from "@/lib/channels";
 import { currentMonthRange, currentMonthKey } from "@/lib/month";
 import { saveChannelSpend } from "./actions";
+import { HelpButton } from "@/components/help-button";
 
 export default async function CanalesPage() {
   const supabase = await createClient();
@@ -62,7 +63,10 @@ export default async function CanalesPage() {
 
   return (
     <div>
-      <h1 className="mb-2 font-heading text-3xl font-semibold text-ink">Canales</h1>
+      <h1 className="mb-2 flex items-center gap-2 font-heading text-3xl font-semibold text-ink">
+        Canales
+        <HelpButton slug="canal-origen-contactos" label="Canal de origen" />
+      </h1>
       <p className="mb-6 text-sm text-ink-mute">
         De dónde vienen tus contactos este mes y cuánto te cuesta cada uno.{" "}
         <Link href="/configuracion?tab=marketing" className="underline hover:text-ink">

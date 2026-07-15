@@ -11,6 +11,7 @@ const AUTH_ERROR_MESSAGES: Record<string, string> = {
   "Password should be at least 6 characters": "La contraseña debe tener al menos 6 caracteres.",
   "Unable to validate email address: invalid format": "El formato del email no es válido.",
   "Email rate limit exceeded": "Se enviaron demasiadas solicitudes. Inténtalo de nuevo en unos minutos.",
+  "Database error saving new user": "El enlace de invitación no es válido o ya se usó. Pide uno nuevo a tu administrador.",
 };
 
 function translateAuthError(message: string): string {
@@ -46,7 +47,10 @@ function LoginForm() {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { emailRedirectTo: redirectUrl.toString() },
+        options: {
+          emailRedirectTo: redirectUrl.toString(),
+          data: inviteId ? { invite_id: inviteId } : undefined,
+        },
       });
 
       if (error) {
@@ -104,13 +108,21 @@ function LoginForm() {
           {loading ? "Cargando..." : mode === "signin" ? "Entrar" : "Registrarme"}
         </button>
       </form>
-      <button
-        type="button"
-        onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-        className="mt-4 text-sm text-ink-soft underline"
-      >
-        {mode === "signin" ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Inicia sesión"}
-      </button>
+      {inviteId ? (
+        <button
+          type="button"
+          onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+          className="mt-4 text-sm text-ink-soft underline"
+        >
+          {mode === "signin" ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Inicia sesión"}
+        </button>
+      ) : (
+        mode === "signin" && (
+          <p className="mt-4 text-xs text-ink-mute">
+            El registro es solo por invitación. Pide a un administrador que te envíe un enlace de acceso.
+          </p>
+        )
+      )}
     </div>
   );
 }

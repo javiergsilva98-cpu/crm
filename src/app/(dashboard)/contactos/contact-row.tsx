@@ -1,8 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
 import { updateContact, deleteContact } from "./actions";
 import { CHANNELS, CHANNEL_LABELS, type Channel } from "@/lib/channels";
+import { ExpandableDetail } from "@/components/expandable-detail";
+import type { DetailField } from "@/lib/detail-fields";
+
+function ignoreInteractiveClick(e: MouseEvent<HTMLTableRowElement>) {
+  return (e.target as HTMLElement).closest("a, button, input, select, form") !== null;
+}
 
 type Contact = {
   id: string;
@@ -24,12 +30,15 @@ export function ContactRow({
   contact,
   companies,
   lastActivityByEmail,
+  detailFields,
 }: {
   contact: Contact;
   companies: { id: string; name: string }[];
   lastActivityByEmail: string | null;
+  detailFields: DetailField[];
 }) {
   const [editing, setEditing] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   if (editing) {
     return (
@@ -127,8 +136,29 @@ export function ContactRow({
     );
   }
 
+  const values: Record<string, string | null> = {
+    email: contact.email,
+    phone: contact.phone,
+    company: contact.companies?.name ?? null,
+    source: contact.source ? CHANNEL_LABELS[contact.source] : null,
+    source_detail: contact.source_detail,
+    source_url: contact.source_url,
+    tax_id: contact.tax_id,
+    fiscal_address: contact.fiscal_address,
+    last_activity_at: contact.last_activity_at
+      ? `${new Date(contact.last_activity_at).toLocaleDateString("es-ES")}${lastActivityByEmail ? ` · ${lastActivityByEmail}` : ""}`
+      : null,
+  };
+
   return (
-    <tr className="border-t border-border transition-colors hover:bg-sunken">
+    <>
+    <tr
+      className="cursor-pointer border-t border-border transition-colors hover:bg-sunken"
+      onClick={(e) => {
+        if (ignoreInteractiveClick(e)) return;
+        setExpanded((v) => !v);
+      }}
+    >
       <td className="px-4 py-2">{contact.full_name}</td>
       <td className="px-4 py-2">{contact.email}</td>
       <td className="px-4 py-2">{contact.phone}</td>
@@ -166,5 +196,12 @@ export function ContactRow({
         </div>
       </td>
     </tr>
+    {expanded && (
+      <ExpandableDetail
+        colSpan={7}
+        fields={detailFields.map((f) => ({ key: f.key, label: f.label, value: values[f.key] }))}
+      />
+    )}
+    </>
   );
 }

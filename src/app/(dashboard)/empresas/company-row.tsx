@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type MouseEvent } from "react";
 import Link from "next/link";
 import { updateCompany, deleteCompany } from "./actions";
+import { ExpandableDetail } from "@/components/expandable-detail";
+import type { DetailField } from "@/lib/detail-fields";
 
 type Company = {
   id: string;
@@ -11,10 +13,16 @@ type Company = {
   industry: string | null;
   tax_id: string | null;
   fiscal_address: string | null;
+  created_at: string;
 };
 
-export function CompanyRow({ company }: { company: Company }) {
+function ignoreInteractiveClick(e: MouseEvent<HTMLTableRowElement>) {
+  return (e.target as HTMLElement).closest("a, button, input, select, form") !== null;
+}
+
+export function CompanyRow({ company, detailFields }: { company: Company; detailFields: DetailField[] }) {
   const [editing, setEditing] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   if (editing) {
     return (
@@ -74,28 +82,50 @@ export function CompanyRow({ company }: { company: Company }) {
     );
   }
 
+  const values: Record<string, string | null> = {
+    website: company.website,
+    industry: company.industry,
+    tax_id: company.tax_id,
+    fiscal_address: company.fiscal_address,
+    created_at: new Date(company.created_at).toLocaleDateString("es-ES"),
+  };
+
   return (
-    <tr className="border-t border-border transition-colors hover:bg-sunken">
-      <td className="px-4 py-2">
-        <Link href={`/empresas/${company.id}`} className="text-ink hover:underline">
-          {company.name}
-        </Link>
-      </td>
-      <td className="px-4 py-2">{company.website}</td>
-      <td className="px-4 py-2">{company.industry}</td>
-      <td className="px-4 py-2 text-right">
-        <div className="flex justify-end gap-3">
-          <button type="button" onClick={() => setEditing(true)} className="text-ink-soft hover:underline">
-            Editar
-          </button>
-          <form action={deleteCompany}>
-            <input type="hidden" name="id" value={company.id} />
-            <button type="submit" className="text-danger hover:underline">
-              Eliminar
+    <>
+      <tr
+        className="cursor-pointer border-t border-border transition-colors hover:bg-sunken"
+        onClick={(e) => {
+          if (ignoreInteractiveClick(e)) return;
+          setExpanded((v) => !v);
+        }}
+      >
+        <td className="px-4 py-2">
+          <Link href={`/empresas/${company.id}`} className="text-ink hover:underline">
+            {company.name}
+          </Link>
+        </td>
+        <td className="px-4 py-2">{company.website}</td>
+        <td className="px-4 py-2">{company.industry}</td>
+        <td className="px-4 py-2 text-right">
+          <div className="flex justify-end gap-3">
+            <button type="button" onClick={() => setEditing(true)} className="text-ink-soft hover:underline">
+              Editar
             </button>
-          </form>
-        </div>
-      </td>
-    </tr>
+            <form action={deleteCompany}>
+              <input type="hidden" name="id" value={company.id} />
+              <button type="submit" className="text-danger hover:underline">
+                Eliminar
+              </button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {expanded && (
+        <ExpandableDetail
+          colSpan={4}
+          fields={detailFields.map((f) => ({ key: f.key, label: f.label, value: values[f.key] }))}
+        />
+      )}
+    </>
   );
 }

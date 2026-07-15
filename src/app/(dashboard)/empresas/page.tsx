@@ -4,6 +4,8 @@ import { createCompany } from "./actions";
 import { CompanyRow } from "./company-row";
 import { EmptyStateRow } from "@/components/empty-state";
 import { AddDisclosure } from "@/components/add-disclosure";
+import { FieldCustomizer } from "@/components/field-customizer";
+import { DETAIL_FIELD_CATALOG, resolveDetailFields } from "@/lib/detail-fields";
 
 export default async function EmpresasPage({
   searchParams,
@@ -22,18 +24,31 @@ export default async function EmpresasPage({
     query = query.or(`name.ilike.%${q}%,industry.ilike.%${q}%`);
   }
 
-  const { data: companies, error: companiesError } = await query;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const [{ data: companies, error: companiesError }, { data: viewSettings }] = await Promise.all([
+    query,
+    user
+      ? supabase.from("detail_view_settings").select("fields").eq("owner_id", user.id).eq("table_name", "companies").maybeSingle()
+      : Promise.resolve({ data: null }),
+  ]);
+
+  const detailFields = resolveDetailFields("companies", viewSettings?.fields as string[] | null);
 
   return (
     <div>
       <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="font-heading text-3xl font-semibold text-ink">Empresas</h1>
-          <p className="mt-1 text-sm text-ink-mute">Las cuentas con las que trabajas.</p>
+          <p className="mt-1 text-sm text-ink-mute">Las cuentas con las que trabajas. Haz clic en una fila para ver más detalles.</p>
         </div>
-        <Link href="/empresas/export" className="text-sm text-ink-soft hover:text-ink hover:underline">
-          Exportar CSV
-        </Link>
+        <div className="flex items-center gap-3">
+          <FieldCustomizer tableName="companies" catalog={DETAIL_FIELD_CATALOG.companies} selected={detailFields.map((f) => f.key)} />
+          <Link href="/empresas/export" className="text-sm text-ink-soft hover:text-ink hover:underline">
+            Exportar CSV
+          </Link>
+        </div>
       </div>
 
       <AddDisclosure label="Agregar empresa">
@@ -83,7 +98,7 @@ export default async function EmpresasPage({
           </thead>
           <tbody>
             {companies?.map((company) => (
-              <CompanyRow key={company.id} company={company} />
+              <CompanyRow key={company.id} company={company} detailFields={detailFields} />
             ))}
             {companies?.length === 0 &&
               (q ? (

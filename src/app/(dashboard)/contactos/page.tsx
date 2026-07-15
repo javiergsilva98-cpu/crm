@@ -6,6 +6,8 @@ import { ImportButton } from "./import-button";
 import { CHANNELS, CHANNEL_LABELS } from "@/lib/channels";
 import { EmptyStateRow } from "@/components/empty-state";
 import { AddDisclosure } from "@/components/add-disclosure";
+import { FieldCustomizer } from "@/components/field-customizer";
+import { DETAIL_FIELD_CATALOG, resolveDetailFields } from "@/lib/detail-fields";
 
 export default async function ContactosPage({
   searchParams,
@@ -32,21 +34,30 @@ export default async function ContactosPage({
     query = query.eq("source", canal);
   }
 
-  const [{ data: contacts, error: contactsError }, { data: companies }, { data: profiles }] = await Promise.all([
-    query,
-    supabase.from("companies").select("id, name").order("name"),
-    supabase.from("profiles").select("id, email"),
-  ]);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const [{ data: contacts, error: contactsError }, { data: companies }, { data: profiles }, { data: viewSettings }] =
+    await Promise.all([
+      query,
+      supabase.from("companies").select("id, name").order("name"),
+      supabase.from("profiles").select("id, email"),
+      user
+        ? supabase.from("detail_view_settings").select("fields").eq("owner_id", user.id).eq("table_name", "contacts").maybeSingle()
+        : Promise.resolve({ data: null }),
+    ]);
   const profileEmailById = new Map((profiles ?? []).map((p) => [p.id, p.email]));
+  const detailFields = resolveDetailFields("contacts", viewSettings?.fields as string[] | null);
 
   return (
     <div>
       <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="font-heading text-3xl font-semibold text-ink">Contactos</h1>
-          <p className="mt-1 text-sm text-ink-mute">Las personas que han llegado a tu negocio.</p>
+          <p className="mt-1 text-sm text-ink-mute">Las personas que han llegado a tu negocio. Haz clic en una fila para ver más detalles.</p>
         </div>
         <div className="flex items-center gap-4">
+          <FieldCustomizer tableName="contacts" catalog={DETAIL_FIELD_CATALOG.contacts} selected={detailFields.map((f) => f.key)} />
           <ImportButton />
           <Link href="/contactos/export" className="text-sm text-ink-soft hover:text-ink hover:underline">
             Exportar CSV
@@ -158,6 +169,7 @@ export default async function ContactosPage({
                 }}
                 companies={companies ?? []}
                 lastActivityByEmail={contact.last_activity_by ? (profileEmailById.get(contact.last_activity_by) ?? null) : null}
+                detailFields={detailFields}
               />
             ))}
             {contacts?.length === 0 &&

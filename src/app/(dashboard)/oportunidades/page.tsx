@@ -5,6 +5,8 @@ import { OpportunityRow } from "./opportunity-row";
 import { EmptyStateRow } from "@/components/empty-state";
 import { AddDisclosure } from "@/components/add-disclosure";
 import { STAGES, STAGE_LABELS } from "@/lib/stages";
+import { FieldCustomizer } from "@/components/field-customizer";
+import { DETAIL_FIELD_CATALOG, resolveDetailFields } from "@/lib/detail-fields";
 
 export default async function OportunidadesPage({
   searchParams,
@@ -16,7 +18,9 @@ export default async function OportunidadesPage({
 
   let query = supabase
     .from("opportunities")
-    .select("id, title, stage, amount, company_id, companies!company_id(name)")
+    .select(
+      "id, title, stage, amount, notes, created_at, company_id, contact_id, companies!company_id(name), contacts!contact_id(full_name)",
+    )
     .order("created_at", { ascending: false });
 
   if (q) {
@@ -29,10 +33,17 @@ export default async function OportunidadesPage({
     query = query.eq("stage", etapa);
   }
 
-  const [{ data: opportunities, error: opportunitiesError }, { data: companies }] = await Promise.all([
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const [{ data: opportunities, error: opportunitiesError }, { data: companies }, { data: viewSettings }] = await Promise.all([
     query,
     supabase.from("companies").select("id, name").order("name"),
+    user
+      ? supabase.from("detail_view_settings").select("fields").eq("owner_id", user.id).eq("table_name", "opportunities").maybeSingle()
+      : Promise.resolve({ data: null }),
   ]);
+  const detailFields = resolveDetailFields("opportunities", viewSettings?.fields as string[] | null);
 
   return (
     <div>
@@ -42,6 +53,7 @@ export default async function OportunidadesPage({
           <p className="mt-1 text-sm text-ink-mute">Tu pipeline de ventas, de nuevo a ganado.</p>
         </div>
         <div className="flex items-center gap-4">
+          <FieldCustomizer tableName="opportunities" catalog={DETAIL_FIELD_CATALOG.opportunities} selected={detailFields.map((f) => f.key)} />
           <Link href="/oportunidades/export" className="text-sm text-ink-soft hover:text-ink hover:underline">
             Exportar CSV
           </Link>
@@ -127,8 +139,10 @@ export default async function OportunidadesPage({
                 opportunity={{
                   ...opp,
                   companies: (opp.companies as unknown as { name: string } | null) ?? null,
+                  contacts: (opp.contacts as unknown as { full_name: string } | null) ?? null,
                 }}
                 companies={companies ?? []}
+                detailFields={detailFields}
               />
             ))}
             {opportunities?.length === 0 &&

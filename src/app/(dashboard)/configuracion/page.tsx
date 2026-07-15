@@ -5,6 +5,7 @@ import { saveBusinessSettings } from "./actions";
 import { updateUserRole, createInvite, deleteInvite } from "./users-actions";
 import { InviteLink } from "./invite-link";
 import { MarketingSection } from "./marketing-section";
+import { HelpButton } from "@/components/help-button";
 
 const SECTIONS = [
   { key: "empresa", label: "Datos de la empresa" },
@@ -176,7 +177,10 @@ export default async function ConfiguracionPage({
 
           {activeTab === "usuarios" && isAdmin && (
             <>
-              <h2 className="mb-3 font-heading text-lg font-semibold text-ink">Usuarios</h2>
+              <h2 className="mb-3 flex items-center gap-2 font-heading text-lg font-semibold text-ink">
+                Usuarios
+                <HelpButton slug="invitar-usuarios" label="Invitar usuarios" />
+              </h2>
               <p className="mb-3 text-sm text-ink-mute">
                 Los administradores ven y gestionan todos los datos. Los usuarios normales solo ven lo que ellos mismos crean.
               </p>

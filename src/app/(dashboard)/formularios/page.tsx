@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HelpButton } from "@/components/help-button";
 import { createClient } from "@/lib/supabase/server";
 import { createForm, deleteForm } from "./actions";
 import { AddDisclosure } from "@/components/add-disclosure";
@@ -12,7 +13,10 @@ export default async function FormulariosPage() {
 
   return (
     <div>
-      <h1 className="mb-1 font-heading text-3xl font-semibold text-ink">Formularios</h1>
+      <h1 className="mb-1 flex items-center gap-2 font-heading text-3xl font-semibold text-ink">
+        Formularios
+        <HelpButton slug="formularios-embed" label="Formularios" />
+      </h1>
       <p className="mb-8 text-sm text-ink-mute">
         Crea formularios para tu web que den de alta contactos automáticamente en el CRM.
       </p>

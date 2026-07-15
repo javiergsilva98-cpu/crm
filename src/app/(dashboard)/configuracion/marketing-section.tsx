@@ -1,5 +1,6 @@
 import { PROVIDERS } from "@/lib/marketing-providers";
 import { saveIntegration, disconnectIntegration, syncIntegration } from "./marketing-actions";
+import { HelpButton } from "@/components/help-button";
 
 type Integration = {
   provider: string;
@@ -11,7 +12,10 @@ type Integration = {
 export function MarketingSection({ integrations }: { integrations: Integration[] }) {
   return (
     <>
-      <h2 className="mb-3 font-heading text-lg font-semibold text-ink">Marketing</h2>
+      <h2 className="mb-3 flex items-center gap-2 font-heading text-lg font-semibold text-ink">
+        Marketing
+        <HelpButton slug="conectar-meta-google-ads" label="Conectar Meta y Google Ads" />
+      </h2>
       <p className="mb-6 text-sm text-ink-mute">
         Conecta tus cuentas de Meta Ads y Google Ads para que el gasto por canal en{" "}
         <span className="font-medium text-ink">Canales</span> se rellene solo cada vez que sincronices, en vez de

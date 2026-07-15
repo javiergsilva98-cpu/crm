@@ -4,6 +4,7 @@ import { fetchRawData } from "./raw-data";
 import { CreateReportForm } from "./create-report-form";
 import { ReportCard } from "./report-card";
 import { AddDisclosure } from "@/components/add-disclosure";
+import { HelpButton } from "@/components/help-button";
 
 type SeriesRow = { metric: MetricKey; color: string; compare?: boolean };
 
@@ -34,7 +35,10 @@ export default async function InformesPage() {
 
   return (
     <div>
-      <h1 className="mb-1 font-heading text-3xl font-semibold text-ink">Informes</h1>
+      <h1 className="mb-1 flex items-center gap-2 font-heading text-3xl font-semibold text-ink">
+        Informes
+        <HelpButton slug="informes-avanzados" label="Informes avanzados" />
+      </h1>
       <p className="mb-8 text-sm text-ink-mute">
         Crea y guarda informes con las métricas del CRM que más te interesan. Puedes marcar uno como la pantalla de inicio o compartirlo como plantilla con el equipo.
       </p>

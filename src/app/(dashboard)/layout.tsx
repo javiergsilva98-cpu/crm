@@ -29,6 +29,18 @@ export default async function DashboardLayout({
           </div>
           <div className="flex items-center gap-4">
             <Link
+              href="/ayuda"
+              aria-label="Ayuda"
+              title="Ayuda"
+              className="flex h-8 w-8 items-center justify-center rounded-md text-ink-soft transition-colors hover:text-ink"
+            >
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <circle cx="10" cy="10" r="8" />
+                <path d="M7.5 7.8a2.5 2.5 0 1 1 3.3 2.4c-.6.3-1 .8-1 1.4v.4" strokeLinecap="round" />
+                <circle cx="10" cy="14" r="0.75" fill="currentColor" stroke="none" />
+              </svg>
+            </Link>
+            <Link
               href="/configuracion"
               aria-label="Configuración"
               title="Configuración"

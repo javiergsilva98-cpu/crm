@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { aggregateMetric } from "../informes/aggregate";
 import { fetchRawData } from "../informes/raw-data";
+import { HelpButton } from "@/components/help-button";
 
 function formatAmount(n: number) {
   return n.toLocaleString("es-ES", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
@@ -45,7 +46,10 @@ export default async function PnlPage({
 
   return (
     <div>
-      <h1 className="mb-1 font-heading text-3xl font-semibold text-ink">Cuenta de resultados (P&amp;L)</h1>
+      <h1 className="mb-1 flex items-center gap-2 font-heading text-3xl font-semibold text-ink">
+        Cuenta de resultados (P&amp;L)
+        <HelpButton slug="pnl-que-cuenta" label="Qué cuenta en el P&L" />
+      </h1>
       <p className="mb-8 text-sm text-ink-mute">
         Ingresos (facturas emitidas o pagadas) menos gastos, mes a mes.
       </p>

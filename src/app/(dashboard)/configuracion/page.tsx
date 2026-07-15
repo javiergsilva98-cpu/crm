@@ -4,10 +4,12 @@ import { getCurrentProfile } from "@/lib/profile";
 import { saveBusinessSettings } from "./actions";
 import { updateUserRole, createInvite, deleteInvite } from "./users-actions";
 import { InviteLink } from "./invite-link";
+import { MarketingSection } from "./marketing-section";
 
 const SECTIONS = [
   { key: "empresa", label: "Datos de la empresa" },
   { key: "usuarios", label: "Usuarios" },
+  { key: "marketing", label: "Marketing" },
 ] as const;
 
 export default async function ConfiguracionPage({
@@ -23,7 +25,7 @@ export default async function ConfiguracionPage({
 
   const profile = await getCurrentProfile();
   const isAdmin = profile?.role === "admin";
-  const activeTab = tab === "usuarios" && isAdmin ? "usuarios" : "empresa";
+  const activeTab = (tab === "usuarios" || tab === "marketing") && isAdmin ? tab : "empresa";
 
   const { data: settings } = await supabase
     .from("business_settings")
@@ -31,7 +33,7 @@ export default async function ConfiguracionPage({
     .eq("owner_id", user?.id ?? "")
     .maybeSingle();
 
-  const [{ data: users }, { data: invites }] = isAdmin
+  const [{ data: users }, { data: invites }, { data: integrations }] = isAdmin
     ? await Promise.all([
         supabase.from("profiles").select("id, email, role, created_at").order("created_at", { ascending: true }),
         supabase
@@ -39,8 +41,12 @@ export default async function ConfiguracionPage({
           .select("id, role, email, sent_at, created_at")
           .is("used_by", null)
           .order("created_at", { ascending: false }),
+        supabase
+          .from("marketing_integrations")
+          .select("provider, connected_at, last_synced_at, last_sync_error")
+          .eq("owner_id", user?.id ?? ""),
       ])
-    : [{ data: null }, { data: null }];
+    : [{ data: null }, { data: null }, { data: null }];
 
   return (
     <div>
@@ -50,7 +56,7 @@ export default async function ConfiguracionPage({
       <div className="flex flex-col gap-8 md:flex-row">
         <div className="relative md:w-48 md:flex-none">
         <nav className="flex gap-1 overflow-x-auto md:w-48 md:flex-none md:flex-col md:gap-0.5">
-          {SECTIONS.filter((s) => s.key !== "usuarios" || isAdmin).map((section) => (
+          {SECTIONS.filter((s) => s.key === "empresa" || isAdmin).map((section) => (
             <Link
               key={section.key}
               href={`/configuracion?tab=${section.key}`}
@@ -276,6 +282,8 @@ export default async function ConfiguracionPage({
               )}
             </>
           )}
+
+          {activeTab === "marketing" && isAdmin && <MarketingSection integrations={integrations ?? []} />}
         </div>
       </div>
     </div>

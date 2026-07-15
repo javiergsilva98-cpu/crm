@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { CHANNELS, CHANNEL_LABELS, type Channel } from "@/lib/channels";
 import { currentMonthRange, currentMonthKey } from "@/lib/month";
@@ -62,7 +63,13 @@ export default async function CanalesPage() {
   return (
     <div>
       <h1 className="mb-2 font-heading text-3xl font-semibold text-ink">Canales</h1>
-      <p className="mb-6 text-sm text-ink-mute">De dónde vienen tus contactos este mes y cuánto te cuesta cada uno.</p>
+      <p className="mb-6 text-sm text-ink-mute">
+        De dónde vienen tus contactos este mes y cuánto te cuesta cada uno.{" "}
+        <Link href="/configuracion?tab=marketing" className="underline hover:text-ink">
+          Conecta Meta o Google Ads
+        </Link>{" "}
+        para que el gasto se rellene solo.
+      </p>
 
       <div
         className="mb-8 rounded-lg border p-6 transition-shadow hover:shadow-lg hover:shadow-black/10"

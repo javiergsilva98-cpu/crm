@@ -7,14 +7,18 @@ import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { InviteLink } from "./invite-link";
 import { MarketingSection } from "./marketing-section";
 import { ServicesSection } from "./services-section";
+import { QuoteTemplatesSection } from "./quote-templates-section";
 import { HelpButton } from "@/components/help-button";
 
 const SECTIONS = [
   { key: "empresa", label: "Datos de la empresa" },
   { key: "servicios", label: "Servicios" },
+  { key: "plantillas", label: "Plantillas de presupuesto" },
   { key: "usuarios", label: "Usuarios" },
   { key: "marketing", label: "Marketing" },
 ] as const;
+
+const NON_ADMIN_TABS = ["empresa", "servicios", "plantillas"];
 
 export default async function ConfiguracionPage({
   searchParams,
@@ -29,8 +33,11 @@ export default async function ConfiguracionPage({
 
   const profile = await getCurrentProfile();
   const isAdmin = profile?.role === "admin";
-  const activeTab =
-    tab === "servicios" ? "servicios" : (tab === "usuarios" || tab === "marketing") && isAdmin ? tab : "empresa";
+  const activeTab = NON_ADMIN_TABS.includes(tab ?? "")
+    ? (tab as (typeof NON_ADMIN_TABS)[number])
+    : (tab === "usuarios" || tab === "marketing") && isAdmin
+      ? tab
+      : "empresa";
 
   const { data: settings } = await supabase
     .from("business_settings")
@@ -43,6 +50,16 @@ export default async function ConfiguracionPage({
     .select("id, name, description, unit_price, tax_rate")
     .eq("owner_id", user?.id ?? "")
     .order("name");
+
+  const { data: quoteTemplates } = await supabase
+    .from("quote_templates")
+    .select("id, name, logo_path, primary_color, secondary_color, header_text, footer_text")
+    .eq("owner_id", user?.id ?? "")
+    .order("created_at");
+  const quoteTemplatesWithUrl = (quoteTemplates ?? []).map((t) => ({
+    ...t,
+    logo_url: t.logo_path ? supabase.storage.from("quote-logos").getPublicUrl(t.logo_path).data.publicUrl : null,
+  }));
 
   const [{ data: users }, { data: invites }, { data: integrations }] = isAdmin
     ? await Promise.all([
@@ -67,7 +84,7 @@ export default async function ConfiguracionPage({
       <div className="flex flex-col gap-8 md:flex-row">
         <div className="relative md:w-48 md:flex-none">
         <nav className="flex gap-1 overflow-x-auto md:w-48 md:flex-none md:flex-col md:gap-0.5">
-          {SECTIONS.filter((s) => s.key === "empresa" || s.key === "servicios" || isAdmin).map((section) => (
+          {SECTIONS.filter((s) => NON_ADMIN_TABS.includes(s.key) || isAdmin).map((section) => (
             <Link
               key={section.key}
               href={`/configuracion?tab=${section.key}`}
@@ -81,7 +98,7 @@ export default async function ConfiguracionPage({
             </Link>
           ))}
         </nav>
-        {SECTIONS.filter((s) => s.key === "empresa" || s.key === "servicios" || isAdmin).length > 1 && (
+        {SECTIONS.filter((s) => NON_ADMIN_TABS.includes(s.key) || isAdmin).length > 1 && (
           <div
             aria-hidden
             className="pointer-events-none absolute top-0 right-0 h-full w-8 md:hidden"
@@ -301,6 +318,8 @@ export default async function ConfiguracionPage({
           )}
 
           {activeTab === "servicios" && <ServicesSection services={services ?? []} />}
+
+          {activeTab === "plantillas" && <QuoteTemplatesSection templates={quoteTemplatesWithUrl} />}
 
           {activeTab === "marketing" && isAdmin && <MarketingSection integrations={integrations ?? []} />}
         </div>

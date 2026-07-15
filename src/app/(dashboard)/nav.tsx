@@ -17,6 +17,7 @@ const GROUPS = [
     links: [
       { href: "/oportunidades", label: "Oportunidades" },
       { href: "/oportunidades/pipeline", label: "Pipeline" },
+      { href: "/presupuestos", label: "Presupuestos" },
     ],
   },
   {

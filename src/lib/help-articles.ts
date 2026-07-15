@@ -367,6 +367,34 @@ La ficha muestra automáticamente todas las oportunidades y facturas asociadas a
 También aparecen los contactos que tienen esta empresa asignada, para tener a mano quién es quién sin salir de la ficha.
 `,
   },
+  {
+    slug: "presupuestos",
+    title: "Cómo funcionan los presupuestos",
+    category: "Ventas",
+    summary: "Estados, plantillas personalizables y cómo convertir uno en factura.",
+    body: `
+Ventas > Presupuestos funciona igual que Facturas (empresa, contacto opcional, conceptos, IVA), pero con su propia numeración ("P2026-0001") y sus propios estados.
+
+## Estados
+
+- **Borrador**: puedes seguir editándolo.
+- **Enviado**: ya se lo has mandado al cliente.
+- **Aceptado**: el cliente lo ha aprobado. Aparece el botón "Convertir en factura".
+- **Rechazado** / **Caducado**: no siguió adelante.
+
+## Convertir en factura
+
+Cuando marcas un presupuesto como "Aceptado", puedes convertirlo en factura con un clic: se crea una factura nueva con las mismas líneas, empresa y contacto, dejando una referencia al presupuesto de origen en las notas. El presupuesto y la factura quedan enlazados entre sí para poder ir de uno a otra.
+
+## Plantillas personalizables
+
+En Configuración > Plantillas de presupuesto puedes crear hasta 3 plantillas, cada una con su logo, dos colores corporativos y textos de cabecera/pie propios. Al crear o editar un presupuesto, eliges qué plantilla usar (o ninguna, para el estilo por defecto). El logo se limita a 2 MB y solo imágenes (PNG, JPG, WEBP o SVG), para que no se llene el almacenamiento con archivos innecesariamente pesados.
+
+## Exportar a PDF
+
+Igual que las facturas: el botón "Imprimir / PDF" del detalle de un presupuesto genera un PDF limpio con el estilo de la plantilla elegida.
+`,
+  },
 ];
 
 export function helpArticle(slug: string): HelpArticle | null {

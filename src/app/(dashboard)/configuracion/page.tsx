@@ -19,11 +19,21 @@ export default async function ConfiguracionPage({
   const supabase = await createClient();
   const {
     data: { user },
+    error: userError,
   } = await supabase.auth.getUser();
 
   const profile = await getCurrentProfile();
   const isAdmin = profile?.role === "admin";
   const activeTab = tab === "usuarios" && isAdmin ? "usuarios" : "empresa";
+
+  const debugInfo = {
+    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "(no definida)",
+    userId: user?.id ?? null,
+    userEmail: user?.email ?? null,
+    userError: userError?.message ?? null,
+    profile,
+    isAdmin,
+  };
 
   const { data: settings } = await supabase
     .from("business_settings")
@@ -46,6 +56,10 @@ export default async function ConfiguracionPage({
     <div>
       <h1 className="mb-1 font-heading text-3xl font-semibold text-ink">Configuración</h1>
       <p className="mb-8 text-sm text-ink-mute">Tus datos fiscales y quién tiene acceso al CRM.</p>
+
+      <pre className="mb-8 overflow-x-auto rounded-lg border border-danger bg-danger/10 p-4 text-xs text-ink">
+        {JSON.stringify(debugInfo, null, 2)}
+      </pre>
 
       <div className="flex flex-col gap-8 md:flex-row">
         <nav className="flex gap-1 overflow-x-auto md:w-48 md:flex-none md:flex-col md:gap-0.5">

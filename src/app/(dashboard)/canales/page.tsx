@@ -68,7 +68,7 @@ export default async function CanalesPage() {
         <Link href="/configuracion?tab=marketing" className="underline hover:text-ink">
           Conecta Meta o Google Ads
         </Link>{" "}
-        para que el gasto se rellene solo.
+        para que la inversión se rellene sola.
       </p>
 
       <div
@@ -109,7 +109,7 @@ export default async function CanalesPage() {
             <tr>
               <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Canal</th>
               <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Contactos este mes</th>
-              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Gasto este mes</th>
+              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Inversión este mes</th>
               <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Coste por contacto</th>
             </tr>
           </thead>
@@ -141,7 +141,7 @@ export default async function CanalesPage() {
         </table>
         <div className="border-t border-border p-4">
           <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-base transition-colors hover:bg-calm-hover sm:w-auto">
-            Guardar gasto del mes
+            Guardar inversión del mes
           </button>
         </div>
       </form>

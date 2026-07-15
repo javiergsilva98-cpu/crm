@@ -12,14 +12,11 @@ type Integration = {
 export function MarketingSection({ integrations }: { integrations: Integration[] }) {
   return (
     <>
-      <h2 className="mb-3 flex items-center gap-2 font-heading text-lg font-semibold text-ink">
-        Marketing
-        <HelpButton slug="conectar-meta-google-ads" label="Conectar Meta y Google Ads" />
-      </h2>
+      <h2 className="mb-3 font-heading text-lg font-semibold text-ink">Marketing</h2>
       <p className="mb-6 text-sm text-ink-mute">
-        Conecta tus cuentas de Meta Ads y Google Ads para que el gasto por canal en{" "}
-        <span className="font-medium text-ink">Canales</span> se rellene solo cada vez que sincronices, en vez de
-        introducirlo a mano.
+        Conecta tus cuentas de Meta Ads y Google Ads para que la inversión por canal en{" "}
+        <span className="font-medium text-ink">Canales</span> se rellene sola cada vez que sincronices, en vez de
+        introducirla a mano.
       </p>
 
       <div className="flex flex-col gap-4">
@@ -30,7 +27,10 @@ export function MarketingSection({ integrations }: { integrations: Integration[]
             <div key={config.key} className="rounded-lg border border-border bg-raised p-5">
               <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <h3 className="text-sm font-semibold text-ink">{config.label}</h3>
+                  <h3 className="flex items-center gap-2 text-sm font-semibold text-ink">
+                    {config.label}
+                    <HelpButton slug={config.helpSlug} label={config.label} />
+                  </h3>
                   {integration ? (
                     <p className="text-xs text-ink-mute">
                       Conectado
@@ -39,12 +39,7 @@ export function MarketingSection({ integrations }: { integrations: Integration[]
                         ` · última sincronización ${new Date(integration.last_synced_at).toLocaleString("es-ES")}`}
                     </p>
                   ) : (
-                    <p className="text-xs text-ink-mute">
-                      Sin conectar ·{" "}
-                      <a href={config.helpUrl} target="_blank" rel="noreferrer" className="underline">
-                        cómo conseguir las credenciales
-                      </a>
-                    </p>
+                    <p className="text-xs text-ink-mute">Sin conectar</p>
                   )}
                   {integration?.last_sync_error && (
                     <p className="mt-1 text-xs text-danger">Error al sincronizar: {integration.last_sync_error}</p>

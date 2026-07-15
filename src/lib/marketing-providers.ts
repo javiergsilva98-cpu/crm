@@ -8,7 +8,7 @@ export type ProviderConfig = {
   key: Provider;
   label: string;
   channel: Channel;
-  helpUrl: string;
+  helpSlug: string;
   fields: ProviderField[];
 };
 
@@ -17,7 +17,7 @@ export const PROVIDERS: ProviderConfig[] = [
     key: "meta_ads",
     label: "Meta Ads (Instagram / Facebook)",
     channel: "instagram",
-    helpUrl: "https://developers.facebook.com/docs/marketing-apis/get-started",
+    helpSlug: "conectar-meta-ads",
     fields: [
       { key: "access_token", label: "Access Token de larga duración" },
       { key: "ad_account_id", label: "Ad Account ID", placeholder: "act_1234567890" },
@@ -27,7 +27,7 @@ export const PROVIDERS: ProviderConfig[] = [
     key: "google_ads",
     label: "Google Ads",
     channel: "google",
-    helpUrl: "https://developers.google.com/google-ads/api/docs/start",
+    helpSlug: "conectar-google-ads",
     fields: [
       { key: "developer_token", label: "Developer Token" },
       { key: "client_id", label: "OAuth Client ID" },

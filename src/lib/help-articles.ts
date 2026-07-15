@@ -10,23 +10,40 @@ export type HelpArticle = {
 
 export const HELP_ARTICLES: HelpArticle[] = [
   {
-    slug: "conectar-meta-google-ads",
-    title: "Cómo conectar Meta Ads y Google Ads",
+    slug: "conectar-meta-ads",
+    title: "Cómo conectar Meta Ads",
     category: "Marketing",
     summary: "Qué credenciales necesitas, de dónde las sacas y qué hace el CRM con ellas.",
     body: `
-Al conectar una cuenta de Meta Ads o Google Ads, el CRM sincroniza el gasto publicitario del mes actual y lo guarda como gasto por canal, para que en Canales veas el coste por contacto sin tener que introducirlo a mano.
+Al conectar tu cuenta de Meta Ads, el CRM sincroniza la inversión publicitaria del mes actual y la guarda como inversión por canal, para que en Canales veas el coste por contacto sin tener que introducirlo a mano.
 
-## Meta Ads (Instagram / Facebook)
-
-Necesitas dos datos:
+## Qué credenciales necesitas
 
 - **Access Token de larga duración**: se genera desde Meta Business Suite, vinculado a tu cuenta publicitaria. Requiere tener una app creada en developers.facebook.com con el producto "Marketing API" añadido.
 - **Ad Account ID**: el identificador de tu cuenta publicitaria, con el prefijo "act_" (por ejemplo, act_1234567890). Lo encuentras en Business Suite, en la configuración de la cuenta publicitaria.
 
-Meta revisa el acceso a la Marketing API antes de dejarte sacar datos de gasto reales — puede tardar de horas a días en aprobarse.
+Meta revisa el acceso a la Marketing API antes de dejarte sacar datos de inversión reales — puede tardar de horas a días en aprobarse.
 
-## Google Ads
+## Cómo conseguir las credenciales
+
+Sigue la [documentación oficial de la Marketing API de Meta](https://developers.facebook.com/docs/marketing-apis/get-started) para crear la app, activar el producto "Marketing API" y generar el access token.
+
+## De dónde sale el dato que ves en Canales
+
+Cada vez que le das a "Sincronizar ahora" en Configuración > Marketing, el CRM llama a la API de Meta y suma la inversión del mes en curso. Ese número se guarda como si lo hubieras escrito a mano en Canales, así que puedes seguir editándolo manualmente si algún mes prefieres corregirlo.
+
+Si la sincronización falla, verás el motivo exacto del error debajo del nombre de la integración — normalmente es una credencial caducada o incorrecta.
+`,
+  },
+  {
+    slug: "conectar-google-ads",
+    title: "Cómo conectar Google Ads",
+    category: "Marketing",
+    summary: "Qué credenciales necesitas, de dónde las sacas y qué hace el CRM con ellas.",
+    body: `
+Al conectar tu cuenta de Google Ads, el CRM sincroniza la inversión publicitaria del mes actual y la guarda como inversión por canal, para que en Canales veas el coste por contacto sin tener que introducirlo a mano.
+
+## Qué credenciales necesitas
 
 Necesitas cinco datos, todos desde Google Cloud y Google Ads:
 
@@ -35,9 +52,13 @@ Necesitas cinco datos, todos desde Google Cloud y Google Ads:
 - **Refresh Token**: se obtiene siguiendo el flujo OAuth de Google (por ejemplo con el OAuth Playground de Google), autorizando acceso a tu cuenta de Ads.
 - **Customer ID**: el número de tu cuenta de Google Ads (formato 123-456-7890).
 
+## Cómo conseguir las credenciales
+
+Sigue la [documentación oficial de la Google Ads API](https://developers.google.com/google-ads/api/docs/start) para crear el proyecto en Google Cloud, habilitar la API y obtener el developer token y las credenciales OAuth.
+
 ## De dónde sale el dato que ves en Canales
 
-Cada vez que le das a "Sincronizar ahora" en Configuración > Marketing, el CRM llama a la API correspondiente y suma el gasto del mes en curso. Ese número se guarda como si lo hubieras escrito a mano en Canales, así que puedes seguir editándolo manualmente si algún mes prefieres corregirlo.
+Cada vez que le das a "Sincronizar ahora" en Configuración > Marketing, el CRM llama a la API de Google Ads y suma la inversión del mes en curso. Ese número se guarda como si lo hubieras escrito a mano en Canales, así que puedes seguir editándolo manualmente si algún mes prefieres corregirlo.
 
 Si la sincronización falla, verás el motivo exacto del error debajo del nombre de la integración — normalmente es una credencial caducada o incorrecta.
 `,

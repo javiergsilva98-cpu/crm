@@ -14,11 +14,13 @@ export function HelpButton({ slug, label }: { slug: string; label?: string }) {
         ?
       </button>
       {article && (
-        <span className="pointer-events-none absolute top-full left-1/2 z-20 mt-2 w-64 -translate-x-1/2 rounded-lg border border-border bg-raised p-3 text-left opacity-0 shadow-lg shadow-black/10 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100">
-          <span className="block text-sm font-normal text-ink-soft">{article.summary}</span>
-          <Link href={`/ayuda/${slug}`} target="_blank" className="mt-2 inline-block text-sm font-medium text-ink underline">
-            Más información →
-          </Link>
+        <span className="pointer-events-none absolute top-full left-1/2 z-20 w-64 -translate-x-1/2 pt-2 opacity-0 transition-opacity delay-300 duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:delay-0">
+          <span className="block rounded-lg border border-border bg-raised p-3 text-left shadow-lg shadow-black/10">
+            <span className="block text-sm font-normal text-ink-soft">{article.summary}</span>
+            <Link href={`/ayuda/${slug}`} target="_blank" className="mt-2 inline-block text-sm font-medium text-ink underline">
+              Más información →
+            </Link>
+          </span>
         </span>
       )}
     </span>

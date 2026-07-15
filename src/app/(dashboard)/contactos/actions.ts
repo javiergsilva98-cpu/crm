@@ -17,8 +17,9 @@ export async function createContact(formData: FormData) {
   } = await supabase.auth.getUser();
   if (!user) return;
 
-  const fullName = String(formData.get("full_name") ?? "").trim();
-  if (!fullName) return;
+  const firstName = String(formData.get("first_name") ?? "").trim();
+  if (!firstName) return;
+  const lastName = String(formData.get("last_name") ?? "").trim();
 
   const email = String(formData.get("email") ?? "").trim();
   let companyId = String(formData.get("company_id") ?? "").trim() || null;
@@ -29,7 +30,8 @@ export async function createContact(formData: FormData) {
 
   await supabase.from("contacts").insert({
     owner_id: user.id,
-    full_name: fullName,
+    first_name: firstName,
+    last_name: lastName || null,
     email: email || null,
     phone: String(formData.get("phone") ?? "").trim() || null,
     phone_prefix: String(formData.get("phone_prefix") ?? "").trim() || null,
@@ -48,8 +50,9 @@ export async function createContact(formData: FormData) {
 export async function updateContact(formData: FormData) {
   const supabase = await createClient();
   const id = String(formData.get("id"));
-  const fullName = String(formData.get("full_name") ?? "").trim();
-  if (!fullName) return;
+  const firstName = String(formData.get("first_name") ?? "").trim();
+  if (!firstName) return;
+  const lastName = String(formData.get("last_name") ?? "").trim();
 
   const email = String(formData.get("email") ?? "").trim();
   let companyId = String(formData.get("company_id") ?? "").trim() || null;
@@ -61,7 +64,8 @@ export async function updateContact(formData: FormData) {
   await supabase
     .from("contacts")
     .update({
-      full_name: fullName,
+      first_name: firstName,
+      last_name: lastName || null,
       email: email || null,
       phone: String(formData.get("phone") ?? "").trim() || null,
       phone_prefix: String(formData.get("phone_prefix") ?? "").trim() || null,
@@ -85,7 +89,7 @@ export async function deleteContact(formData: FormData) {
   revalidatePath("/contactos");
 }
 
-type ImportRow = { full_name: string; email: string; phone: string; empresa: string; source: string };
+type ImportRow = { first_name: string; last_name: string; email: string; phone: string; empresa: string; source: string };
 
 function normalizeSource(value: string): string | null {
   const v = value.trim().toLowerCase();
@@ -107,8 +111,8 @@ export async function importContacts(
   let skipped = 0;
 
   for (const row of rows) {
-    const fullName = row.full_name.trim();
-    if (!fullName) {
+    const firstName = row.first_name.trim();
+    if (!firstName) {
       skipped++;
       continue;
     }
@@ -128,7 +132,8 @@ export async function importContacts(
 
     const { error } = await supabase.from("contacts").insert({
       owner_id: user.id,
-      full_name: fullName,
+      first_name: firstName,
+      last_name: row.last_name.trim() || null,
       email: email || null,
       phone: row.phone.trim() || null,
       company_id: companyId,

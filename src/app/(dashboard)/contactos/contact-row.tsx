@@ -14,6 +14,8 @@ function ignoreInteractiveClick(e: MouseEvent<HTMLTableRowElement>) {
 
 type Contact = {
   id: string;
+  first_name: string;
+  last_name: string | null;
   full_name: string;
   email: string | null;
   phone: string | null;
@@ -57,9 +59,16 @@ export function ContactRow({
           >
             <input type="hidden" name="id" value={contact.id} />
             <input
-              name="full_name"
-              defaultValue={contact.full_name}
+              name="first_name"
+              defaultValue={contact.first_name}
+              placeholder="Nombre"
               required
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <input
+              name="last_name"
+              defaultValue={contact.last_name ?? ""}
+              placeholder="Apellidos"
               className="rounded-md border border-border px-2 py-1 text-sm"
             />
             <input

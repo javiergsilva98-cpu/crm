@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { parseCsv } from "@/lib/parse-csv";
 import { importContacts } from "./actions";
+import { splitFullName } from "@/lib/contact-name";
 
 function findColumn(headers: string[], candidates: string[]): number {
   const normalized = headers.map((h) => h.trim().toLowerCase());
@@ -15,9 +16,9 @@ function findColumn(headers: string[], candidates: string[]): number {
 }
 
 const TEMPLATE_CSV =
-  "Nombre,Email,Teléfono,Empresa,Canal\n" +
-  'Ana García,ana@ejemplo.com,612345678,Acme S.L.,instagram\n' +
-  'Juan Pérez,juan@ejemplo.com,655123456,,referido\n';
+  "Nombre,Apellidos,Email,Teléfono,Empresa,Canal\n" +
+  "Ana,García,ana@ejemplo.com,612345678,Acme S.L.,instagram\n" +
+  "Juan,Pérez,juan@ejemplo.com,655123456,,referido\n";
 
 function downloadTemplate() {
   const blob = new Blob([TEMPLATE_CSV], { type: "text/csv;charset=utf-8;" });
@@ -54,7 +55,8 @@ export function ImportButton() {
     }
 
     const [header, ...dataRows] = rows;
-    const nameIdx = findColumn(header, ["nombre", "full_name", "name"]);
+    const nameIdx = findColumn(header, ["nombre", "first_name", "name"]);
+    const lastNameIdx = findColumn(header, ["apellidos", "last_name", "apellido"]);
     const emailIdx = findColumn(header, ["email", "correo"]);
     const phoneIdx = findColumn(header, ["teléfono", "telefono", "phone"]);
     const companyIdx = findColumn(header, ["empresa", "company"]);
@@ -66,13 +68,29 @@ export function ImportButton() {
       return;
     }
 
-    const parsedRows = dataRows.map((r) => ({
-      full_name: r[nameIdx] ?? "",
-      email: emailIdx !== -1 ? (r[emailIdx] ?? "") : "",
-      phone: phoneIdx !== -1 ? (r[phoneIdx] ?? "") : "",
-      empresa: companyIdx !== -1 ? (r[companyIdx] ?? "") : "",
-      source: sourceIdx !== -1 ? (r[sourceIdx] ?? "") : "",
-    }));
+    // Si no hay columna "Apellidos", asumimos que "Nombre" trae el nombre
+    // completo (compatibilidad con plantillas/CSVs antiguos) y lo repartimos.
+    const parsedRows = dataRows.map((r) => {
+      if (lastNameIdx !== -1) {
+        return {
+          first_name: r[nameIdx] ?? "",
+          last_name: r[lastNameIdx] ?? "",
+          email: emailIdx !== -1 ? (r[emailIdx] ?? "") : "",
+          phone: phoneIdx !== -1 ? (r[phoneIdx] ?? "") : "",
+          empresa: companyIdx !== -1 ? (r[companyIdx] ?? "") : "",
+          source: sourceIdx !== -1 ? (r[sourceIdx] ?? "") : "",
+        };
+      }
+      const { firstName, lastName } = splitFullName(r[nameIdx] ?? "");
+      return {
+        first_name: firstName,
+        last_name: lastName,
+        email: emailIdx !== -1 ? (r[emailIdx] ?? "") : "",
+        phone: phoneIdx !== -1 ? (r[phoneIdx] ?? "") : "",
+        empresa: companyIdx !== -1 ? (r[companyIdx] ?? "") : "",
+        source: sourceIdx !== -1 ? (r[sourceIdx] ?? "") : "",
+      };
+    });
 
     const result = await importContacts(parsedRows);
     setStatus(`Importados ${result.imported}. Omitidos ${result.skipped}.`);

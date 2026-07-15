@@ -91,7 +91,7 @@ export function OpportunityRow({
   const values: Record<string, string | null> = {
     company: opportunity.companies?.name ?? null,
     contact: opportunity.contacts?.full_name ?? null,
-    amount: `$${Number(opportunity.amount).toLocaleString()}`,
+    amount: `${Number(opportunity.amount).toLocaleString()}€`,
     notes: opportunity.notes,
     created_at: new Date(opportunity.created_at).toLocaleDateString("es-ES"),
   };
@@ -107,7 +107,7 @@ export function OpportunityRow({
       >
         <td className="px-4 py-2">{opportunity.title}</td>
         <td className="px-4 py-2">{opportunity.companies?.name}</td>
-        <td className="px-4 py-2">${Number(opportunity.amount).toLocaleString()}</td>
+        <td className="px-4 py-2">{Number(opportunity.amount).toLocaleString()}€</td>
         <td className="px-4 py-2">
           <StageSelect id={opportunity.id} stage={opportunity.stage} />
         </td>

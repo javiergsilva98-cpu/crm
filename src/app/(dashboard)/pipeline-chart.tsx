@@ -43,7 +43,7 @@ export function PipelineChart({
           return (
             <div
               key={row.stage}
-              title={`${STAGE_LABELS[row.stage]}: $${row.amount.toLocaleString()}`}
+              title={`${STAGE_LABELS[row.stage]}: ${row.amount.toLocaleString()}€`}
               className="group flex items-center gap-3 rounded-md px-1 py-1 transition-colors hover:bg-sunken"
             >
               <span className="w-24 shrink-0 text-xs text-ink-soft transition-colors group-hover:text-ink">
@@ -56,7 +56,7 @@ export function PipelineChart({
                 />
               </div>
               <span className="w-24 shrink-0 text-right text-xs text-ink-soft transition-colors group-hover:text-ink">
-                ${row.amount.toLocaleString()}
+                {row.amount.toLocaleString()}€
               </span>
             </div>
           );

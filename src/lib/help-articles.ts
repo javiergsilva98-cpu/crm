@@ -164,6 +164,150 @@ Beneficio neto = Ingresos − Gastos. El margen (%) es ese beneficio dividido en
 Puedes acotar el periodo con el filtro de fechas de arriba. Si no filtras, se muestra todo el histórico agrupado por mes.
 `,
   },
+  {
+    slug: "pipeline-oportunidades",
+    title: "Cómo funcionan las etapas y el pipeline",
+    category: "Ventas",
+    summary: "Qué son las etapas, cómo mover una oportunidad y qué pasa al marcarla ganada o perdida.",
+    body: `
+Toda oportunidad pasa por una serie fija de etapas, visibles tanto en Oportunidades (como lista) como en Pipeline (como tablero).
+
+## Las etapas
+
+- **Nuevo**: la oportunidad se acaba de crear, sin trabajar todavía.
+- **Calificado**: ya has confirmado que es una oportunidad real (presupuesto, necesidad, decisor).
+- **Propuesta**: le has enviado una propuesta o presupuesto.
+- **Negociación**: está en conversación sobre condiciones, precio o alcance.
+- **Ganado**: se ha cerrado con éxito.
+- **Perdido**: se ha cerrado sin éxito.
+
+## Cómo cambiarla de etapa
+
+En Pipeline, arrastra la tarjeta a la columna de la etapa nueva. En Oportunidades (vista de lista), cámbiala directamente desde el desplegable de la fila.
+
+## Por qué importa marcarla ganada o perdida
+
+En cuanto una oportunidad pasa a "Ganado" o "Perdido" deja de contar como oportunidad abierta en el pipeline, pero sigue existiendo en tus datos: los importes de las oportunidades ganadas son los que alimentan las métricas de facturación potencial en Informes. Márcalas en cuanto se decidan para que el pipeline solo muestre lo que sigue vivo.
+`,
+  },
+  {
+    slug: "facturas-estados",
+    title: "Estados de una factura y cómo exportarla",
+    category: "Finanzas",
+    summary: "Qué significa cada estado, de dónde salen los datos fiscales y cómo sacar el PDF.",
+    body: `
+## Estados
+
+- **Borrador**: creada pero todavía no enviada al cliente. Puedes seguir editándola libremente.
+- **Emitida**: ya se ha enviado al cliente. Cuenta como ingreso en el P&L desde este momento.
+- **Pagada**: el cliente ya la ha abonado. También cuenta como ingreso en el P&L.
+- **Anulada**: no cuenta como ingreso en ningún cálculo.
+
+## Datos fiscales
+
+Los datos de tu empresa (razón social, NIF, dirección) que aparecen impresos en la factura salen de Configuración > Datos de la empresa, así que revisa que estén completos antes de emitir la primera.
+
+## Numeración
+
+Las facturas llevan numeración correlativa automática — no puedes elegir el número a mano, para evitar huecos o duplicados.
+
+## Exportar a PDF
+
+Desde el detalle de una factura, el botón de imprimir/exportar genera un PDF limpio (sin menús ni botones) listo para enviar al cliente o guardar.
+`,
+  },
+  {
+    slug: "gastos-categorias",
+    title: "Categorías de gastos y su relación con el P&L",
+    category: "Finanzas",
+    summary: "Para qué sirve la categoría de cada gasto.",
+    body: `
+Cada gasto que registras en Finanzas > Gastos se guarda con una fecha, un importe y una categoría.
+
+## Categorías disponibles
+
+Suministros, Material, Software, Transporte, Dietas, Alquiler y Otros.
+
+## Para qué sirve la categoría
+
+No afecta al cálculo del beneficio neto (todos los gastos restan por igual, sin importar la categoría), pero sí alimenta la tabla "Gastos por categoría" de Finanzas > P&L, que te permite ver en qué se te va el dinero mes a mes. Elige la categoría que más se ajuste — si dudas, usa "Otros" antes que dejarlo sin categorizar.
+`,
+  },
+  {
+    slug: "personalizar-fichas",
+    title: "Cómo personalizar las fichas de Contactos, Empresas y Oportunidades",
+    category: "Equipo",
+    summary: "Qué campos mostrar en la ficha desplegable y cómo cambiar el orden.",
+    body: `
+En Contactos, Empresas y Oportunidades, cada fila de la tabla se puede desplegar haciendo clic en ella (fuera de los botones) para ver una ficha con más detalle.
+
+## Qué campos aparecen en la ficha
+
+Por defecto se muestra un conjunto de campos habitual, pero puedes elegir cuáles ver y en qué orden con el botón "Personalizar" que hay junto al título de cada sección.
+
+## Cómo cambiarlos
+
+En el desplegable de "Personalizar" marca o desmarca los campos que quieras mostrar u ocultar, y usa las flechas ↑ ↓ para reordenarlos. Se guarda al pulsar "Guardar".
+
+## Es una preferencia personal
+
+Esta personalización es solo tuya: cada usuario puede configurar sus fichas a su manera, sin que afecte a lo que ven los demás.
+`,
+  },
+  {
+    slug: "canal-origen-contactos",
+    title: "Por qué rellenar el canal de origen de un contacto",
+    category: "Marketing",
+    summary: "Cómo se usa el campo \"¿De dónde vino?\" en Canales e Informes.",
+    body: `
+Al crear un contacto puedes indicar de qué canal vino (Instagram, Google, referido, etc.), con un detalle opcional y una URL de origen.
+
+## Para qué se usa
+
+Ese dato es la base de la pantalla de Canales: ahí ves cuántos contactos ha traído cada canal este mes y, si has introducido o sincronizado la inversión publicitaria, el coste por contacto de cada uno. Sin canal de origen, el contacto simplemente no se cuenta en ese desglose.
+
+## Detalle y URL de origen
+
+El campo de detalle sirve para anotar algo más concreto (por ejemplo, "post reels enero" o el nombre de quien lo refirió), y la URL de origen para guardar el enlace exacto (landing, anuncio) del que vino, por si luego quieres revisarlo.
+
+## Recomendación
+
+Acostúmbrate a rellenarlo siempre al dar de alta un contacto nuevo — es el único momento en que ese dato se puede capturar con precisión.
+`,
+  },
+  {
+    slug: "primeros-pasos",
+    title: "Primeros pasos con el CRM",
+    category: "Equipo",
+    summary: "Qué configurar primero para sacarle partido al CRM desde el primer día.",
+    body: `
+Si acabas de empezar, este es el orden recomendado.
+
+## 1. Datos fiscales
+
+Rellena Configuración > Datos de la empresa — son los que aparecerán impresos en tus facturas.
+
+## 2. Invita a tu equipo
+
+Desde Configuración > Usuarios, genera una invitación (por enlace o email) para cada persona que necesite acceso, y decide si es administrador o usuario normal.
+
+## 3. Registra el canal de origen de tus contactos
+
+Cada vez que des de alta un contacto, indica de dónde vino. Es lo que alimenta la pantalla de Canales.
+
+## 4. Conecta Meta Ads / Google Ads (opcional)
+
+Si haces publicidad, conecta tus cuentas en Configuración > Marketing para que la inversión se rellene sola en Canales en vez de introducirla a mano.
+
+## 5. Empieza a usar Oportunidades y Facturas
+
+Da de alta tus oportunidades comerciales y, cuando cierres una venta, emite la factura correspondiente — ambas cosas alimentan automáticamente Finanzas > P&L e Informes.
+
+## 6. Crea tu primer informe
+
+En Informes, prueba el modo simple para tener un vistazo rápido, y pasa al avanzado cuando quieras combinar métricas o comparar periodos.
+`,
+  },
 ];
 
 export function helpArticle(slug: string): HelpArticle | null {

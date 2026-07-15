@@ -4,6 +4,7 @@ import { ExpenseRow } from "./expense-row";
 import { AddDisclosure } from "@/components/add-disclosure";
 import { EmptyStateRow } from "@/components/empty-state";
 import { EXPENSE_CATEGORIES as CATEGORIES, EXPENSE_CATEGORY_LABELS as CATEGORY_LABELS } from "@/lib/expenses";
+import { HelpButton } from "@/components/help-button";
 
 export default async function GastosPage({
   searchParams,
@@ -40,7 +41,10 @@ export default async function GastosPage({
 
   return (
     <div>
-      <h1 className="mb-1 font-heading text-3xl font-semibold text-ink">Gastos</h1>
+      <h1 className="mb-1 flex items-center gap-2 font-heading text-3xl font-semibold text-ink">
+        Gastos
+        <HelpButton slug="gastos-categorias" label="Categorías de gastos" />
+      </h1>
       <p className="mb-8 text-sm text-ink-mute">Lo que te gastas en el negocio, con el IVA soportado.</p>
 
       <AddDisclosure label="Agregar gasto">

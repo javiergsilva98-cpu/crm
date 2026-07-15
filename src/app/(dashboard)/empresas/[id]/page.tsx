@@ -105,7 +105,7 @@ export default async function CompanyDetailPage({
           </div>
           <div>
             <dt className="text-ink-mute">Pipeline total</dt>
-            <dd>${totalPipeline.toLocaleString()}</dd>
+            <dd>{totalPipeline.toLocaleString()}€</dd>
           </div>
           <div>
             <dt className="text-ink-mute">NIF / CIF</dt>
@@ -165,7 +165,7 @@ export default async function CompanyDetailPage({
                 <tr key={opp.id} className="border-t border-border transition-colors hover:bg-sunken">
                   <td className="px-4 py-2">{opp.title}</td>
                   <td className="px-4 py-2 capitalize">{opp.stage}</td>
-                  <td className="px-4 py-2">${Number(opp.amount).toLocaleString()}</td>
+                  <td className="px-4 py-2">{Number(opp.amount).toLocaleString()}€</td>
                 </tr>
               ))}
               {opportunities?.length === 0 && (

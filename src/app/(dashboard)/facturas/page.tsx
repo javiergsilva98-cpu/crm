@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { EmptyStateRow } from "@/components/empty-state";
 import { calculateTotals } from "@/lib/invoice";
 import { deleteInvoice } from "./actions";
+import { HelpButton } from "@/components/help-button";
 
 const STATUS_LABELS: Record<string, string> = {
   draft: "Borrador",
@@ -36,7 +37,10 @@ export default async function FacturasPage({
     <div>
       <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="font-heading text-3xl font-semibold text-ink">Facturas</h1>
+          <h1 className="flex items-center gap-2 font-heading text-3xl font-semibold text-ink">
+            Facturas
+            <HelpButton slug="facturas-estados" label="Estados y exportación" />
+          </h1>
           <p className="mt-1 text-sm text-ink-mute">Numeración correlativa, vinculadas a tus empresas y negocios.</p>
         </div>
         <Link

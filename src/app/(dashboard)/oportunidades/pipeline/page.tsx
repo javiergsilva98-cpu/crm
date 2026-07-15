@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { PipelineBoard } from "./board";
+import { HelpButton } from "@/components/help-button";
 
 export default async function PipelinePage() {
   const supabase = await createClient();
@@ -13,7 +14,10 @@ export default async function PipelinePage() {
     <div>
       <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="font-heading text-3xl font-semibold text-ink">Pipeline</h1>
+          <h1 className="flex items-center gap-2 font-heading text-3xl font-semibold text-ink">
+            Pipeline
+            <HelpButton slug="pipeline-oportunidades" label="Etapas y pipeline" />
+          </h1>
           <p className="mt-1 text-sm text-ink-mute">Arrastra una tarjeta para cambiarla de etapa.</p>
         </div>
         <Link href="/oportunidades" className="text-sm text-ink-soft hover:text-ink hover:underline">

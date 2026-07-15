@@ -7,6 +7,7 @@ import { computeSeries, metricInfo, type MetricKey } from "./informes/aggregate"
 import { fetchRawData } from "./informes/raw-data";
 import { ReportView } from "./informes/report-view";
 import type { ChartType } from "./informes/validate";
+import { HelpButton } from "@/components/help-button";
 
 type SeriesRow = { metric: MetricKey; color: string; compare?: boolean };
 
@@ -72,7 +73,7 @@ export default async function DashboardHome() {
     { label: "Empresas", value: companies ?? 0 },
     { label: "Contactos", value: contacts ?? 0 },
     { label: "Oportunidades", value: opportunityCount },
-    { label: "Valor del pipeline", value: `$${pipelineValue.toLocaleString()}` },
+    { label: "Valor del pipeline", value: `${pipelineValue.toLocaleString()}€` },
     { label: "Tasa de conversión", value: conversionRate !== null ? `${conversionRate}%` : "—" },
   ];
 
@@ -93,7 +94,10 @@ export default async function DashboardHome() {
 
   return (
     <div>
-      <h1 className="mb-1 font-heading text-3xl font-semibold text-ink">Resumen</h1>
+      <h1 className="mb-1 flex items-center gap-2 font-heading text-3xl font-semibold text-ink">
+        Resumen
+        <HelpButton slug="primeros-pasos" label="Primeros pasos" />
+      </h1>
       <p className="mb-8 text-sm text-ink-mute">Cómo va tu negocio hoy.</p>
 
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-5">

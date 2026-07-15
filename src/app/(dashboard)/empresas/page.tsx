@@ -6,6 +6,7 @@ import { EmptyStateRow } from "@/components/empty-state";
 import { AddDisclosure } from "@/components/add-disclosure";
 import { FieldCustomizer } from "@/components/field-customizer";
 import { DETAIL_FIELD_CATALOG, resolveDetailFields } from "@/lib/detail-fields";
+import { HelpButton } from "@/components/help-button";
 
 export default async function EmpresasPage({
   searchParams,
@@ -40,7 +41,10 @@ export default async function EmpresasPage({
     <div>
       <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="font-heading text-3xl font-semibold text-ink">Empresas</h1>
+          <h1 className="flex items-center gap-2 font-heading text-3xl font-semibold text-ink">
+            Empresas
+            <HelpButton slug="personalizar-fichas" label="Personalizar fichas" />
+          </h1>
           <p className="mt-1 text-sm text-ink-mute">Las cuentas con las que trabajas. Haz clic en una fila para ver más detalles.</p>
         </div>
         <div className="flex items-center gap-3">

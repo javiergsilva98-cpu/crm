@@ -7,6 +7,7 @@ import { AddDisclosure } from "@/components/add-disclosure";
 import { STAGES, STAGE_LABELS } from "@/lib/stages";
 import { FieldCustomizer } from "@/components/field-customizer";
 import { DETAIL_FIELD_CATALOG, resolveDetailFields } from "@/lib/detail-fields";
+import { HelpButton } from "@/components/help-button";
 
 export default async function OportunidadesPage({
   searchParams,
@@ -49,7 +50,11 @@ export default async function OportunidadesPage({
     <div>
       <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="font-heading text-3xl font-semibold text-ink">Oportunidades</h1>
+          <h1 className="flex items-center gap-2 font-heading text-3xl font-semibold text-ink">
+            Oportunidades
+            <HelpButton slug="pipeline-oportunidades" label="Etapas y pipeline" />
+            <HelpButton slug="personalizar-fichas" label="Personalizar fichas" />
+          </h1>
           <p className="mt-1 text-sm text-ink-mute">Tu pipeline de ventas, de nuevo a ganado.</p>
         </div>
         <div className="flex items-center gap-4">

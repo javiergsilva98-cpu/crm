@@ -177,7 +177,7 @@ function LineChart({ series }: { series: ComputedSeries[] }) {
           if (i % labelStep !== 0 && i !== sortKeys.length - 1) return null;
           const x = sortKeys.length > 1 ? padding + (i / (sortKeys.length - 1)) * (width - padding * 2) : width / 2;
           return (
-            <text key={key} x={x} y={height - 8} fontSize={10} textAnchor="middle" fill="var(--text-mute)">
+            <text key={key} x={x} y={height - 8} fontSize={10} textAnchor="middle" fill="var(--text-muted)">
               {labelsBySortKey.get(key)}
             </text>
           );

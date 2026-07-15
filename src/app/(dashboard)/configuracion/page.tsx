@@ -48,6 +48,7 @@ export default async function ConfiguracionPage({
       <p className="mb-8 text-sm text-ink-mute">Tus datos fiscales y quién tiene acceso al CRM.</p>
 
       <div className="flex flex-col gap-8 md:flex-row">
+        <div className="relative md:w-48 md:flex-none">
         <nav className="flex gap-1 overflow-x-auto md:w-48 md:flex-none md:flex-col md:gap-0.5">
           {SECTIONS.filter((s) => s.key !== "usuarios" || isAdmin).map((section) => (
             <Link
@@ -63,6 +64,14 @@ export default async function ConfiguracionPage({
             </Link>
           ))}
         </nav>
+        {isAdmin && (
+          <div
+            aria-hidden
+            className="pointer-events-none absolute top-0 right-0 h-full w-8 md:hidden"
+            style={{ background: "linear-gradient(to right, transparent, var(--bg-base))" }}
+          />
+        )}
+        </div>
 
         <div className="min-w-0 flex-1">
           {activeTab === "empresa" && (

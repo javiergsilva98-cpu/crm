@@ -59,6 +59,44 @@ export async function createReport(formData: FormData) {
   revalidatePath("/");
 }
 
+export async function updateReport(formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const id = String(formData.get("id") ?? "").trim();
+  const name = String(formData.get("name") ?? "").trim();
+  const chartType = parseChartType(formData.get("chart_type"));
+  const series = parseSeries(formData.get("series"));
+  if (!id || !name || !chartType || !series) return;
+
+  const validation = validateSeries(chartType, series);
+  if (!validation.ok) return;
+
+  const dateFrom = String(formData.get("date_from") ?? "").trim() || null;
+  const dateTo = String(formData.get("date_to") ?? "").trim() || null;
+  const comparePrevious = formData.get("compare_previous") === "on" && chartType === "kpi_card" && Boolean(dateFrom && dateTo);
+
+  await supabase
+    .from("reports")
+    .update({
+      name,
+      metric: series[0]?.metric ?? null,
+      series,
+      chart_type: chartType,
+      compare_previous: comparePrevious,
+      date_from: dateFrom,
+      date_to: dateTo,
+    })
+    .eq("id", id)
+    .eq("owner_id", user.id);
+
+  revalidatePath("/informes");
+  revalidatePath("/");
+}
+
 export async function deleteReport(formData: FormData) {
   const supabase = await createClient();
   const id = String(formData.get("id"));

@@ -16,8 +16,15 @@ const GROUPS = [
     label: "Ventas",
     links: [
       { href: "/oportunidades", label: "Oportunidades" },
+      { href: "/oportunidades/pipeline", label: "Pipeline" },
+    ],
+  },
+  {
+    label: "Finanzas",
+    links: [
       { href: "/facturas", label: "Facturas" },
       { href: "/gastos", label: "Gastos" },
+      { href: "/pnl", label: "P&L" },
     ],
   },
   {

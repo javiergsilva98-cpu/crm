@@ -2,31 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { METRICS, type SeriesInput } from "./aggregate";
-import { validateSeries, type ChartType } from "./validate";
-
-function parseChartType(value: FormDataEntryValue | null): ChartType | null {
-  const v = String(value ?? "");
-  return (["bar", "line", "pie", "table", "kpi_card"] as const).includes(v as ChartType) ? (v as ChartType) : null;
-}
-
-function parseSeries(raw: FormDataEntryValue | null): SeriesInput[] | null {
-  try {
-    const parsed = JSON.parse(String(raw ?? "[]"));
-    if (!Array.isArray(parsed)) return null;
-    const valid = parsed.every(
-      (s) =>
-        s &&
-        typeof s.metric === "string" &&
-        METRICS.some((m) => m.key === s.metric) &&
-        typeof s.color === "string" &&
-        (s.compare === undefined || typeof s.compare === "boolean"),
-    );
-    return valid ? parsed : null;
-  } catch {
-    return null;
-  }
-}
+import { parseBlocks, validateBlocks } from "./blocks";
 
 export async function createReport(formData: FormData) {
   const supabase = await createClient();
@@ -36,11 +12,10 @@ export async function createReport(formData: FormData) {
   if (!user) return;
 
   const name = String(formData.get("name") ?? "").trim();
-  const chartType = parseChartType(formData.get("chart_type"));
-  const series = parseSeries(formData.get("series"));
-  if (!name || !chartType || !series) return;
+  const blocks = parseBlocks(formData.get("blocks"));
+  if (!name || !blocks) return;
 
-  const validation = validateSeries(chartType, series);
+  const validation = validateBlocks(blocks);
   if (!validation.ok) return;
 
   const dateFrom = String(formData.get("date_from") ?? "").trim() || null;
@@ -50,9 +25,7 @@ export async function createReport(formData: FormData) {
   await supabase.from("reports").insert({
     owner_id: user.id,
     name,
-    metric: series[0]?.metric ?? null,
-    series,
-    chart_type: chartType,
+    blocks: blocks.map((b) => ({ id: b.id, title: b.title, chart_type: b.chartType, series: b.series })),
     is_template: isTemplate,
     date_from: dateFrom,
     date_to: dateTo,
@@ -71,11 +44,10 @@ export async function updateReport(formData: FormData) {
 
   const id = String(formData.get("id") ?? "").trim();
   const name = String(formData.get("name") ?? "").trim();
-  const chartType = parseChartType(formData.get("chart_type"));
-  const series = parseSeries(formData.get("series"));
-  if (!id || !name || !chartType || !series) return;
+  const blocks = parseBlocks(formData.get("blocks"));
+  if (!id || !name || !blocks) return;
 
-  const validation = validateSeries(chartType, series);
+  const validation = validateBlocks(blocks);
   if (!validation.ok) return;
 
   const dateFrom = String(formData.get("date_from") ?? "").trim() || null;
@@ -86,9 +58,7 @@ export async function updateReport(formData: FormData) {
     .from("reports")
     .update({
       name,
-      metric: series[0]?.metric ?? null,
-      series,
-      chart_type: chartType,
+      blocks: blocks.map((b) => ({ id: b.id, title: b.title, chart_type: b.chartType, series: b.series })),
       is_template: isTemplate,
       date_from: dateFrom,
       date_to: dateTo,

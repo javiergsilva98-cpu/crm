@@ -1,30 +1,23 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { computeSeries, metricInfo, type MetricKey } from "../aggregate";
+import { computeSeries } from "../aggregate";
 import { fetchRawData } from "../raw-data";
 import { ReportView } from "../report-view";
 import { PrintButton } from "./print-button";
-import type { ChartType } from "../validate";
-
-type SeriesRow = { metric: MetricKey; color: string; compare?: boolean };
+import { blocksFromDb, sanitizeBlocks } from "../blocks";
 
 export default async function ReportDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await createClient();
 
   const [{ data: report }, raw] = await Promise.all([
-    supabase
-      .from("reports")
-      .select("id, name, chart_type, series, date_from, date_to")
-      .eq("id", id)
-      .maybeSingle(),
+    supabase.from("reports").select("id, name, blocks, date_from, date_to").eq("id", id).maybeSingle(),
     fetchRawData(supabase),
   ]);
 
   if (!report) notFound();
 
-  const series = ((report.series as SeriesRow[] | null) ?? []).filter((s) => metricInfo(s.metric));
-  const computed = computeSeries(raw, series, report.date_from, report.date_to);
+  const blocks = sanitizeBlocks(blocksFromDb(report.blocks));
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -39,8 +32,16 @@ export default async function ReportDetailPage({ params }: { params: Promise<{ i
         </div>
         <PrintButton />
       </div>
-      <div className="rounded-lg border border-border bg-raised p-5">
-        <ReportView chartType={report.chart_type as ChartType} series={computed} />
+      <div className="flex flex-col gap-6">
+        {blocks.map((block) => {
+          const computed = computeSeries(raw, block.series, report.date_from, report.date_to);
+          return (
+            <div key={block.id} className="rounded-lg border border-border bg-raised p-5">
+              {block.title && <h2 className="mb-3 text-base font-semibold text-ink">{block.title}</h2>}
+              <ReportView chartType={block.chartType} series={computed} />
+            </div>
+          );
+        })}
       </div>
     </div>
   );

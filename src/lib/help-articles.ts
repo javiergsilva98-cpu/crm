@@ -92,9 +92,13 @@ Revisa la consola del navegador en la página donde pegaste el formulario (clic 
     slug: "informes-avanzados",
     title: "Cómo crear un informe avanzado",
     category: "Marketing",
-    summary: "Mezclar métricas, elegir tipo de gráfico y comparar con el periodo anterior.",
+    summary: "Añadir varias gráficas, mezclar métricas y comparar con el periodo anterior.",
     body: `
 En Marketing > Informes, activa "Creación avanzada" para acceder a todas las opciones.
+
+## Un informe puede tener varias gráficas
+
+Un informe no es una sola gráfica: con "+ Añadir gráfica" puedes ir sumando tantas como necesites (por ejemplo, facturación por mes, gastos por categoría y oportunidades por etapa, todo en el mismo informe). Cada gráfica se configura por separado —su propio tipo de visualización y sus propias métricas— y todas comparten el nombre y el rango de fechas del informe. Ponle un título a cada gráfica si quieres que se distingan al verlas juntas.
 
 ## Elegir tipo de visualización
 

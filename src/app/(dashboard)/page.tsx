@@ -3,13 +3,11 @@ import { createClient } from "@/lib/supabase/server";
 import { PipelineChart } from "./pipeline-chart";
 import { CHANNELS, CHANNEL_LABELS, type Channel } from "@/lib/channels";
 import { currentMonthRange } from "@/lib/month";
-import { computeSeries, metricInfo, type MetricKey } from "./informes/aggregate";
+import { computeSeries } from "./informes/aggregate";
 import { fetchRawData } from "./informes/raw-data";
 import { ReportView } from "./informes/report-view";
-import type { ChartType } from "./informes/validate";
+import { blocksFromDb, sanitizeBlocks } from "./informes/blocks";
 import { HelpButton } from "@/components/help-button";
-
-type SeriesRow = { metric: MetricKey; color: string; compare?: boolean };
 
 export default async function DashboardHome() {
   const supabase = await createClient();
@@ -20,7 +18,7 @@ export default async function DashboardHome() {
   const { data: homeReport } = user
     ? await supabase
         .from("reports")
-        .select("id, name, chart_type, series, date_from, date_to")
+        .select("id, name, blocks, date_from, date_to")
         .eq("owner_id", user.id)
         .eq("is_home", true)
         .maybeSingle()
@@ -28,8 +26,7 @@ export default async function DashboardHome() {
 
   if (homeReport) {
     const raw = await fetchRawData(supabase);
-    const series = ((homeReport.series as SeriesRow[] | null) ?? []).filter((s) => metricInfo(s.metric));
-    const computed = computeSeries(raw, series, homeReport.date_from, homeReport.date_to);
+    const blocks = sanitizeBlocks(blocksFromDb(homeReport.blocks));
 
     return (
       <div>
@@ -42,8 +39,16 @@ export default async function DashboardHome() {
             Cambiar inicio →
           </Link>
         </div>
-        <div className="rounded-lg border border-border bg-raised p-5">
-          <ReportView chartType={homeReport.chart_type as ChartType} series={computed} />
+        <div className="flex flex-col gap-6">
+          {blocks.map((block) => {
+            const computed = computeSeries(raw, block.series, homeReport.date_from, homeReport.date_to);
+            return (
+              <div key={block.id} className="rounded-lg border border-border bg-raised p-5">
+                {block.title && <h2 className="mb-3 text-base font-semibold text-ink">{block.title}</h2>}
+                <ReportView chartType={block.chartType} series={computed} />
+              </div>
+            );
+          })}
         </div>
       </div>
     );

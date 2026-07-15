@@ -26,8 +26,13 @@ export function CreateReportForm({ raw }: { raw: RawData }) {
 
       {!advanced && (
         <form action={createReport} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-          <input type="hidden" name="chart_type" value="bar" />
-          <input type="hidden" name="series" value={JSON.stringify([{ metric: simpleMetric, color: colorAt(0) }])} />
+          <input
+            type="hidden"
+            name="blocks"
+            value={JSON.stringify([
+              { id: "block-1", title: null, chartType: "bar", series: [{ metric: simpleMetric, color: colorAt(0) }] },
+            ])}
+          />
           <input
             name="name"
             value={simpleName}

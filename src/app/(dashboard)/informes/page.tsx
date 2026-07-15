@@ -1,12 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
-import { computeSeries, metricInfo, type MetricKey } from "./aggregate";
 import { fetchRawData } from "./raw-data";
 import { CreateReportForm } from "./create-report-form";
 import { ReportCard } from "./report-card";
 import { AddDisclosure } from "@/components/add-disclosure";
 import { HelpButton } from "@/components/help-button";
-
-type SeriesRow = { metric: MetricKey; color: string; compare?: boolean };
+import { blocksFromDb, sanitizeBlocks } from "./blocks";
 
 export default async function InformesPage() {
   const supabase = await createClient();
@@ -17,7 +15,7 @@ export default async function InformesPage() {
   const [{ data: reports }, raw] = await Promise.all([
     supabase
       .from("reports")
-      .select("id, name, chart_type, series, date_from, date_to, is_home, is_template, owner_id, created_at")
+      .select("id, name, blocks, date_from, date_to, is_home, is_template, owner_id, created_at")
       .order("created_at", { ascending: false }),
     fetchRawData(supabase),
   ]);
@@ -26,10 +24,9 @@ export default async function InformesPage() {
   const templateReports = (reports ?? []).filter((r) => r.owner_id !== user?.id);
 
   function renderReport(report: NonNullable<typeof reports>[number]) {
-    const series = ((report.series as SeriesRow[] | null) ?? []).filter((s) => metricInfo(s.metric));
-    const computed = computeSeries(raw, series, report.date_from, report.date_to);
+    const blocks = sanitizeBlocks(blocksFromDb(report.blocks));
     return (
-      <ReportCard key={report.id} report={report} computed={computed} raw={raw} isOwner={report.owner_id === user?.id} />
+      <ReportCard key={report.id} report={{ ...report, blocks }} raw={raw} isOwner={report.owner_id === user?.id} />
     );
   }
 

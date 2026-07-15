@@ -4,6 +4,7 @@ import { useState } from "react";
 import { calculateTotals, type InvoiceItem } from "@/lib/invoice";
 
 type Option = { id: string; label: string };
+type Service = { id: string; name: string; description: string | null; unit_price: number };
 
 export function InvoiceForm({
   action,
@@ -11,6 +12,7 @@ export function InvoiceForm({
   companies,
   contacts,
   opportunities,
+  services,
   initial,
 }: {
   action: (formData: FormData) => void;
@@ -18,6 +20,7 @@ export function InvoiceForm({
   companies: Option[];
   contacts: Option[];
   opportunities: Option[];
+  services?: Service[];
   initial?: {
     company_id: string | null;
     contact_id: string | null;
@@ -116,6 +119,26 @@ export function InvoiceForm({
       <div className="mb-3 flex flex-col gap-2">
         {items.map((item, i) => (
           <div key={i} className="flex flex-col gap-2 rounded-md border border-border p-3 sm:flex-row sm:items-center">
+            {services && services.length > 0 && (
+              <select
+                aria-label="Rellenar desde un servicio"
+                defaultValue=""
+                onChange={(e) => {
+                  const service = services.find((s) => s.id === e.target.value);
+                  if (service) {
+                    updateItem(i, { description: service.description || service.name, unit_price: service.unit_price });
+                  }
+                }}
+                className="w-full rounded-md border border-border bg-base px-2 py-2 text-sm text-ink-soft sm:w-40"
+              >
+                <option value="">Desde servicio…</option>
+                {services.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+            )}
             <input
               name={`item_description_${i}`}
               value={item.description}

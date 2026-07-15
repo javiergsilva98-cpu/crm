@@ -6,10 +6,12 @@ import { updateUserRole, createInvite, deleteInvite } from "./users-actions";
 import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { InviteLink } from "./invite-link";
 import { MarketingSection } from "./marketing-section";
+import { ServicesSection } from "./services-section";
 import { HelpButton } from "@/components/help-button";
 
 const SECTIONS = [
   { key: "empresa", label: "Datos de la empresa" },
+  { key: "servicios", label: "Servicios" },
   { key: "usuarios", label: "Usuarios" },
   { key: "marketing", label: "Marketing" },
 ] as const;
@@ -27,13 +29,20 @@ export default async function ConfiguracionPage({
 
   const profile = await getCurrentProfile();
   const isAdmin = profile?.role === "admin";
-  const activeTab = (tab === "usuarios" || tab === "marketing") && isAdmin ? tab : "empresa";
+  const activeTab =
+    tab === "servicios" ? "servicios" : (tab === "usuarios" || tab === "marketing") && isAdmin ? tab : "empresa";
 
   const { data: settings } = await supabase
     .from("business_settings")
     .select("legal_name, tax_id, address, postal_code, city, province, country, email, phone")
     .eq("owner_id", user?.id ?? "")
     .maybeSingle();
+
+  const { data: services } = await supabase
+    .from("services")
+    .select("id, name, description, unit_price, tax_rate")
+    .eq("owner_id", user?.id ?? "")
+    .order("name");
 
   const [{ data: users }, { data: invites }, { data: integrations }] = isAdmin
     ? await Promise.all([
@@ -58,7 +67,7 @@ export default async function ConfiguracionPage({
       <div className="flex flex-col gap-8 md:flex-row">
         <div className="relative md:w-48 md:flex-none">
         <nav className="flex gap-1 overflow-x-auto md:w-48 md:flex-none md:flex-col md:gap-0.5">
-          {SECTIONS.filter((s) => s.key === "empresa" || isAdmin).map((section) => (
+          {SECTIONS.filter((s) => s.key === "empresa" || s.key === "servicios" || isAdmin).map((section) => (
             <Link
               key={section.key}
               href={`/configuracion?tab=${section.key}`}
@@ -72,7 +81,7 @@ export default async function ConfiguracionPage({
             </Link>
           ))}
         </nav>
-        {isAdmin && (
+        {SECTIONS.filter((s) => s.key === "empresa" || s.key === "servicios" || isAdmin).length > 1 && (
           <div
             aria-hidden
             className="pointer-events-none absolute top-0 right-0 h-full w-8 md:hidden"
@@ -290,6 +299,8 @@ export default async function ConfiguracionPage({
               )}
             </>
           )}
+
+          {activeTab === "servicios" && <ServicesSection services={services ?? []} />}
 
           {activeTab === "marketing" && isAdmin && <MarketingSection integrations={integrations ?? []} />}
         </div>

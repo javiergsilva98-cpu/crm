@@ -6,10 +6,14 @@ import { HelpButton } from "@/components/help-button";
 
 export default async function NuevaFacturaPage() {
   const supabase = await createClient();
-  const [{ data: companies }, { data: contacts }, { data: opportunities }] = await Promise.all([
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const [{ data: companies }, { data: contacts }, { data: opportunities }, { data: services }] = await Promise.all([
     supabase.from("companies").select("id, name").order("name"),
     supabase.from("contacts").select("id, full_name").order("full_name"),
     supabase.from("opportunities").select("id, title").order("created_at", { ascending: false }),
+    supabase.from("services").select("id, name, description, unit_price").eq("owner_id", user?.id ?? "").order("name"),
   ]);
 
   return (
@@ -27,6 +31,7 @@ export default async function NuevaFacturaPage() {
         companies={(companies ?? []).map((c) => ({ id: c.id, label: c.name }))}
         contacts={(contacts ?? []).map((c) => ({ id: c.id, label: c.full_name }))}
         opportunities={(opportunities ?? []).map((o) => ({ id: o.id, label: o.title }))}
+        services={services ?? []}
       />
     </div>
   );

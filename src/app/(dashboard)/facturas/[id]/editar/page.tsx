@@ -12,8 +12,11 @@ export default async function EditarFacturaPage({
 }) {
   const { id } = await params;
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  const [{ data: invoice }, { data: items }, { data: companies }, { data: contacts }, { data: opportunities }] =
+  const [{ data: invoice }, { data: items }, { data: companies }, { data: contacts }, { data: opportunities }, { data: services }] =
     await Promise.all([
       supabase
         .from("invoices")
@@ -24,6 +27,7 @@ export default async function EditarFacturaPage({
       supabase.from("companies").select("id, name").order("name"),
       supabase.from("contacts").select("id, full_name").order("full_name"),
       supabase.from("opportunities").select("id, title").order("created_at", { ascending: false }),
+      supabase.from("services").select("id, name, description, unit_price").eq("owner_id", user?.id ?? "").order("name"),
     ]);
 
   if (!invoice) {
@@ -50,6 +54,7 @@ export default async function EditarFacturaPage({
         companies={(companies ?? []).map((c) => ({ id: c.id, label: c.name }))}
         contacts={(contacts ?? []).map((c) => ({ id: c.id, label: c.full_name }))}
         opportunities={(opportunities ?? []).map((o) => ({ id: o.id, label: o.title }))}
+        services={services ?? []}
         initial={{
           company_id: invoice.company_id,
           contact_id: invoice.contact_id,

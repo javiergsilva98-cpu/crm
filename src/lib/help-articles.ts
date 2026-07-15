@@ -179,15 +179,19 @@ La vista de Finanzas > P&L cruza dos fuentes de datos que ya tienes en el CRM.
 
 ## Ingresos
 
-Se cuentan las facturas en estado "emitida" o "pagada", por su fecha de emisión. Las facturas en borrador o canceladas no cuentan como ingreso.
+Se cuentan las facturas en estado "emitida" o "pagada", por su fecha de emisión, **solo por su base imponible**. El IVA que cobras en la factura no es ingreso del negocio — es dinero que retienes para Hacienda — así que no se incluye aquí. Las facturas en borrador o canceladas tampoco cuentan.
 
 ## Gastos
 
-Se cuentan todos los gastos registrados en Finanzas > Gastos, por su fecha de gasto, sin importar la categoría.
+Se cuentan todos los gastos registrados en Finanzas > Gastos, por su fecha de gasto y por su importe sin IVA, sin importar la categoría.
 
 ## Beneficio y margen
 
-Beneficio neto = Ingresos − Gastos. El margen (%) es ese beneficio dividido entre los ingresos totales del periodo.
+Beneficio neto = Ingresos − Gastos (ambos sin IVA). El margen (%) es ese beneficio dividido entre los ingresos totales del periodo.
+
+## Cajas de IVA
+
+Debajo de la cuenta de resultados hay dos cajas separadas: el **IVA devengado** (el que cobras en tus facturas emitidas) y el **IVA soportado** (el que pagas en tus gastos). La diferencia entre ambas es, a grandes rasgos, lo que tocaría liquidar con Hacienda — positivo significa a ingresar, negativo a compensar o devolver. Esto es una aproximación orientativa, no sustituye el cálculo real de tu gestoría (que puede incluir otros ajustes, prorratas o periodos de liquidación distintos).
 
 ## Filtrar por fechas
 

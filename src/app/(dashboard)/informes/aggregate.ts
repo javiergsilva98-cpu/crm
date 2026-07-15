@@ -9,9 +9,11 @@ import { CHANNEL_LABELS } from "@/lib/channels";
 export const METRICS = [
   { key: "opportunities_by_stage", label: "Oportunidades por etapa", kind: "count_amount", dimension: "category" },
   { key: "opportunities_by_month", label: "Oportunidades creadas por mes", kind: "count", dimension: "month" },
-  { key: "invoices_by_month", label: "Facturación por mes", kind: "amount", dimension: "month" },
+  { key: "invoices_by_month", label: "Facturación por mes (base, sin IVA)", kind: "amount", dimension: "month" },
   { key: "expenses_by_category", label: "Gastos por categoría", kind: "amount", dimension: "category" },
   { key: "expenses_by_month", label: "Gastos por mes", kind: "amount", dimension: "month" },
+  { key: "iva_devengado_by_month", label: "IVA devengado por mes (facturas emitidas)", kind: "amount", dimension: "month" },
+  { key: "iva_soportado_by_month", label: "IVA soportado por mes (gastos)", kind: "amount", dimension: "month" },
   { key: "contacts_by_source", label: "Contactos por canal", kind: "count", dimension: "category" },
   { key: "companies_by_month", label: "Empresas nuevas por mes", kind: "count", dimension: "month" },
   { key: "sessions_by_channel", label: "Sesiones web por canal", kind: "count", dimension: "category" },
@@ -31,8 +33,8 @@ export type RawData = {
   companies: { created_at: string }[];
   contacts: { created_at: string; source: string | null }[];
   opportunities: { created_at: string; stage: string; amount: number }[];
-  invoices: { issue_date: string; status: string; total: number }[];
-  expenses: { expense_date: string; category: string; amount: number }[];
+  invoices: { issue_date: string; status: string; base: number; tax: number }[];
+  expenses: { expense_date: string; category: string; amount: number; tax_rate: number }[];
   channelSessions: { month: string; channel: string; sessions: number }[];
 };
 
@@ -142,13 +144,36 @@ export function aggregateMetric(
     return sortedMonthRows(totals, "amount");
   }
 
-  // invoices_by_month
+  if (metric === "iva_soportado_by_month") {
+    const totals = new Map<string, number>();
+    for (const row of raw.expenses) {
+      if (!inRange(row.expense_date, dateFrom, dateTo)) continue;
+      const key = monthKey(row.expense_date);
+      const tax = Number(row.amount ?? 0) * (Number(row.tax_rate ?? 0) / 100);
+      totals.set(key, (totals.get(key) ?? 0) + tax);
+    }
+    return sortedMonthRows(totals, "amount");
+  }
+
+  if (metric === "iva_devengado_by_month") {
+    const totals = new Map<string, number>();
+    for (const row of raw.invoices) {
+      if (row.status === "draft" || row.status === "cancelled") continue;
+      if (!inRange(row.issue_date, dateFrom, dateTo)) continue;
+      const key = monthKey(row.issue_date);
+      totals.set(key, (totals.get(key) ?? 0) + row.tax);
+    }
+    return sortedMonthRows(totals, "amount");
+  }
+
+  // invoices_by_month — base imponible, no incluye IVA (el IVA repercutido no
+  // es ingreso del negocio, se lleva por separado en iva_devengado_by_month).
   const totals = new Map<string, number>();
   for (const row of raw.invoices) {
     if (row.status === "draft" || row.status === "cancelled") continue;
     if (!inRange(row.issue_date, dateFrom, dateTo)) continue;
     const key = monthKey(row.issue_date);
-    totals.set(key, (totals.get(key) ?? 0) + row.total);
+    totals.set(key, (totals.get(key) ?? 0) + row.base);
   }
   return sortedMonthRows(totals, "amount");
 }

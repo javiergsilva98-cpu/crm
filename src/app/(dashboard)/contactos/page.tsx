@@ -8,13 +8,25 @@ import { AddDisclosure } from "@/components/add-disclosure";
 import { FieldCustomizer } from "@/components/field-customizer";
 import { DETAIL_FIELD_CATALOG, resolveDetailFields } from "@/lib/detail-fields";
 import { HelpButton } from "@/components/help-button";
+import { AdvancedFilters } from "@/components/advanced-filters";
+import { applyFilters, parseFilters } from "@/lib/table-filters";
+
+const FILTER_FIELDS = [
+  { key: "full_name", label: "Nombre completo" },
+  { key: "email", label: "Email" },
+  { key: "phone", label: "Teléfono" },
+  { key: "source_detail", label: "Detalle del canal" },
+  { key: "tax_id", label: "NIF" },
+  { key: "fiscal_address", label: "Dirección fiscal" },
+];
 
 export default async function ContactosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; empresa?: string; canal?: string }>;
+  searchParams: Promise<{ q?: string; empresa?: string; canal?: string; f?: string }>;
 }) {
-  const { q, empresa, canal } = await searchParams;
+  const { q, empresa, canal, f } = await searchParams;
+  const filters = parseFilters(f);
   const supabase = await createClient();
 
   let query = supabase
@@ -33,6 +45,7 @@ export default async function ContactosPage({
   if (canal) {
     query = query.eq("source", canal);
   }
+  query = applyFilters(query, filters);
 
   const {
     data: { user },
@@ -146,6 +159,10 @@ export default async function ContactosPage({
         )}
       </form>
 
+      <div className="mb-6">
+        <AdvancedFilters fields={FILTER_FIELDS} initial={filters} />
+      </div>
+
       {contactsError && (
         <div className="mb-6 rounded-lg border border-danger bg-raised p-4 text-sm text-danger">
           Error al cargar los contactos: {contactsError.message}
@@ -160,9 +177,9 @@ export default async function ContactosPage({
         companies={companies ?? []}
         profileEmailById={profileEmailById}
         detailFields={detailFields}
-        emptyTitle={q || empresa || canal ? "Sin resultados" : "Todavía no tienes contactos"}
+        emptyTitle={q || empresa || canal || filters.length > 0 ? "Sin resultados" : "Todavía no tienes contactos"}
         emptyBody={
-          q || empresa || canal
+          q || empresa || canal || filters.length > 0
             ? "Ningún contacto coincide con este filtro. Prueba a limpiarlo."
             : "Añade el primero arriba e indica de dónde vino — es lo que te va a permitir ver qué canal te trae más clientes."
         }

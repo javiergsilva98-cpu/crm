@@ -6,13 +6,24 @@ import { AddDisclosure } from "@/components/add-disclosure";
 import { FieldCustomizer } from "@/components/field-customizer";
 import { DETAIL_FIELD_CATALOG, resolveDetailFields } from "@/lib/detail-fields";
 import { HelpButton } from "@/components/help-button";
+import { AdvancedFilters } from "@/components/advanced-filters";
+import { applyFilters, parseFilters } from "@/lib/table-filters";
+
+const FILTER_FIELDS = [
+  { key: "name", label: "Nombre" },
+  { key: "website", label: "Sitio web" },
+  { key: "industry", label: "Industria" },
+  { key: "tax_id", label: "NIF / CIF" },
+  { key: "fiscal_address", label: "Dirección fiscal" },
+];
 
 export default async function EmpresasPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; f?: string }>;
 }) {
-  const { q } = await searchParams;
+  const { q, f } = await searchParams;
+  const filters = parseFilters(f);
   const supabase = await createClient();
 
   let query = supabase
@@ -23,6 +34,7 @@ export default async function EmpresasPage({
   if (q) {
     query = query.or(`name.ilike.%${q}%,industry.ilike.%${q}%`);
   }
+  query = applyFilters(query, filters);
 
   const {
     data: { user },
@@ -83,6 +95,10 @@ export default async function EmpresasPage({
         )}
       </form>
 
+      <div className="mb-6">
+        <AdvancedFilters fields={FILTER_FIELDS} initial={filters} />
+      </div>
+
       {companiesError && (
         <div className="mb-6 rounded-lg border border-danger bg-raised p-4 text-sm text-danger">
           Error al cargar las empresas: {companiesError.message}
@@ -92,9 +108,9 @@ export default async function EmpresasPage({
       <CompaniesTable
         companies={companies ?? []}
         detailFields={detailFields}
-        emptyTitle={q ? "Sin resultados" : "Todavía no tienes empresas"}
+        emptyTitle={q || filters.length > 0 ? "Sin resultados" : "Todavía no tienes empresas"}
         emptyBody={
-          q
+          q || filters.length > 0
             ? `Ninguna empresa coincide con "${q}". Prueba con otro término o limpia el filtro.`
             : "Añade la primera con el botón + de arriba — nombre y, si lo sabes, su sitio web (así los contactos con ese dominio de email se vinculan solos)."
         }

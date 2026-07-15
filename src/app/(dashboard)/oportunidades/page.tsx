@@ -7,13 +7,21 @@ import { STAGES, STAGE_LABELS } from "@/lib/stages";
 import { FieldCustomizer } from "@/components/field-customizer";
 import { DETAIL_FIELD_CATALOG, resolveDetailFields } from "@/lib/detail-fields";
 import { HelpButton } from "@/components/help-button";
+import { AdvancedFilters } from "@/components/advanced-filters";
+import { applyFilters, parseFilters } from "@/lib/table-filters";
+
+const FILTER_FIELDS = [
+  { key: "title", label: "Título" },
+  { key: "notes", label: "Notas" },
+];
 
 export default async function OportunidadesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; empresa?: string; etapa?: string }>;
+  searchParams: Promise<{ q?: string; empresa?: string; etapa?: string; f?: string }>;
 }) {
-  const { q, empresa, etapa } = await searchParams;
+  const { q, empresa, etapa, f } = await searchParams;
+  const filters = parseFilters(f);
   const supabase = await createClient();
 
   let query = supabase
@@ -32,6 +40,7 @@ export default async function OportunidadesPage({
   if (etapa) {
     query = query.eq("stage", etapa);
   }
+  query = applyFilters(query, filters);
 
   const {
     data: { user },
@@ -118,6 +127,10 @@ export default async function OportunidadesPage({
         )}
       </form>
 
+      <div className="mb-6">
+        <AdvancedFilters fields={FILTER_FIELDS} initial={filters} />
+      </div>
+
       {opportunitiesError && (
         <div className="mb-6 rounded-lg border border-danger bg-raised p-4 text-sm text-danger">
           Error al cargar las oportunidades: {opportunitiesError.message}
@@ -132,9 +145,9 @@ export default async function OportunidadesPage({
         }))}
         companies={companies ?? []}
         detailFields={detailFields}
-        emptyTitle={q || empresa || etapa ? "Sin resultados" : "Todavía no tienes oportunidades"}
+        emptyTitle={q || empresa || etapa || filters.length > 0 ? "Sin resultados" : "Todavía no tienes oportunidades"}
         emptyBody={
-          q || empresa || etapa
+          q || empresa || etapa || filters.length > 0
             ? "Ninguna oportunidad coincide con este filtro. Prueba a limpiarlo."
             : "Añade la primera arriba para empezar a ver tu pipeline tomar forma."
         }

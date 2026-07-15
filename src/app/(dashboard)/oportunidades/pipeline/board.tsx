@@ -3,23 +3,36 @@
 import { useState, useTransition } from "react";
 import { updateStage as updateStageAction } from "../actions";
 import { STAGES, STAGE_LABELS } from "@/lib/stages";
+import { OpportunityModal } from "./opportunity-modal";
 
 type Opportunity = {
   id: string;
   title: string;
   stage: string;
   amount: number;
+  stage_entered_at: string;
+  updated_at: string;
   companies: { name: string } | null;
 };
+
+function daysAgo(dateStr: string) {
+  const diffMs = Date.now() - new Date(dateStr).getTime();
+  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  if (days <= 0) return "hoy";
+  if (days === 1) return "1 día";
+  return `${days} días`;
+}
 
 export function PipelineBoard({ opportunities }: { opportunities: Opportunity[] }) {
   const [items, setItems] = useState(opportunities);
   const [dragId, setDragId] = useState<string | null>(null);
   const [dragOverStage, setDragOverStage] = useState<string | null>(null);
+  const [openId, setOpenId] = useState<string | null>(null);
   const [, startTransition] = useTransition();
 
   function moveTo(id: string, stage: string) {
-    setItems((prev) => prev.map((o) => (o.id === id ? { ...o, stage } : o)));
+    const now = new Date().toISOString();
+    setItems((prev) => prev.map((o) => (o.id === id ? { ...o, stage, stage_entered_at: now, updated_at: now } : o)));
     startTransition(() => {
       const formData = new FormData();
       formData.set("id", id);
@@ -71,11 +84,16 @@ export function PipelineBoard({ opportunities }: { opportunities: Opportunity[] 
                     setDragId(null);
                     setDragOverStage(null);
                   }}
+                  onClick={() => setOpenId(opp.id)}
                   className="cursor-grab rounded-md border border-border bg-raised p-3 text-sm shadow-sm transition-all hover:-translate-y-0.5 hover:border-border-strong hover:shadow-md active:cursor-grabbing active:scale-[0.98]"
                 >
                   <p className="font-medium text-ink">{opp.title}</p>
                   {opp.companies?.name && <p className="text-xs text-ink-mute">{opp.companies.name}</p>}
                   <p className="mt-1 text-xs text-ink-soft">{Number(opp.amount).toLocaleString("es-ES")}€</p>
+                  <p className="mt-1.5 flex items-center justify-between text-[11px] text-ink-mute">
+                    <span title="Tiempo en esta etapa">{daysAgo(opp.stage_entered_at)} aquí</span>
+                    <span title="Última modificación">mod. {daysAgo(opp.updated_at)}</span>
+                  </p>
                 </div>
               ))}
               {stageItems.length === 0 && (
@@ -85,6 +103,7 @@ export function PipelineBoard({ opportunities }: { opportunities: Opportunity[] 
           </div>
         );
       })}
+      {openId && <OpportunityModal id={openId} onClose={() => setOpenId(null)} />}
     </div>
   );
 }

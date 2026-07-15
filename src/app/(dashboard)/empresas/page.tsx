@@ -1,13 +1,11 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { createCompany } from "./actions";
-import { CompanyRow } from "./company-row";
-import { EmptyStateRow } from "@/components/empty-state";
+import { CompaniesTable } from "./companies-table";
 import { AddDisclosure } from "@/components/add-disclosure";
 import { FieldCustomizer } from "@/components/field-customizer";
 import { DETAIL_FIELD_CATALOG, resolveDetailFields } from "@/lib/detail-fields";
 import { HelpButton } from "@/components/help-button";
-import { ResizableTh } from "@/components/resizable-th";
 
 export default async function EmpresasPage({
   searchParams,
@@ -91,33 +89,16 @@ export default async function EmpresasPage({
         </div>
       )}
 
-      <div className="overflow-x-auto rounded-lg border border-border bg-raised">
-        <table className="w-full text-left text-sm" style={{ tableLayout: "fixed" }}>
-          <thead className="border-b border-border-strong bg-sunken">
-            <tr>
-              <ResizableTh tableId="empresas" columnKey="name" defaultWidth={220}>Nombre</ResizableTh>
-              <ResizableTh tableId="empresas" columnKey="website" defaultWidth={220}>Sitio web</ResizableTh>
-              <ResizableTh tableId="empresas" columnKey="industry" defaultWidth={180}>Industria</ResizableTh>
-              <th className="px-4 py-2.5" style={{ width: 96 }} />
-            </tr>
-          </thead>
-          <tbody>
-            {companies?.map((company) => (
-              <CompanyRow key={company.id} company={company} detailFields={detailFields} />
-            ))}
-            {companies?.length === 0 &&
-              (q ? (
-                <EmptyStateRow colSpan={4} title="Sin resultados" body={`Ninguna empresa coincide con "${q}". Prueba con otro término o limpia el filtro.`} />
-              ) : (
-                <EmptyStateRow
-                  colSpan={4}
-                  title="Todavía no tienes empresas"
-                  body="Añade la primera con el botón + de arriba — nombre y, si lo sabes, su sitio web (así los contactos con ese dominio de email se vinculan solos)."
-                />
-              ))}
-          </tbody>
-        </table>
-      </div>
+      <CompaniesTable
+        companies={companies ?? []}
+        detailFields={detailFields}
+        emptyTitle={q ? "Sin resultados" : "Todavía no tienes empresas"}
+        emptyBody={
+          q
+            ? `Ninguna empresa coincide con "${q}". Prueba con otro término o limpia el filtro.`
+            : "Añade la primera con el botón + de arriba — nombre y, si lo sabes, su sitio web (así los contactos con ese dominio de email se vinculan solos)."
+        }
+      />
     </div>
   );
 }

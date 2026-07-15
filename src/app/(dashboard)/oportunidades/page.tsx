@@ -1,14 +1,12 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { createOpportunity } from "./actions";
-import { OpportunityRow } from "./opportunity-row";
-import { EmptyStateRow } from "@/components/empty-state";
+import { OpportunitiesTable } from "./opportunities-table";
 import { AddDisclosure } from "@/components/add-disclosure";
 import { STAGES, STAGE_LABELS } from "@/lib/stages";
 import { FieldCustomizer } from "@/components/field-customizer";
 import { DETAIL_FIELD_CATALOG, resolveDetailFields } from "@/lib/detail-fields";
 import { HelpButton } from "@/components/help-button";
-import { ResizableTh } from "@/components/resizable-th";
 
 export default async function OportunidadesPage({
   searchParams,
@@ -126,43 +124,21 @@ export default async function OportunidadesPage({
         </div>
       )}
 
-      <div className="overflow-x-auto rounded-lg border border-border bg-raised">
-        <table className="w-full text-left text-sm" style={{ tableLayout: "fixed" }}>
-          <thead className="border-b border-border-strong bg-sunken">
-            <tr>
-              <ResizableTh tableId="oportunidades" columnKey="title" defaultWidth={240}>Título</ResizableTh>
-              <ResizableTh tableId="oportunidades" columnKey="company" defaultWidth={180}>Empresa</ResizableTh>
-              <ResizableTh tableId="oportunidades" columnKey="amount" defaultWidth={110}>Monto</ResizableTh>
-              <ResizableTh tableId="oportunidades" columnKey="stage" defaultWidth={160}>Etapa</ResizableTh>
-              <th className="px-4 py-2.5" style={{ width: 96 }} />
-            </tr>
-          </thead>
-          <tbody>
-            {opportunities?.map((opp) => (
-              <OpportunityRow
-                key={opp.id}
-                opportunity={{
-                  ...opp,
-                  companies: (opp.companies as unknown as { name: string } | null) ?? null,
-                  contacts: (opp.contacts as unknown as { full_name: string } | null) ?? null,
-                }}
-                companies={companies ?? []}
-                detailFields={detailFields}
-              />
-            ))}
-            {opportunities?.length === 0 &&
-              (q || empresa || etapa ? (
-                <EmptyStateRow colSpan={5} title="Sin resultados" body="Ninguna oportunidad coincide con este filtro. Prueba a limpiarlo." />
-              ) : (
-                <EmptyStateRow
-                  colSpan={5}
-                  title="Todavía no tienes oportunidades"
-                  body="Añade la primera arriba para empezar a ver tu pipeline tomar forma."
-                />
-              ))}
-          </tbody>
-        </table>
-      </div>
+      <OpportunitiesTable
+        opportunities={(opportunities ?? []).map((opp) => ({
+          ...opp,
+          companies: (opp.companies as unknown as { name: string } | null) ?? null,
+          contacts: (opp.contacts as unknown as { full_name: string } | null) ?? null,
+        }))}
+        companies={companies ?? []}
+        detailFields={detailFields}
+        emptyTitle={q || empresa || etapa ? "Sin resultados" : "Todavía no tienes oportunidades"}
+        emptyBody={
+          q || empresa || etapa
+            ? "Ninguna oportunidad coincide con este filtro. Prueba a limpiarlo."
+            : "Añade la primera arriba para empezar a ver tu pipeline tomar forma."
+        }
+      />
     </div>
   );
 }

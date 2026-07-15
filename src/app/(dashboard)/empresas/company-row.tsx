@@ -21,14 +21,24 @@ function ignoreInteractiveClick(e: MouseEvent<HTMLTableRowElement>) {
   return (e.target as HTMLElement).closest("a, button, input, select, form") !== null;
 }
 
-export function CompanyRow({ company, detailFields }: { company: Company; detailFields: DetailField[] }) {
+export function CompanyRow({
+  company,
+  detailFields,
+  selected,
+  onToggleSelect,
+}: {
+  company: Company;
+  detailFields: DetailField[];
+  selected: boolean;
+  onToggleSelect: () => void;
+}) {
   const [editing, setEditing] = useState(false);
   const [expanded, setExpanded] = useState(false);
 
   if (editing) {
     return (
       <tr className="border-t border-border bg-sunken">
-        <td className="px-4 py-2" colSpan={4}>
+        <td className="px-4 py-2" colSpan={5}>
           <form
             action={async (formData) => {
               await updateCompany(formData);
@@ -100,6 +110,9 @@ export function CompanyRow({ company, detailFields }: { company: Company; detail
           setExpanded((v) => !v);
         }}
       >
+        <td className="px-4 py-2">
+          <input type="checkbox" checked={selected} onChange={onToggleSelect} aria-label={`Seleccionar ${company.name}`} />
+        </td>
         <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">
           <Link href={`/empresas/${company.id}`} className="text-ink hover:underline">
             {company.name}
@@ -126,7 +139,7 @@ export function CompanyRow({ company, detailFields }: { company: Company; detail
       </tr>
       {expanded && (
         <ExpandableDetail
-          colSpan={4}
+          colSpan={5}
           fields={detailFields.map((f) => ({ key: f.key, label: f.label, value: values[f.key] }))}
         />
       )}

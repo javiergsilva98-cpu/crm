@@ -51,3 +51,17 @@ export async function deleteCompany(formData: FormData) {
   await supabase.from("companies").delete().eq("id", id);
   revalidatePath("/empresas");
 }
+
+export async function bulkDeleteCompanies(ids: string[]) {
+  if (ids.length === 0) return;
+  const supabase = await createClient();
+  await supabase.from("companies").delete().in("id", ids);
+  revalidatePath("/empresas");
+}
+
+export async function bulkUpdateCompaniesIndustry(ids: string[], industry: string | null) {
+  if (ids.length === 0) return;
+  const supabase = await createClient();
+  await supabase.from("companies").update({ industry }).in("id", ids);
+  revalidatePath("/empresas");
+}

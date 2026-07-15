@@ -1,15 +1,13 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { createContact } from "./actions";
-import { ContactRow } from "./contact-row";
+import { ContactsTable } from "./contacts-table";
 import { ImportButton } from "./import-button";
 import { CHANNELS, CHANNEL_LABELS } from "@/lib/channels";
-import { EmptyStateRow } from "@/components/empty-state";
 import { AddDisclosure } from "@/components/add-disclosure";
 import { FieldCustomizer } from "@/components/field-customizer";
 import { DETAIL_FIELD_CATALOG, resolveDetailFields } from "@/lib/detail-fields";
 import { HelpButton } from "@/components/help-button";
-import { ResizableTh } from "@/components/resizable-th";
 
 export default async function ContactosPage({
   searchParams,
@@ -154,45 +152,21 @@ export default async function ContactosPage({
         </div>
       )}
 
-      <div className="overflow-x-auto rounded-lg border border-border bg-raised">
-        <table className="w-full text-left text-sm" style={{ tableLayout: "fixed" }}>
-          <thead className="border-b border-border-strong bg-sunken">
-            <tr>
-              <ResizableTh tableId="contactos" columnKey="full_name" defaultWidth={160}>Nombre</ResizableTh>
-              <ResizableTh tableId="contactos" columnKey="email" defaultWidth={200}>Email</ResizableTh>
-              <ResizableTh tableId="contactos" columnKey="phone" defaultWidth={130}>Teléfono</ResizableTh>
-              <ResizableTh tableId="contactos" columnKey="company" defaultWidth={160}>Empresa</ResizableTh>
-              <ResizableTh tableId="contactos" columnKey="source" defaultWidth={120}>Canal</ResizableTh>
-              <ResizableTh tableId="contactos" columnKey="last_activity" defaultWidth={160}>Última actividad</ResizableTh>
-              <th className="px-4 py-2.5" style={{ width: 96 }} />
-            </tr>
-          </thead>
-          <tbody>
-            {contacts?.map((contact) => (
-              <ContactRow
-                key={contact.id}
-                contact={{
-                  ...contact,
-                  companies: (contact.companies as unknown as { name: string } | null) ?? null,
-                }}
-                companies={companies ?? []}
-                lastActivityByEmail={contact.last_activity_by ? (profileEmailById.get(contact.last_activity_by) ?? null) : null}
-                detailFields={detailFields}
-              />
-            ))}
-            {contacts?.length === 0 &&
-              (q || empresa || canal ? (
-                <EmptyStateRow colSpan={7} title="Sin resultados" body="Ningún contacto coincide con este filtro. Prueba a limpiarlo." />
-              ) : (
-                <EmptyStateRow
-                  colSpan={7}
-                  title="Todavía no tienes contactos"
-                  body="Añade el primero arriba e indica de dónde vino — es lo que te va a permitir ver qué canal te trae más clientes."
-                />
-              ))}
-          </tbody>
-        </table>
-      </div>
+      <ContactsTable
+        contacts={(contacts ?? []).map((contact) => ({
+          ...contact,
+          companies: (contact.companies as unknown as { name: string } | null) ?? null,
+        }))}
+        companies={companies ?? []}
+        profileEmailById={profileEmailById}
+        detailFields={detailFields}
+        emptyTitle={q || empresa || canal ? "Sin resultados" : "Todavía no tienes contactos"}
+        emptyBody={
+          q || empresa || canal
+            ? "Ningún contacto coincide con este filtro. Prueba a limpiarlo."
+            : "Añade el primero arriba e indica de dónde vino — es lo que te va a permitir ver qué canal te trae más clientes."
+        }
+      />
     </div>
   );
 }

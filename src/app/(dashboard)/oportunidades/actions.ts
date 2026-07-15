@@ -62,3 +62,24 @@ export async function deleteOpportunity(formData: FormData) {
   await supabase.from("opportunities").delete().eq("id", id);
   revalidatePath("/oportunidades");
 }
+
+export async function bulkDeleteOpportunities(ids: string[]) {
+  if (ids.length === 0) return;
+  const supabase = await createClient();
+  await supabase.from("opportunities").delete().in("id", ids);
+  revalidatePath("/oportunidades");
+}
+
+export async function bulkUpdateOpportunitiesStage(ids: string[], stage: string) {
+  if (ids.length === 0) return;
+  const supabase = await createClient();
+  await supabase.from("opportunities").update({ stage }).in("id", ids);
+  revalidatePath("/oportunidades");
+}
+
+export async function bulkUpdateOpportunitiesCompany(ids: string[], companyId: string | null) {
+  if (ids.length === 0) return;
+  const supabase = await createClient();
+  await supabase.from("opportunities").update({ company_id: companyId }).in("id", ids);
+  revalidatePath("/oportunidades");
+}

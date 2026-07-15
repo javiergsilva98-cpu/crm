@@ -28,10 +28,14 @@ export function OpportunityRow({
   opportunity,
   companies,
   detailFields,
+  selected,
+  onToggleSelect,
 }: {
   opportunity: Opportunity;
   companies: { id: string; name: string }[];
   detailFields: DetailField[];
+  selected: boolean;
+  onToggleSelect: () => void;
 }) {
   const [editing, setEditing] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -39,7 +43,7 @@ export function OpportunityRow({
   if (editing) {
     return (
       <tr className="border-t border-border bg-sunken">
-        <td className="px-4 py-2" colSpan={5}>
+        <td className="px-4 py-2" colSpan={6}>
           <form
             action={async (formData) => {
               await updateOpportunity(formData);
@@ -106,6 +110,9 @@ export function OpportunityRow({
           setExpanded((v) => !v);
         }}
       >
+        <td className="px-4 py-2">
+          <input type="checkbox" checked={selected} onChange={onToggleSelect} aria-label={`Seleccionar ${opportunity.title}`} />
+        </td>
         <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">{opportunity.title}</td>
         <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">{opportunity.companies?.name}</td>
         <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">{Number(opportunity.amount).toLocaleString("es-ES")}€</td>
@@ -131,7 +138,7 @@ export function OpportunityRow({
       </tr>
       {expanded && (
         <ExpandableDetail
-          colSpan={5}
+          colSpan={6}
           fields={detailFields.map((f) => ({ key: f.key, label: f.label, value: values[f.key] }))}
         />
       )}

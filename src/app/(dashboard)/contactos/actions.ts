@@ -89,6 +89,27 @@ export async function deleteContact(formData: FormData) {
   revalidatePath("/contactos");
 }
 
+export async function bulkDeleteContacts(ids: string[]) {
+  if (ids.length === 0) return;
+  const supabase = await createClient();
+  await supabase.from("contacts").delete().in("id", ids);
+  revalidatePath("/contactos");
+}
+
+export async function bulkUpdateContactsCompany(ids: string[], companyId: string | null) {
+  if (ids.length === 0) return;
+  const supabase = await createClient();
+  await supabase.from("contacts").update({ company_id: companyId }).in("id", ids);
+  revalidatePath("/contactos");
+}
+
+export async function bulkUpdateContactsSource(ids: string[], source: string | null) {
+  if (ids.length === 0) return;
+  const supabase = await createClient();
+  await supabase.from("contacts").update({ source: parseSource(source) }).in("id", ids);
+  revalidatePath("/contactos");
+}
+
 type ImportRow = { first_name: string; last_name: string; email: string; phone: string; empresa: string; source: string };
 
 function normalizeSource(value: string): string | null {

@@ -7,6 +7,7 @@ import { StatusSelect } from "./status-select";
 import { PrintButton } from "./print-button";
 import { PaidAtInput } from "./paid-at-input";
 import { HelpButton } from "@/components/help-button";
+import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 
 export default async function FacturaDetailPage({
   params,
@@ -161,9 +162,12 @@ export default async function FacturaDetailPage({
       {invoice.status === "draft" && (
         <form action={deleteInvoice} className="mt-4 print:hidden">
           <input type="hidden" name="id" value={id} />
-          <button type="submit" className="text-sm text-danger hover:underline">
+          <ConfirmSubmitButton
+            confirmMessage={`¿Eliminar la factura ${invoice.invoice_number}? Esta acción no se puede deshacer.`}
+            className="text-sm text-danger hover:underline"
+          >
             Eliminar factura
-          </button>
+          </ConfirmSubmitButton>
         </form>
       )}
     </div>

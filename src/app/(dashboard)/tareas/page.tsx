@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { createTask, toggleTask, deleteTask } from "./actions";
+import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { AddDisclosure } from "@/components/add-disclosure";
 
 export default async function TareasPage() {
@@ -88,9 +89,9 @@ export default async function TareasPage() {
             </div>
             <form action={deleteTask}>
               <input type="hidden" name="id" value={task.id} />
-              <button type="submit" className="text-sm text-danger hover:underline">
+              <ConfirmSubmitButton confirmMessage={`¿Eliminar la tarea "${task.title}"?`} className="text-sm text-danger hover:underline">
                 Eliminar
-              </button>
+              </ConfirmSubmitButton>
             </form>
           </div>
         ))}

@@ -4,6 +4,7 @@ import { EmptyStateRow } from "@/components/empty-state";
 import { calculateTotals } from "@/lib/invoice";
 import { deleteInvoice } from "./actions";
 import { HelpButton } from "@/components/help-button";
+import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { ResizableTh } from "@/components/resizable-th";
 
 const STATUS_LABELS: Record<string, string> = {
@@ -125,9 +126,12 @@ export default async function FacturasPage({
                     {invoice.status === "draft" && (
                       <form action={deleteInvoice}>
                         <input type="hidden" name="id" value={invoice.id} />
-                        <button type="submit" className="text-sm text-danger hover:underline">
+                        <ConfirmSubmitButton
+                          confirmMessage={`¿Eliminar la factura ${invoice.invoice_number}? Esta acción no se puede deshacer.`}
+                          className="text-sm text-danger hover:underline"
+                        >
                           Eliminar
-                        </button>
+                        </ConfirmSubmitButton>
                       </form>
                     )}
                   </td>

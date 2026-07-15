@@ -2,6 +2,7 @@ import Link from "next/link";
 import { HelpButton } from "@/components/help-button";
 import { createClient } from "@/lib/supabase/server";
 import { createForm, deleteForm } from "./actions";
+import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { AddDisclosure } from "@/components/add-disclosure";
 
 export default async function FormulariosPage() {
@@ -50,9 +51,12 @@ export default async function FormulariosPage() {
             </Link>
             <form action={deleteForm}>
               <input type="hidden" name="id" value={form.id} />
-              <button type="submit" className="text-sm text-danger hover:underline">
+              <ConfirmSubmitButton
+                confirmMessage={`¿Eliminar el formulario "${form.name}"? El HTML embebido en tu web dejará de funcionar.`}
+                className="text-sm text-danger hover:underline"
+              >
                 Eliminar
-              </button>
+              </ConfirmSubmitButton>
             </form>
           </div>
         ))}

@@ -7,6 +7,7 @@ import { ReportView } from "./report-view";
 import { ReportBuilderForm } from "./report-builder-form";
 import { ExportCsvButton } from "./export-csv-button";
 import type { ReportBlock } from "./blocks";
+import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import Link from "next/link";
 
 type Report = {
@@ -93,9 +94,12 @@ export function ReportCard({
               </form>
               <form action={deleteReport}>
                 <input type="hidden" name="id" value={report.id} />
-                <button type="submit" className="text-sm text-danger hover:underline">
+                <ConfirmSubmitButton
+                  confirmMessage={`¿Eliminar el informe "${report.name}"? Esta acción no se puede deshacer.`}
+                  className="text-sm text-danger hover:underline"
+                >
                   Eliminar
-                </button>
+                </ConfirmSubmitButton>
               </form>
             </>
           )}

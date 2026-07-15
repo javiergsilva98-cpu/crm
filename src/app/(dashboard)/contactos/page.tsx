@@ -58,7 +58,6 @@ export default async function ContactosPage({
           <h1 className="flex items-center gap-2 font-heading text-3xl font-semibold text-ink">
             Contactos
             <HelpButton slug="canal-origen-contactos" label="Canal de origen" />
-            <HelpButton slug="personalizar-fichas" label="Personalizar fichas" />
           </h1>
           <p className="mt-1 text-sm text-ink-mute">Las personas que han llegado a tu negocio. Haz clic en una fila para ver más detalles.</p>
         </div>

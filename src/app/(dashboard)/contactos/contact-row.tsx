@@ -5,6 +5,8 @@ import { updateContact, deleteContact } from "./actions";
 import { CHANNELS, CHANNEL_LABELS, type Channel } from "@/lib/channels";
 import { ExpandableDetail } from "@/components/expandable-detail";
 import type { DetailField } from "@/lib/detail-fields";
+import { formatDateTime } from "@/lib/format";
+import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 
 function ignoreInteractiveClick(e: MouseEvent<HTMLTableRowElement>) {
   return (e.target as HTMLElement).closest("a, button, input, select, form") !== null;
@@ -163,7 +165,7 @@ export function ContactRow({
     tax_id: contact.tax_id,
     fiscal_address: contact.fiscal_address,
     last_activity_at: contact.last_activity_at
-      ? `${new Date(contact.last_activity_at).toLocaleDateString("es-ES")}${lastActivityByEmail ? ` · ${lastActivityByEmail}` : ""}`
+      ? `${formatDateTime(contact.last_activity_at)}${lastActivityByEmail ? ` · ${lastActivityByEmail}` : ""}`
       : null,
   };
 
@@ -194,7 +196,7 @@ export function ContactRow({
       <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap text-ink-soft">
         {contact.last_activity_at ? (
           <span title={lastActivityByEmail ? `Por ${lastActivityByEmail}` : undefined}>
-            {new Date(contact.last_activity_at).toLocaleDateString("es-ES")}
+            {formatDateTime(contact.last_activity_at)}
             {lastActivityByEmail && <span className="text-ink-mute"> · {lastActivityByEmail}</span>}
           </span>
         ) : (
@@ -208,9 +210,12 @@ export function ContactRow({
           </button>
           <form action={deleteContact}>
             <input type="hidden" name="id" value={contact.id} />
-            <button type="submit" className="text-danger hover:underline">
+            <ConfirmSubmitButton
+              confirmMessage={`¿Eliminar a ${contact.full_name}? Esta acción no se puede deshacer.`}
+              className="text-danger hover:underline"
+            >
               Eliminar
-            </button>
+            </ConfirmSubmitButton>
           </form>
         </div>
       </td>

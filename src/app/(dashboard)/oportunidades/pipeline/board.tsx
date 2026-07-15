@@ -58,7 +58,7 @@ export function PipelineBoard({ opportunities }: { opportunities: Opportunity[] 
                 {STAGE_LABELS[stage]}
               </p>
               <p className="text-xs text-ink-mute">
-                {stageItems.length} · {stageTotal.toLocaleString()}€
+                {stageItems.length} · {stageTotal.toLocaleString("es-ES")}€
               </p>
             </div>
             <div className="flex flex-col gap-2 p-2">
@@ -75,7 +75,7 @@ export function PipelineBoard({ opportunities }: { opportunities: Opportunity[] 
                 >
                   <p className="font-medium text-ink">{opp.title}</p>
                   {opp.companies?.name && <p className="text-xs text-ink-mute">{opp.companies.name}</p>}
-                  <p className="mt-1 text-xs text-ink-soft">{Number(opp.amount).toLocaleString()}€</p>
+                  <p className="mt-1 text-xs text-ink-soft">{Number(opp.amount).toLocaleString("es-ES")}€</p>
                 </div>
               ))}
               {stageItems.length === 0 && (

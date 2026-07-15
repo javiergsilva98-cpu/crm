@@ -54,7 +54,6 @@ export default async function OportunidadesPage({
           <h1 className="flex items-center gap-2 font-heading text-3xl font-semibold text-ink">
             Oportunidades
             <HelpButton slug="pipeline-oportunidades" label="Etapas y pipeline" />
-            <HelpButton slug="personalizar-fichas" label="Personalizar fichas" />
           </h1>
           <p className="mt-1 text-sm text-ink-mute">Tu pipeline de ventas, de nuevo a ganado.</p>
         </div>

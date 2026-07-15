@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { addActivity, deleteActivity, addTagToCompany, removeTagFromCompany } from "./actions";
 import { calculateTotals } from "@/lib/invoice";
 import { HelpButton } from "@/components/help-button";
+import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 
 const STATUS_LABELS: Record<string, string> = {
   draft: "Borrador",
@@ -109,7 +110,7 @@ export default async function CompanyDetailPage({
           </div>
           <div>
             <dt className="text-ink-mute">Pipeline total</dt>
-            <dd>{totalPipeline.toLocaleString()}€</dd>
+            <dd>{totalPipeline.toLocaleString("es-ES")}€</dd>
           </div>
           <div>
             <dt className="text-ink-mute">NIF / CIF</dt>
@@ -169,7 +170,7 @@ export default async function CompanyDetailPage({
                 <tr key={opp.id} className="border-t border-border transition-colors hover:bg-sunken">
                   <td className="px-4 py-2">{opp.title}</td>
                   <td className="px-4 py-2 capitalize">{opp.stage}</td>
-                  <td className="px-4 py-2">{Number(opp.amount).toLocaleString()}€</td>
+                  <td className="px-4 py-2">{Number(opp.amount).toLocaleString("es-ES")}€</td>
                 </tr>
               ))}
               {opportunities?.length === 0 && (
@@ -258,9 +259,9 @@ export default async function CompanyDetailPage({
               <form action={deleteActivity}>
                 <input type="hidden" name="id" value={activity.id} />
                 <input type="hidden" name="company_id" value={id} />
-                <button type="submit" className="text-danger hover:underline">
+                <ConfirmSubmitButton confirmMessage="¿Eliminar esta nota de actividad?" className="text-danger hover:underline">
                   Eliminar
-                </button>
+                </ConfirmSubmitButton>
               </form>
             </div>
           ))}

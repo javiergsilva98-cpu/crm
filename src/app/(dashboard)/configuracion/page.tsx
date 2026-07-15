@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentProfile } from "@/lib/profile";
 import { saveBusinessSettings } from "./actions";
 import { updateUserRole, createInvite, deleteInvite } from "./users-actions";
+import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { InviteLink } from "./invite-link";
 import { MarketingSection } from "./marketing-section";
 import { HelpButton } from "@/components/help-button";
@@ -272,9 +273,12 @@ export default async function ConfiguracionPage({
                               <InviteLink id={invite.id} />
                               <form action={deleteInvite}>
                                 <input type="hidden" name="id" value={invite.id} />
-                                <button type="submit" className="rounded-md border border-border px-3 py-1 text-sm text-danger transition-colors hover:border-danger">
+                                <ConfirmSubmitButton
+                                  confirmMessage="¿Revocar esta invitación? El enlace dejará de funcionar."
+                                  className="rounded-md border border-border px-3 py-1 text-sm text-danger transition-colors hover:border-danger"
+                                >
                                   Revocar
-                                </button>
+                                </ConfirmSubmitButton>
                               </form>
                             </div>
                           </td>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { updateCompany, deleteCompany } from "./actions";
 import { ExpandableDetail } from "@/components/expandable-detail";
 import type { DetailField } from "@/lib/detail-fields";
+import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 
 type Company = {
   id: string;
@@ -113,9 +114,12 @@ export function CompanyRow({ company, detailFields }: { company: Company; detail
             </button>
             <form action={deleteCompany}>
               <input type="hidden" name="id" value={company.id} />
-              <button type="submit" className="text-danger hover:underline">
+              <ConfirmSubmitButton
+                confirmMessage={`¿Eliminar ${company.name}? Esta acción no se puede deshacer.`}
+                className="text-danger hover:underline"
+              >
                 Eliminar
-              </button>
+              </ConfirmSubmitButton>
             </form>
           </div>
         </td>

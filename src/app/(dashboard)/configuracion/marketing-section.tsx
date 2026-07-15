@@ -1,6 +1,7 @@
 import { PROVIDERS } from "@/lib/marketing-providers";
 import { saveIntegration, disconnectIntegration, syncIntegration } from "./marketing-actions";
 import { HelpButton } from "@/components/help-button";
+import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 
 type Integration = {
   provider: string;
@@ -55,9 +56,12 @@ export function MarketingSection({ integrations }: { integrations: Integration[]
                     </form>
                     <form action={disconnectIntegration}>
                       <input type="hidden" name="provider" value={config.key} />
-                      <button type="submit" className="text-sm text-danger hover:underline">
+                      <ConfirmSubmitButton
+                        confirmMessage={`¿Desconectar ${config.label}? Tendrás que volver a introducir las credenciales para reconectarlo.`}
+                        className="text-sm text-danger hover:underline"
+                      >
                         Desconectar
-                      </button>
+                      </ConfirmSubmitButton>
                     </form>
                   </div>
                 )}

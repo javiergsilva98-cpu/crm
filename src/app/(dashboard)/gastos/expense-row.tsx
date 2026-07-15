@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { updateExpense, deleteExpense } from "./actions";
 import { EXPENSE_CATEGORIES as CATEGORIES, EXPENSE_CATEGORY_LABELS as CATEGORY_LABELS } from "@/lib/expenses";
+import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 
 type Expense = {
   id: string;
@@ -108,9 +109,12 @@ export function ExpenseRow({
           </button>
           <form action={deleteExpense}>
             <input type="hidden" name="id" value={expense.id} />
-            <button type="submit" className="text-danger hover:underline">
+            <ConfirmSubmitButton
+              confirmMessage={`¿Eliminar el gasto "${expense.description}"? Esta acción no se puede deshacer.`}
+              className="text-danger hover:underline"
+            >
               Eliminar
-            </button>
+            </ConfirmSubmitButton>
           </form>
         </div>
       </td>

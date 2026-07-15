@@ -78,7 +78,7 @@ export default async function DashboardHome() {
     { label: "Empresas", value: companies ?? 0 },
     { label: "Contactos", value: contacts ?? 0 },
     { label: "Oportunidades", value: opportunityCount },
-    { label: "Valor del pipeline", value: `${pipelineValue.toLocaleString()}€` },
+    { label: "Valor del pipeline", value: `${pipelineValue.toLocaleString("es-ES")}€` },
     { label: "Tasa de conversión", value: conversionRate !== null ? `${conversionRate}%` : "—" },
   ];
 

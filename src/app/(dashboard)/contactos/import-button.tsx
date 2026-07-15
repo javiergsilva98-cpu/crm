@@ -14,8 +14,26 @@ function findColumn(headers: string[], candidates: string[]): number {
   return -1;
 }
 
+const TEMPLATE_CSV =
+  "Nombre,Email,Teléfono,Empresa,Canal\n" +
+  'Ana García,ana@ejemplo.com,612345678,Acme S.L.,instagram\n' +
+  'Juan Pérez,juan@ejemplo.com,655123456,,referido\n';
+
+function downloadTemplate() {
+  const blob = new Blob([TEMPLATE_CSV], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "plantilla_contactos.csv";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
 export function ImportButton() {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [open, setOpen] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -64,19 +82,45 @@ export function ImportButton() {
   }
 
   return (
-    <div className="flex items-center gap-2">
-      <label className="cursor-pointer text-sm text-ink-soft hover:underline">
-        {loading ? "Importando..." : "Importar CSV"}
-        <input
-          ref={inputRef}
-          type="file"
-          accept=".csv,text/csv"
-          onChange={handleFile}
-          disabled={loading}
-          className="hidden"
-        />
-      </label>
-      {status && <span className="text-xs text-ink-mute">{status}</span>}
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="text-sm text-ink-soft hover:text-ink hover:underline"
+      >
+        Importar CSV
+      </button>
+
+      {open && (
+        <div className="absolute right-0 z-20 mt-2 w-80 rounded-lg border border-border bg-raised p-4 shadow-lg shadow-black/10">
+          <p className="mb-2 text-sm font-semibold text-ink">Cómo importar contactos</p>
+          <ol className="mb-3 list-decimal space-y-1 pl-4 text-xs text-ink-soft">
+            <li>Descarga la plantilla de abajo y rellénala (o adapta tu propio CSV a esas columnas).</li>
+            <li>La columna &quot;Nombre&quot; es obligatoria; el resto son opcionales.</li>
+            <li>En &quot;Canal&quot; usa uno de: instagram, google, whatsapp, referido, tiktok, otro.</li>
+            <li>Sube el archivo con el botón de abajo.</li>
+          </ol>
+          <button
+            type="button"
+            onClick={downloadTemplate}
+            className="mb-3 w-full rounded-md border border-border px-3 py-1.5 text-sm text-ink-soft transition-colors hover:border-border-strong hover:text-ink"
+          >
+            Descargar plantilla CSV
+          </button>
+          <label className="block w-full cursor-pointer rounded-md bg-calm px-3 py-1.5 text-center text-sm font-medium text-base transition-colors hover:bg-calm-hover">
+            {loading ? "Importando..." : "Elegir archivo CSV"}
+            <input
+              ref={inputRef}
+              type="file"
+              accept=".csv,text/csv"
+              onChange={handleFile}
+              disabled={loading}
+              className="hidden"
+            />
+          </label>
+          {status && <p className="mt-2 text-xs text-ink-mute">{status}</p>}
+        </div>
+      )}
     </div>
   );
 }

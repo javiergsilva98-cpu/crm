@@ -39,8 +39,8 @@ export function FieldCustomizer({
         className="flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm text-ink-soft transition-colors hover:border-border-strong hover:text-ink"
       >
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <circle cx="8" cy="8" r="2" />
-          <path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.5 3.5l1.4 1.4M11.1 11.1l1.4 1.4M3.5 12.5l1.4-1.4M11.1 4.9l1.4-1.4" strokeLinecap="round" />
+          <path d="M11.5 1.9a1.4 1.4 0 0 1 2 2L4.8 12.6l-2.8.6.6-2.8L11.5 1.9Z" strokeLinejoin="round" />
+          <path d="M10 3.4l2 2" strokeLinecap="round" />
         </svg>
         Personalizar
       </button>

@@ -26,6 +26,10 @@ export default async function ConfiguracionPage({
   const isAdmin = profile?.role === "admin";
   const activeTab = tab === "usuarios" && isAdmin ? "usuarios" : "empresa";
 
+  const rawProfileQuery = user
+    ? await supabase.from("profiles").select("id, email, role").eq("id", user.id).maybeSingle()
+    : { data: null, error: null, status: null, statusText: null };
+
   const debugInfo = {
     supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "(no definida)",
     userId: user?.id ?? null,
@@ -33,6 +37,12 @@ export default async function ConfiguracionPage({
     userError: userError?.message ?? null,
     profile,
     isAdmin,
+    rawProfileQuery: {
+      data: rawProfileQuery.data,
+      error: rawProfileQuery.error,
+      status: (rawProfileQuery as { status?: number }).status ?? null,
+      statusText: (rawProfileQuery as { statusText?: string }).statusText ?? null,
+    },
   };
 
   const { data: settings } = await supabase

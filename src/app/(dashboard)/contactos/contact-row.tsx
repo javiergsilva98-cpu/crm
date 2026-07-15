@@ -219,7 +219,7 @@ export function ContactRow({
           <span className="text-ink-mute">—</span>
         )}
       </td>
-      <td className="px-4 py-2 text-right">
+      <td className="sticky right-0 border-l border-border bg-raised px-4 py-2 text-right">
         <div className="flex justify-end gap-3">
           <button type="button" onClick={() => setEditing(true)} className="text-ink-soft hover:underline">
             Editar

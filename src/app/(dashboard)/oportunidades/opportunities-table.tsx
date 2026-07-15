@@ -146,7 +146,7 @@ export function OpportunitiesTable({
               <ResizableTh tableId="oportunidades" columnKey="company" defaultWidth={180}>Empresa</ResizableTh>
               <ResizableTh tableId="oportunidades" columnKey="amount" defaultWidth={110}>Monto</ResizableTh>
               <ResizableTh tableId="oportunidades" columnKey="stage" defaultWidth={160}>Etapa</ResizableTh>
-              <th className="px-4 py-2.5" style={{ width: 96 }} />
+              <th className="sticky right-0 border-l border-border bg-sunken px-4 py-2.5" style={{ width: 96 }} />
             </tr>
           </thead>
           <tbody>

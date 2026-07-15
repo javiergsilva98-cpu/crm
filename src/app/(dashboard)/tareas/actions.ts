@@ -8,22 +8,24 @@ export async function createTask(formData: FormData) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return;
+  if (!user) return { error: "Sesión no válida. Vuelve a iniciar sesión." };
 
   const title = String(formData.get("title") ?? "").trim();
-  if (!title) return;
+  if (!title) return { error: "El título es obligatorio." };
 
   const companyId = String(formData.get("company_id") ?? "").trim();
   const opportunityId = String(formData.get("opportunity_id") ?? "").trim();
   const dueDate = String(formData.get("due_date") ?? "").trim();
 
-  await supabase.from("tasks").insert({
+  const { error } = await supabase.from("tasks").insert({
     owner_id: user.id,
     title,
     company_id: companyId || null,
     opportunity_id: opportunityId || null,
     due_date: dueDate || null,
   });
+
+  if (error) return { error: "No se pudo guardar la tarea. Inténtalo de nuevo." };
 
   revalidatePath("/tareas");
 }

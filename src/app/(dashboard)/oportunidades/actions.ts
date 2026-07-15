@@ -8,21 +8,23 @@ export async function createOpportunity(formData: FormData) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return;
+  if (!user) return { error: "Sesión no válida. Vuelve a iniciar sesión." };
 
   const title = String(formData.get("title") ?? "").trim();
-  if (!title) return;
+  if (!title) return { error: "El título es obligatorio." };
 
   const companyId = String(formData.get("company_id") ?? "").trim();
   const amount = Number(formData.get("amount") ?? 0);
 
-  await supabase.from("opportunities").insert({
+  const { error } = await supabase.from("opportunities").insert({
     owner_id: user.id,
     title,
     company_id: companyId || null,
     amount: Number.isFinite(amount) ? amount : 0,
     stage: "nuevo",
   });
+
+  if (error) return { error: "No se pudo guardar la oportunidad. Inténtalo de nuevo." };
 
   revalidatePath("/oportunidades");
 }

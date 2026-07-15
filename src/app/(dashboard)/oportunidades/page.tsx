@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createOpportunity } from "./actions";
 import { OpportunitiesTable } from "./opportunities-table";
 import { AddDisclosure } from "@/components/add-disclosure";
+import { CreateForm } from "@/components/create-form";
 import { STAGES, STAGE_LABELS } from "@/lib/stages";
 import { FieldCustomizer } from "@/components/field-customizer";
 import { DETAIL_FIELD_CATALOG, resolveDetailFields } from "@/lib/detail-fields";
@@ -76,21 +77,23 @@ export default async function OportunidadesPage({
       </div>
 
       <AddDisclosure label="Agregar oportunidad">
-        <form action={createOpportunity} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-          <input name="title" placeholder="Título" required className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
-          <input name="amount" type="number" step="0.01" placeholder="Monto" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-32" />
-          <select name="company_id" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
-            <option value="">Sin empresa</option>
-            {companies?.map((company) => (
-              <option key={company.id} value={company.id}>
-                {company.name}
-              </option>
-            ))}
-          </select>
-          <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-base transition-colors hover:bg-calm-hover sm:w-auto">
-            Agregar
-          </button>
-        </form>
+        {(close) => (
+          <CreateForm action={createOpportunity} onSuccess={close} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <input name="title" placeholder="Título" required className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
+            <input name="amount" type="number" step="0.01" placeholder="Monto" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-32" />
+            <select name="company_id" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
+              <option value="">Sin empresa</option>
+              {companies?.map((company) => (
+                <option key={company.id} value={company.id}>
+                  {company.name}
+                </option>
+              ))}
+            </select>
+            <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-base transition-colors hover:bg-calm-hover sm:w-auto">
+              Agregar
+            </button>
+          </CreateForm>
+        )}
       </AddDisclosure>
 
       <form method="get" className="mb-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap">

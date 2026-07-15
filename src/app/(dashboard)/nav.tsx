@@ -47,10 +47,17 @@ function GroupDropdown({ group, pathname }: { group: (typeof GROUPS)[number]; pa
   const isActive = group.links.some((l) => l.href === pathname);
 
   return (
-    <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+    <div
+      className="relative"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setOpen(false);
+      }}
+    >
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => setOpen(true)}
         className={`flex items-center gap-1 text-sm transition-colors hover:text-ink ${
           isActive ? "text-ink" : "text-ink-soft"
         }`}

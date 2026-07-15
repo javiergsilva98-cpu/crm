@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createTask, toggleTask, deleteTask } from "./actions";
 import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { AddDisclosure } from "@/components/add-disclosure";
+import { CreateForm } from "@/components/create-form";
 
 export default async function TareasPage() {
   const supabase = await createClient();
@@ -21,29 +22,31 @@ export default async function TareasPage() {
       <p className="mb-8 text-sm text-ink-mute">Lo que tienes pendiente con tus clientes.</p>
 
       <AddDisclosure label="Agregar tarea">
-        <form action={createTask} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-          <input name="title" placeholder="¿Qué hay que hacer?" required className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
-          <input name="due_date" type="date" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
-          <select name="company_id" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
-            <option value="">Sin empresa</option>
-            {companies?.map((company) => (
-              <option key={company.id} value={company.id}>
-                {company.name}
-              </option>
-            ))}
-          </select>
-          <select name="opportunity_id" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
-            <option value="">Sin oportunidad</option>
-            {opportunities?.map((opp) => (
-              <option key={opp.id} value={opp.id}>
-                {opp.title}
-              </option>
-            ))}
-          </select>
-          <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-base transition-colors hover:bg-calm-hover sm:w-auto">
-            Agregar
-          </button>
-        </form>
+        {(close) => (
+          <CreateForm action={createTask} onSuccess={close} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <input name="title" placeholder="¿Qué hay que hacer?" required className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
+            <input name="due_date" type="date" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
+            <select name="company_id" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
+              <option value="">Sin empresa</option>
+              {companies?.map((company) => (
+                <option key={company.id} value={company.id}>
+                  {company.name}
+                </option>
+              ))}
+            </select>
+            <select name="opportunity_id" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
+              <option value="">Sin oportunidad</option>
+              {opportunities?.map((opp) => (
+                <option key={opp.id} value={opp.id}>
+                  {opp.title}
+                </option>
+              ))}
+            </select>
+            <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-base transition-colors hover:bg-calm-hover sm:w-auto">
+              Agregar
+            </button>
+          </CreateForm>
+        )}
       </AddDisclosure>
 
       {tasksError && (

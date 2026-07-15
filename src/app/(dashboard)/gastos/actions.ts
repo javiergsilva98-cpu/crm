@@ -9,14 +9,14 @@ export async function createExpense(formData: FormData) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return;
+  if (!user) return { error: "Sesión no válida. Vuelve a iniciar sesión." };
 
   const description = String(formData.get("description") ?? "").trim();
-  if (!description) return;
+  if (!description) return { error: "El concepto es obligatorio." };
 
   const category = String(formData.get("category") ?? "otros");
 
-  await supabase.from("expenses").insert({
+  const { error } = await supabase.from("expenses").insert({
     owner_id: user.id,
     description,
     category: (EXPENSE_CATEGORIES as readonly string[]).includes(category) ? category : "otros",
@@ -26,6 +26,8 @@ export async function createExpense(formData: FormData) {
     company_id: String(formData.get("company_id") ?? "").trim() || null,
     notes: String(formData.get("notes") ?? "").trim() || null,
   });
+
+  if (error) return { error: "No se pudo guardar el gasto. Inténtalo de nuevo." };
 
   revalidatePath("/gastos");
 }

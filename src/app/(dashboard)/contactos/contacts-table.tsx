@@ -165,7 +165,7 @@ export function ContactsTable({
               <ResizableTh tableId="contactos" columnKey="company" defaultWidth={160}>Empresa</ResizableTh>
               <ResizableTh tableId="contactos" columnKey="source" defaultWidth={120}>Canal</ResizableTh>
               <ResizableTh tableId="contactos" columnKey="last_activity" defaultWidth={160}>Última actividad</ResizableTh>
-              <th className="px-4 py-2.5" style={{ width: 96 }} />
+              <th className="sticky right-0 border-l border-border bg-sunken px-4 py-2.5" style={{ width: 96 }} />
             </tr>
           </thead>
           <tbody>

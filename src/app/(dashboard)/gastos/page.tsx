@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createExpense } from "./actions";
 import { ExpenseRow } from "./expense-row";
 import { AddDisclosure } from "@/components/add-disclosure";
+import { CreateForm } from "@/components/create-form";
 import { EmptyStateRow } from "@/components/empty-state";
 import { EXPENSE_CATEGORIES as CATEGORIES, EXPENSE_CATEGORY_LABELS as CATEGORY_LABELS } from "@/lib/expenses";
 import { HelpButton } from "@/components/help-button";
@@ -49,30 +50,32 @@ export default async function GastosPage({
       <p className="mb-8 text-sm text-ink-mute">Lo que te gastas en el negocio, con el IVA soportado.</p>
 
       <AddDisclosure label="Agregar gasto">
-        <form action={createExpense} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-          <input name="description" placeholder="Concepto" required className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
-          <select name="category" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
-            {CATEGORIES.map((c) => (
-              <option key={c} value={c}>
-                {CATEGORY_LABELS[c]}
-              </option>
-            ))}
-          </select>
-          <input name="amount" type="number" step="0.01" placeholder="Importe (sin IVA)" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-36" />
-          <input name="tax_rate" type="number" step="0.01" defaultValue={21} placeholder="IVA %" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-24" />
-          <input name="expense_date" type="date" defaultValue={new Date().toISOString().slice(0, 10)} className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
-          <select name="company_id" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
-            <option value="">Sin empresa</option>
-            {companies?.map((company) => (
-              <option key={company.id} value={company.id}>
-                {company.name}
-              </option>
-            ))}
-          </select>
-          <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-base transition-colors hover:bg-calm-hover sm:w-auto">
-            Agregar
-          </button>
-        </form>
+        {(close) => (
+          <CreateForm action={createExpense} onSuccess={close} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <input name="description" placeholder="Concepto" required className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
+            <select name="category" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
+              {CATEGORIES.map((c) => (
+                <option key={c} value={c}>
+                  {CATEGORY_LABELS[c]}
+                </option>
+              ))}
+            </select>
+            <input name="amount" type="number" step="0.01" placeholder="Importe (sin IVA)" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-36" />
+            <input name="tax_rate" type="number" step="0.01" defaultValue={21} placeholder="IVA %" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-24" />
+            <input name="expense_date" type="date" defaultValue={new Date().toISOString().slice(0, 10)} className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
+            <select name="company_id" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
+              <option value="">Sin empresa</option>
+              {companies?.map((company) => (
+                <option key={company.id} value={company.id}>
+                  {company.name}
+                </option>
+              ))}
+            </select>
+            <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-base transition-colors hover:bg-calm-hover sm:w-auto">
+              Agregar
+            </button>
+          </CreateForm>
+        )}
       </AddDisclosure>
 
       <form method="get" className="mb-6 flex flex-col gap-2 sm:flex-row">

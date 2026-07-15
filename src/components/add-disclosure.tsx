@@ -2,7 +2,13 @@
 
 import { useState, type ReactNode } from "react";
 
-export function AddDisclosure({ label, children }: { label: string; children: ReactNode }) {
+export function AddDisclosure({
+  label,
+  children,
+}: {
+  label: string;
+  children: ReactNode | ((close: () => void) => ReactNode);
+}) {
   const [open, setOpen] = useState(false);
 
   if (!open) {
@@ -31,7 +37,7 @@ export function AddDisclosure({ label, children }: { label: string; children: Re
           ×
         </button>
       </div>
-      {children}
+      {typeof children === "function" ? children(() => setOpen(false)) : children}
     </div>
   );
 }

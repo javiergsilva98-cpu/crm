@@ -56,7 +56,9 @@ export function CompanyRow({
             <input
               name="website"
               defaultValue={company.website ?? ""}
-              placeholder="Sitio web"
+              placeholder="Sitio web (ej. miempresa.com)"
+              pattern="^(https?:\/\/)?[\w-]+(\.[\w-]+)+.*$"
+              title="Escribe un dominio válido, ej. miempresa.com o https://miempresa.com"
               className="rounded-md border border-border px-2 py-1 text-sm"
             />
             <input
@@ -120,7 +122,7 @@ export function CompanyRow({
         </td>
         <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">{company.website}</td>
         <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">{company.industry}</td>
-        <td className="px-4 py-2 text-right">
+        <td className="sticky right-0 border-l border-border bg-raised px-4 py-2 text-right">
           <div className="flex justify-end gap-3">
             <button type="button" onClick={() => setEditing(true)} className="text-ink-soft hover:underline">
               Editar

@@ -118,7 +118,7 @@ export function CompaniesTable({
               <ResizableTh tableId="empresas" columnKey="name" defaultWidth={220}>Nombre</ResizableTh>
               <ResizableTh tableId="empresas" columnKey="website" defaultWidth={220}>Sitio web</ResizableTh>
               <ResizableTh tableId="empresas" columnKey="industry" defaultWidth={180}>Industria</ResizableTh>
-              <th className="px-4 py-2.5" style={{ width: 96 }} />
+              <th className="sticky right-0 border-l border-border bg-sunken px-4 py-2.5" style={{ width: 96 }} />
             </tr>
           </thead>
           <tbody>

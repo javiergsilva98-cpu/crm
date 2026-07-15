@@ -8,12 +8,20 @@ export async function createCompany(formData: FormData) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return;
+  if (!user) return { error: "Sesión no válida. Vuelve a iniciar sesión." };
 
   const name = String(formData.get("name") ?? "").trim();
-  if (!name) return;
+  if (!name) return { error: "El nombre es obligatorio." };
 
-  await supabase.from("companies").insert({
+  const { data: existing } = await supabase
+    .from("companies")
+    .select("id")
+    .eq("owner_id", user.id)
+    .ilike("name", name)
+    .limit(1)
+    .maybeSingle();
+
+  const { error } = await supabase.from("companies").insert({
     owner_id: user.id,
     name,
     website: String(formData.get("website") ?? "").trim() || null,
@@ -22,7 +30,11 @@ export async function createCompany(formData: FormData) {
     fiscal_address: String(formData.get("fiscal_address") ?? "").trim() || null,
   });
 
+  if (error) return { error: "No se pudo guardar la empresa. Inténtalo de nuevo." };
+
   revalidatePath("/empresas");
+
+  if (existing) return { warning: `Ya existe una empresa llamada "${name}". Se ha creado igualmente — revisa si es un duplicado.` };
 }
 
 export async function updateCompany(formData: FormData) {

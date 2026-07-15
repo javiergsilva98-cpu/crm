@@ -15,10 +15,10 @@ export async function createContact(formData: FormData) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return;
+  if (!user) return { error: "Sesión no válida. Vuelve a iniciar sesión." };
 
   const firstName = String(formData.get("first_name") ?? "").trim();
-  if (!firstName) return;
+  if (!firstName) return { error: "El nombre es obligatorio." };
   const lastName = String(formData.get("last_name") ?? "").trim();
 
   const email = String(formData.get("email") ?? "").trim();
@@ -28,7 +28,16 @@ export async function createContact(formData: FormData) {
     companyId = await findCompanyByEmailDomain(supabase, email);
   }
 
-  await supabase.from("contacts").insert({
+  const fullName = [firstName, lastName].filter(Boolean).join(" ");
+  const { data: existing } = await supabase
+    .from("contacts")
+    .select("id")
+    .eq("owner_id", user.id)
+    .ilike("full_name", fullName)
+    .limit(1)
+    .maybeSingle();
+
+  const { error } = await supabase.from("contacts").insert({
     owner_id: user.id,
     first_name: firstName,
     last_name: lastName || null,
@@ -44,7 +53,11 @@ export async function createContact(formData: FormData) {
     fiscal_address: String(formData.get("fiscal_address") ?? "").trim() || null,
   });
 
+  if (error) return { error: "No se pudo guardar el contacto. Inténtalo de nuevo." };
+
   revalidatePath("/contactos");
+
+  if (existing) return { warning: `Ya existe un contacto llamado "${fullName}". Se ha creado igualmente — revisa si es un duplicado.` };
 }
 
 export async function updateContact(formData: FormData) {

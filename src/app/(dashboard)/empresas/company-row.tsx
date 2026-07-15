@@ -99,13 +99,13 @@ export function CompanyRow({ company, detailFields }: { company: Company; detail
           setExpanded((v) => !v);
         }}
       >
-        <td className="px-4 py-2">
+        <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">
           <Link href={`/empresas/${company.id}`} className="text-ink hover:underline">
             {company.name}
           </Link>
         </td>
-        <td className="px-4 py-2">{company.website}</td>
-        <td className="px-4 py-2">{company.industry}</td>
+        <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">{company.website}</td>
+        <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">{company.industry}</td>
         <td className="px-4 py-2 text-right">
           <div className="flex justify-end gap-3">
             <button type="button" onClick={() => setEditing(true)} className="text-ink-soft hover:underline">

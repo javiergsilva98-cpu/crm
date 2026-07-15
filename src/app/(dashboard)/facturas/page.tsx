@@ -4,6 +4,7 @@ import { EmptyStateRow } from "@/components/empty-state";
 import { calculateTotals } from "@/lib/invoice";
 import { deleteInvoice } from "./actions";
 import { HelpButton } from "@/components/help-button";
+import { ResizableTh } from "@/components/resizable-th";
 
 const STATUS_LABELS: Record<string, string> = {
   draft: "Borrador",
@@ -85,15 +86,15 @@ export default async function FacturasPage({
       )}
 
       <div className="overflow-x-auto rounded-lg border border-border bg-raised">
-        <table className="w-full text-left text-sm">
+        <table className="w-full text-left text-sm" style={{ tableLayout: "fixed" }}>
           <thead className="border-b border-border-strong bg-sunken">
             <tr>
-              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Número</th>
-              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Empresa</th>
-              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Fecha</th>
-              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Estado</th>
-              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Total</th>
-              <th className="px-4 py-2.5" />
+              <ResizableTh tableId="facturas" columnKey="number" defaultWidth={130}>Número</ResizableTh>
+              <ResizableTh tableId="facturas" columnKey="company" defaultWidth={200}>Empresa</ResizableTh>
+              <ResizableTh tableId="facturas" columnKey="date" defaultWidth={110}>Fecha</ResizableTh>
+              <ResizableTh tableId="facturas" columnKey="status" defaultWidth={160}>Estado</ResizableTh>
+              <ResizableTh tableId="facturas" columnKey="total" defaultWidth={100}>Total</ResizableTh>
+              <th className="px-4 py-2.5" style={{ width: 96 }} />
             </tr>
           </thead>
           <tbody>
@@ -104,22 +105,22 @@ export default async function FacturasPage({
               );
               return (
                 <tr key={invoice.id} className="border-t border-border transition-colors hover:bg-sunken">
-                  <td className="px-4 py-2">
+                  <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">
                     <Link href={`/facturas/${invoice.id}`} className="text-ink hover:underline">
                       {invoice.invoice_number}
                     </Link>
                   </td>
-                  <td className="px-4 py-2">{(invoice.companies as unknown as { name: string } | null)?.name}</td>
-                  <td className="px-4 py-2 text-ink-soft">
+                  <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">{(invoice.companies as unknown as { name: string } | null)?.name}</td>
+                  <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap text-ink-soft">
                     {new Date(invoice.issue_date + "T00:00:00").toLocaleDateString("es-ES")}
                   </td>
-                  <td className="px-4 py-2 text-ink-soft">
+                  <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap text-ink-soft">
                     {STATUS_LABELS[invoice.status] ?? invoice.status}
                     {invoice.status === "paid" && invoice.paid_at && (
                       <span className="text-ink-mute"> ({new Date(invoice.paid_at + "T00:00:00").toLocaleDateString("es-ES")})</span>
                     )}
                   </td>
-                  <td className="px-4 py-2 text-ink">{total.toFixed(2)}€</td>
+                  <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap text-ink">{total.toFixed(2)}€</td>
                   <td className="px-4 py-2 text-right">
                     {invoice.status === "draft" && (
                       <form action={deleteInvoice}>

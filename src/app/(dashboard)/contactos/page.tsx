@@ -9,6 +9,7 @@ import { AddDisclosure } from "@/components/add-disclosure";
 import { FieldCustomizer } from "@/components/field-customizer";
 import { DETAIL_FIELD_CATALOG, resolveDetailFields } from "@/lib/detail-fields";
 import { HelpButton } from "@/components/help-button";
+import { ResizableTh } from "@/components/resizable-th";
 
 export default async function ContactosPage({
   searchParams,
@@ -21,7 +22,7 @@ export default async function ContactosPage({
   let query = supabase
     .from("contacts")
     .select(
-      "id, full_name, email, phone, company_id, source, source_detail, source_url, tax_id, fiscal_address, last_activity_at, last_activity_by, companies!company_id(name)",
+      "id, full_name, email, phone, phone_prefix, phone_country, company_id, source, source_detail, source_url, tax_id, fiscal_address, last_activity_at, last_activity_by, companies!company_id(name)",
     )
     .order("created_at", { ascending: false });
 
@@ -74,7 +75,9 @@ export default async function ContactosPage({
         <form action={createContact} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <input name="full_name" placeholder="Nombre completo" required className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
           <input name="email" type="email" placeholder="Email" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
+          <input name="phone_prefix" placeholder="Prefijo" defaultValue="+34" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-20" />
           <input name="phone" placeholder="Teléfono" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
+          <input name="phone_country" placeholder="País" defaultValue="España" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
           <select name="company_id" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
             <option value="">Detectar por email / sin empresa</option>
             {companies?.map((company) => (
@@ -152,16 +155,16 @@ export default async function ContactosPage({
       )}
 
       <div className="overflow-x-auto rounded-lg border border-border bg-raised">
-        <table className="w-full text-left text-sm">
+        <table className="w-full text-left text-sm" style={{ tableLayout: "fixed" }}>
           <thead className="border-b border-border-strong bg-sunken">
             <tr>
-              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Nombre</th>
-              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Email</th>
-              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Teléfono</th>
-              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Empresa</th>
-              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Canal</th>
-              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Última actividad</th>
-              <th className="px-4 py-2.5" />
+              <ResizableTh tableId="contactos" columnKey="full_name" defaultWidth={160}>Nombre</ResizableTh>
+              <ResizableTh tableId="contactos" columnKey="email" defaultWidth={200}>Email</ResizableTh>
+              <ResizableTh tableId="contactos" columnKey="phone" defaultWidth={130}>Teléfono</ResizableTh>
+              <ResizableTh tableId="contactos" columnKey="company" defaultWidth={160}>Empresa</ResizableTh>
+              <ResizableTh tableId="contactos" columnKey="source" defaultWidth={120}>Canal</ResizableTh>
+              <ResizableTh tableId="contactos" columnKey="last_activity" defaultWidth={160}>Última actividad</ResizableTh>
+              <th className="px-4 py-2.5" style={{ width: 96 }} />
             </tr>
           </thead>
           <tbody>

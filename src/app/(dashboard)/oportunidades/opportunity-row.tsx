@@ -105,10 +105,10 @@ export function OpportunityRow({
           setExpanded((v) => !v);
         }}
       >
-        <td className="px-4 py-2">{opportunity.title}</td>
-        <td className="px-4 py-2">{opportunity.companies?.name}</td>
-        <td className="px-4 py-2">{Number(opportunity.amount).toLocaleString()}€</td>
-        <td className="px-4 py-2">
+        <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">{opportunity.title}</td>
+        <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">{opportunity.companies?.name}</td>
+        <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">{Number(opportunity.amount).toLocaleString()}€</td>
+        <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">
           <StageSelect id={opportunity.id} stage={opportunity.stage} />
         </td>
         <td className="px-4 py-2 text-right">

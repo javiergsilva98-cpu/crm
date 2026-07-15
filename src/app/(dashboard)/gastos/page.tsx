@@ -5,6 +5,7 @@ import { AddDisclosure } from "@/components/add-disclosure";
 import { EmptyStateRow } from "@/components/empty-state";
 import { EXPENSE_CATEGORIES as CATEGORIES, EXPENSE_CATEGORY_LABELS as CATEGORY_LABELS } from "@/lib/expenses";
 import { HelpButton } from "@/components/help-button";
+import { ResizableTh } from "@/components/resizable-th";
 
 export default async function GastosPage({
   searchParams,
@@ -118,15 +119,15 @@ export default async function GastosPage({
       </div>
 
       <div className="overflow-x-auto rounded-lg border border-border bg-raised">
-        <table className="w-full text-left text-sm">
+        <table className="w-full text-left text-sm" style={{ tableLayout: "fixed" }}>
           <thead className="border-b border-border-strong bg-sunken">
             <tr>
-              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Concepto</th>
-              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Categoría</th>
-              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Empresa</th>
-              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Fecha</th>
-              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Total</th>
-              <th className="px-4 py-2.5" />
+              <ResizableTh tableId="gastos" columnKey="description" defaultWidth={240}>Concepto</ResizableTh>
+              <ResizableTh tableId="gastos" columnKey="category" defaultWidth={140}>Categoría</ResizableTh>
+              <ResizableTh tableId="gastos" columnKey="company" defaultWidth={160}>Empresa</ResizableTh>
+              <ResizableTh tableId="gastos" columnKey="date" defaultWidth={110}>Fecha</ResizableTh>
+              <ResizableTh tableId="gastos" columnKey="total" defaultWidth={100}>Total</ResizableTh>
+              <th className="px-4 py-2.5" style={{ width: 96 }} />
             </tr>
           </thead>
           <tbody>

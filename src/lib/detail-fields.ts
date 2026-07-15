@@ -13,6 +13,7 @@ export const DETAIL_FIELD_CATALOG: Record<DetailTableName, DetailField[]> = {
   contacts: [
     { key: "email", label: "Email" },
     { key: "phone", label: "Teléfono" },
+    { key: "phone_country", label: "País (teléfono)" },
     { key: "company", label: "Empresa" },
     { key: "source", label: "Canal" },
     { key: "source_detail", label: "Detalle del canal" },

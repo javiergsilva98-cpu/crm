@@ -7,6 +7,7 @@ import { AddDisclosure } from "@/components/add-disclosure";
 import { FieldCustomizer } from "@/components/field-customizer";
 import { DETAIL_FIELD_CATALOG, resolveDetailFields } from "@/lib/detail-fields";
 import { HelpButton } from "@/components/help-button";
+import { ResizableTh } from "@/components/resizable-th";
 
 export default async function EmpresasPage({
   searchParams,
@@ -91,13 +92,13 @@ export default async function EmpresasPage({
       )}
 
       <div className="overflow-x-auto rounded-lg border border-border bg-raised">
-        <table className="w-full text-left text-sm">
+        <table className="w-full text-left text-sm" style={{ tableLayout: "fixed" }}>
           <thead className="border-b border-border-strong bg-sunken">
             <tr>
-              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Nombre</th>
-              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Sitio web</th>
-              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Industria</th>
-              <th className="px-4 py-2.5" />
+              <ResizableTh tableId="empresas" columnKey="name" defaultWidth={220}>Nombre</ResizableTh>
+              <ResizableTh tableId="empresas" columnKey="website" defaultWidth={220}>Sitio web</ResizableTh>
+              <ResizableTh tableId="empresas" columnKey="industry" defaultWidth={180}>Industria</ResizableTh>
+              <th className="px-4 py-2.5" style={{ width: 96 }} />
             </tr>
           </thead>
           <tbody>

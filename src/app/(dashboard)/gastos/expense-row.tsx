@@ -92,15 +92,15 @@ export function ExpenseRow({
 
   return (
     <tr className="border-t border-border transition-colors hover:bg-sunken">
-      <td className="px-4 py-2 text-ink">{expense.description}</td>
-      <td className="px-4 py-2 text-ink-soft">
+      <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap text-ink">{expense.description}</td>
+      <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap text-ink-soft">
         {CATEGORY_LABELS[expense.category as keyof typeof CATEGORY_LABELS] ?? expense.category}
       </td>
-      <td className="px-4 py-2 text-ink-soft">{expense.companies?.name ?? "—"}</td>
-      <td className="px-4 py-2 text-ink-soft">
+      <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap text-ink-soft">{expense.companies?.name ?? "—"}</td>
+      <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap text-ink-soft">
         {new Date(expense.expense_date + "T00:00:00").toLocaleDateString("es-ES")}
       </td>
-      <td className="px-4 py-2 text-ink">{total.toFixed(2)}€</td>
+      <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap text-ink">{total.toFixed(2)}€</td>
       <td className="px-4 py-2 text-right">
         <div className="flex justify-end gap-3">
           <button type="button" onClick={() => setEditing(true)} className="text-ink-soft hover:underline">

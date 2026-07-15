@@ -256,6 +256,10 @@ En el desplegable de "Personalizar" marca o desmarca los campos que quieras most
 ## Es una preferencia personal
 
 Esta personalización es solo tuya: cada usuario puede configurar sus fichas a su manera, sin que afecte a lo que ven los demás.
+
+## Cambiar el ancho de una columna
+
+En cualquier tabla, coloca el cursor sobre el borde derecho de una cabecera hasta que aparezca una línea vertical y arrástrala para hacer la columna más ancha o más estrecha (útil, por ejemplo, para encoger "Teléfono" y que no se parta en dos líneas). El ancho se recuerda en este dispositivo la próxima vez que entres.
 `,
   },
   {

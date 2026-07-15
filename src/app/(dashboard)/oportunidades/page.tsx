@@ -8,6 +8,7 @@ import { STAGES, STAGE_LABELS } from "@/lib/stages";
 import { FieldCustomizer } from "@/components/field-customizer";
 import { DETAIL_FIELD_CATALOG, resolveDetailFields } from "@/lib/detail-fields";
 import { HelpButton } from "@/components/help-button";
+import { ResizableTh } from "@/components/resizable-th";
 
 export default async function OportunidadesPage({
   searchParams,
@@ -127,14 +128,14 @@ export default async function OportunidadesPage({
       )}
 
       <div className="overflow-x-auto rounded-lg border border-border bg-raised">
-        <table className="w-full text-left text-sm">
+        <table className="w-full text-left text-sm" style={{ tableLayout: "fixed" }}>
           <thead className="border-b border-border-strong bg-sunken">
             <tr>
-              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Título</th>
-              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Empresa</th>
-              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Monto</th>
-              <th className="px-4 py-2.5 text-xs font-semibold tracking-wide text-ink-soft uppercase">Etapa</th>
-              <th className="px-4 py-2.5" />
+              <ResizableTh tableId="oportunidades" columnKey="title" defaultWidth={240}>Título</ResizableTh>
+              <ResizableTh tableId="oportunidades" columnKey="company" defaultWidth={180}>Empresa</ResizableTh>
+              <ResizableTh tableId="oportunidades" columnKey="amount" defaultWidth={110}>Monto</ResizableTh>
+              <ResizableTh tableId="oportunidades" columnKey="stage" defaultWidth={160}>Etapa</ResizableTh>
+              <th className="px-4 py-2.5" style={{ width: 96 }} />
             </tr>
           </thead>
           <tbody>

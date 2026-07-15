@@ -15,6 +15,8 @@ type Contact = {
   full_name: string;
   email: string | null;
   phone: string | null;
+  phone_prefix: string | null;
+  phone_country: string | null;
   company_id: string | null;
   source: Channel | null;
   source_detail: string | null;
@@ -66,9 +68,21 @@ export function ContactRow({
               className="rounded-md border border-border px-2 py-1 text-sm"
             />
             <input
+              name="phone_prefix"
+              defaultValue={contact.phone_prefix ?? ""}
+              placeholder="Prefijo"
+              className="w-20 rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <input
               name="phone"
               defaultValue={contact.phone ?? ""}
               placeholder="Teléfono"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <input
+              name="phone_country"
+              defaultValue={contact.phone_country ?? ""}
+              placeholder="País"
               className="rounded-md border border-border px-2 py-1 text-sm"
             />
             <select
@@ -136,9 +150,12 @@ export function ContactRow({
     );
   }
 
+  const phoneDisplay = contact.phone ? [contact.phone_prefix, contact.phone].filter(Boolean).join(" ") : null;
+
   const values: Record<string, string | null> = {
     email: contact.email,
-    phone: contact.phone,
+    phone: phoneDisplay,
+    phone_country: contact.phone_country,
     company: contact.companies?.name ?? null,
     source: contact.source ? CHANNEL_LABELS[contact.source] : null,
     source_detail: contact.source_detail,
@@ -159,11 +176,13 @@ export function ContactRow({
         setExpanded((v) => !v);
       }}
     >
-      <td className="px-4 py-2">{contact.full_name}</td>
-      <td className="px-4 py-2">{contact.email}</td>
-      <td className="px-4 py-2">{contact.phone}</td>
-      <td className="px-4 py-2">{contact.companies?.name}</td>
-      <td className="px-4 py-2">
+      <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">{contact.full_name}</td>
+      <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">{contact.email}</td>
+      <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap" title={phoneDisplay ?? undefined}>
+        {phoneDisplay}
+      </td>
+      <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">{contact.companies?.name}</td>
+      <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">
         {contact.source ? (
           <span title={[contact.source_detail, contact.source_url].filter(Boolean).join(" · ") || undefined}>
             {CHANNEL_LABELS[contact.source]}
@@ -172,7 +191,7 @@ export function ContactRow({
           <span className="text-ink-mute">—</span>
         )}
       </td>
-      <td className="px-4 py-2 text-ink-soft">
+      <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap text-ink-soft">
         {contact.last_activity_at ? (
           <span title={lastActivityByEmail ? `Por ${lastActivityByEmail}` : undefined}>
             {new Date(contact.last_activity_at).toLocaleDateString("es-ES")}

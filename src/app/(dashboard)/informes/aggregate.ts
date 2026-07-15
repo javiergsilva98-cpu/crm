@@ -153,3 +153,36 @@ export function previousPeriod(dateFrom: string, dateTo: string): { from: string
   const prevFrom = new Date(prevTo.getTime() - lengthMs);
   return { from: prevFrom.toISOString().slice(0, 10), to: prevTo.toISOString().slice(0, 10) };
 }
+
+export type SeriesInput = { metric: MetricKey; color: string; compare?: boolean };
+
+export type ComputedSeries = {
+  metric: MetricKey;
+  label: string;
+  kind: MetricKind;
+  color: string;
+  rows: MetricRow[];
+  previousRows: MetricRow[] | null;
+};
+
+// Calcula las filas de cada métrica y, si se pidió comparar, también las
+// del periodo anterior de igual duración. Se usa tanto en el servidor
+// (informes ya guardados) como en el cliente (vista previa en vivo del
+// constructor), por eso vive junto a la agregación pura.
+export function computeSeries(
+  raw: RawData,
+  series: SeriesInput[],
+  dateFrom: string | null,
+  dateTo: string | null,
+): ComputedSeries[] {
+  return series.map((s) => {
+    const info = metricInfo(s.metric)!;
+    const rows = aggregateMetric(raw, s.metric, dateFrom, dateTo);
+    let previousRows: MetricRow[] | null = null;
+    if (s.compare && dateFrom && dateTo) {
+      const { from, to } = previousPeriod(dateFrom, dateTo);
+      previousRows = aggregateMetric(raw, s.metric, from, to);
+    }
+    return { metric: s.metric, label: info.label, kind: info.kind, color: s.color, rows, previousRows };
+  });
+}

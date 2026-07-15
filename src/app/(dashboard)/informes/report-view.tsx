@@ -1,12 +1,7 @@
-import type { MetricKind, MetricRow } from "./aggregate";
+import { Fragment } from "react";
+import type { ComputedSeries, MetricKind, MetricRow } from "./aggregate";
 
-export type ComputedSeries = {
-  metric: string;
-  label: string;
-  kind: MetricKind;
-  color: string;
-  rows: MetricRow[];
-};
+export type { ComputedSeries } from "./aggregate";
 
 function formatAmount(n: number) {
   return n.toLocaleString("es-ES", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
@@ -20,18 +15,31 @@ function primaryField(kind: MetricKind): "count" | "amount" {
   return kind === "count" ? "count" : "amount";
 }
 
+function deltaPct(current: number, previous: number): number | null {
+  if (previous !== 0) return ((current - previous) / previous) * 100;
+  if (current > 0) return 100;
+  return null;
+}
+
+function DeltaBadge({ delta }: { delta: number | null }) {
+  if (delta === null) return <span className="text-ink-mute">—</span>;
+  return (
+    <span className={delta >= 0 ? "text-emerald-600" : "text-danger"}>
+      {delta >= 0 ? "▲" : "▼"} {Math.abs(Math.round(delta))}%
+    </span>
+  );
+}
+
 export function ReportView({
   chartType,
   series,
-  compare,
 }: {
   chartType: "bar" | "line" | "pie" | "table" | "kpi_card";
   series: ComputedSeries[];
-  compare?: { currentTotal: number; previousTotal: number } | null;
 }) {
   if (series.length === 0) return <p className="text-sm text-ink-mute">No hay métricas configuradas.</p>;
 
-  if (chartType === "kpi_card") return <KpiCard series={series[0]} compare={compare ?? null} />;
+  if (chartType === "kpi_card") return <KpiCard series={series[0]} />;
   if (chartType === "pie") return <PieChart series={series[0]} />;
   if (chartType === "line") return <LineChart series={series} />;
   if (chartType === "table") return <TableView series={series} />;
@@ -203,17 +211,34 @@ function TableView({ series }: { series: ComputedSeries[] }) {
   const sortKeys = Array.from(labelsBySortKey.keys()).sort();
   if (sortKeys.length === 0) return <p className="text-sm text-ink-mute">No hay datos todavía para este informe.</p>;
 
+  const hasAnyCompare = series.some((s) => s.previousRows);
+
+  function totalsFor(s: ComputedSeries) {
+    const field = primaryField(s.kind);
+    const total = s.rows.reduce((sum, r) => sum + Number(r[field] ?? 0), 0);
+    const previousTotal = s.previousRows ? s.previousRows.reduce((sum, r) => sum + Number(r[field] ?? 0), 0) : null;
+    return { total, previousTotal };
+  }
+
   return (
     <div className="overflow-x-auto rounded-lg border border-border">
       <table className="w-full text-left text-sm">
         <thead className="border-b border-border-strong bg-sunken">
           <tr>
             <th className="px-3 py-2 text-xs font-semibold tracking-wide text-ink-soft uppercase"></th>
-            {series.map((s) => (
-              <th key={s.metric} className="px-3 py-2 text-xs font-semibold tracking-wide text-ink-soft uppercase">
-                {s.label}
-              </th>
-            ))}
+            {series.map((s) =>
+              s.previousRows ? (
+                <Fragment key={s.metric}>
+                  <th className="px-3 py-2 text-xs font-semibold tracking-wide text-ink-soft uppercase">{s.label}</th>
+                  <th className="px-3 py-2 text-xs font-semibold tracking-wide text-ink-mute uppercase">{s.label} (anterior)</th>
+                  <th className="px-3 py-2 text-xs font-semibold tracking-wide text-ink-mute uppercase">Δ</th>
+                </Fragment>
+              ) : (
+                <th key={s.metric} className="px-3 py-2 text-xs font-semibold tracking-wide text-ink-soft uppercase">
+                  {s.label}
+                </th>
+              ),
+            )}
           </tr>
         </thead>
         <tbody>
@@ -221,47 +246,74 @@ function TableView({ series }: { series: ComputedSeries[] }) {
             <tr key={key} className="border-t border-border">
               <td className="px-3 py-2 text-ink-soft">{labelsBySortKey.get(key)}</td>
               {series.map((s) => {
+                const field = primaryField(s.kind);
                 const row = s.rows.find((r) => r.sortKey === key);
-                const value = Number(row?.[primaryField(s.kind)] ?? 0);
+                const value = Number(row?.[field] ?? 0);
+                if (!s.previousRows) {
+                  return (
+                    <td key={s.metric} className="px-3 py-2 text-ink">
+                      {row ? formatValue(value, s.kind) : "—"}
+                    </td>
+                  );
+                }
+                const prevRow = s.previousRows.find((r) => r.sortKey === key);
+                const prevValue = prevRow ? Number(prevRow[field] ?? 0) : null;
                 return (
-                  <td key={s.metric} className="px-3 py-2 text-ink">
-                    {row ? formatValue(value, s.kind) : "—"}
-                  </td>
+                  <Fragment key={s.metric}>
+                    <td className="px-3 py-2 text-ink">{row ? formatValue(value, s.kind) : "—"}</td>
+                    <td className="px-3 py-2 text-ink-mute">{prevValue !== null ? formatValue(prevValue, s.kind) : "—"}</td>
+                    <td className="px-3 py-2">
+                      <DeltaBadge delta={prevValue !== null ? deltaPct(value, prevValue) : null} />
+                    </td>
+                  </Fragment>
                 );
               })}
             </tr>
           ))}
+          {hasAnyCompare && (
+            <tr className="border-t-2 border-border-strong font-medium">
+              <td className="px-3 py-2 text-ink">Total</td>
+              {series.map((s) => {
+                const { total, previousTotal } = totalsFor(s);
+                if (!s.previousRows) {
+                  return (
+                    <td key={s.metric} className="px-3 py-2 text-ink">
+                      {formatValue(total, s.kind)}
+                    </td>
+                  );
+                }
+                return (
+                  <Fragment key={s.metric}>
+                    <td className="px-3 py-2 text-ink">{formatValue(total, s.kind)}</td>
+                    <td className="px-3 py-2 text-ink-mute">{formatValue(previousTotal ?? 0, s.kind)}</td>
+                    <td className="px-3 py-2">
+                      <DeltaBadge delta={deltaPct(total, previousTotal ?? 0)} />
+                    </td>
+                  </Fragment>
+                );
+              })}
+            </tr>
+          )}
         </tbody>
       </table>
     </div>
   );
 }
 
-function KpiCard({
-  series,
-  compare,
-}: {
-  series: ComputedSeries;
-  compare: { currentTotal: number; previousTotal: number } | null;
-}) {
+function KpiCard({ series }: { series: ComputedSeries }) {
   const field = primaryField(series.kind);
   const total = series.rows.reduce((sum, r) => sum + Number(r[field] ?? 0), 0);
-
-  let delta: number | null = null;
-  if (compare && compare.previousTotal !== 0) {
-    delta = ((compare.currentTotal - compare.previousTotal) / compare.previousTotal) * 100;
-  } else if (compare && compare.previousTotal === 0 && compare.currentTotal > 0) {
-    delta = 100;
-  }
+  const previousTotal = series.previousRows ? series.previousRows.reduce((sum, r) => sum + Number(r[field] ?? 0), 0) : null;
+  const delta = previousTotal !== null ? deltaPct(total, previousTotal) : null;
 
   return (
     <div>
       <p className="text-3xl font-semibold text-ink" style={{ color: series.color }}>
         {formatValue(total, series.kind)}
       </p>
-      {compare && delta !== null && (
-        <p className={`mt-2 text-sm ${delta >= 0 ? "text-emerald-600" : "text-danger"}`}>
-          {delta >= 0 ? "▲" : "▼"} {Math.abs(Math.round(delta))}% vs. periodo anterior ({formatValue(compare.previousTotal, series.kind)})
+      {previousTotal !== null && (
+        <p className="mt-2 text-sm">
+          <DeltaBadge delta={delta} /> <span className="text-ink-mute">vs. periodo anterior ({formatValue(previousTotal, series.kind)})</span>
         </p>
       )}
     </div>

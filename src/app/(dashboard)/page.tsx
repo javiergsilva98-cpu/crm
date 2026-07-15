@@ -3,12 +3,12 @@ import { createClient } from "@/lib/supabase/server";
 import { PipelineChart } from "./pipeline-chart";
 import { CHANNELS, CHANNEL_LABELS, type Channel } from "@/lib/channels";
 import { currentMonthRange } from "@/lib/month";
-import { aggregateMetric, metricInfo, type MetricKey } from "./informes/aggregate";
+import { computeSeries, metricInfo, type MetricKey } from "./informes/aggregate";
 import { fetchRawData } from "./informes/raw-data";
-import { ReportView, type ComputedSeries } from "./informes/report-view";
+import { ReportView } from "./informes/report-view";
 import type { ChartType } from "./informes/validate";
 
-type SeriesRow = { metric: MetricKey; color: string };
+type SeriesRow = { metric: MetricKey; color: string; compare?: boolean };
 
 export default async function DashboardHome() {
   const supabase = await createClient();
@@ -28,16 +28,7 @@ export default async function DashboardHome() {
   if (homeReport) {
     const raw = await fetchRawData(supabase);
     const series = ((homeReport.series as SeriesRow[] | null) ?? []).filter((s) => metricInfo(s.metric));
-    const computed: ComputedSeries[] = series.map((s) => {
-      const info = metricInfo(s.metric)!;
-      return {
-        metric: s.metric,
-        label: info.label,
-        kind: info.kind,
-        color: s.color,
-        rows: aggregateMetric(raw, s.metric, homeReport.date_from, homeReport.date_to),
-      };
-    });
+    const computed = computeSeries(raw, series, homeReport.date_from, homeReport.date_to);
 
     return (
       <div>

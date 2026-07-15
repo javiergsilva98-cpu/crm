@@ -1,8 +1,7 @@
-import { metricInfo, type MetricKey } from "./aggregate";
+import { metricInfo, type SeriesInput } from "./aggregate";
 
+export type { SeriesInput } from "./aggregate";
 export type ChartType = "bar" | "line" | "pie" | "table" | "kpi_card";
-
-export type SeriesInput = { metric: MetricKey; color: string };
 
 export function validateSeries(
   chartType: ChartType,

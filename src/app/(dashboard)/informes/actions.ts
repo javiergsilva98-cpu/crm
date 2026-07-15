@@ -2,10 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { METRICS, type MetricKey } from "./aggregate";
+import { METRICS, type SeriesInput } from "./aggregate";
 import { validateSeries, type ChartType } from "./validate";
-
-type SeriesInput = { metric: MetricKey; color: string };
 
 function parseChartType(value: FormDataEntryValue | null): ChartType | null {
   const v = String(value ?? "");
@@ -17,7 +15,12 @@ function parseSeries(raw: FormDataEntryValue | null): SeriesInput[] | null {
     const parsed = JSON.parse(String(raw ?? "[]"));
     if (!Array.isArray(parsed)) return null;
     const valid = parsed.every(
-      (s) => s && typeof s.metric === "string" && METRICS.some((m) => m.key === s.metric) && typeof s.color === "string",
+      (s) =>
+        s &&
+        typeof s.metric === "string" &&
+        METRICS.some((m) => m.key === s.metric) &&
+        typeof s.color === "string" &&
+        (s.compare === undefined || typeof s.compare === "boolean"),
     );
     return valid ? parsed : null;
   } catch {
@@ -42,7 +45,7 @@ export async function createReport(formData: FormData) {
 
   const dateFrom = String(formData.get("date_from") ?? "").trim() || null;
   const dateTo = String(formData.get("date_to") ?? "").trim() || null;
-  const comparePrevious = formData.get("compare_previous") === "on" && chartType === "kpi_card" && Boolean(dateFrom && dateTo);
+  const isTemplate = formData.get("is_template") === "on";
 
   await supabase.from("reports").insert({
     owner_id: user.id,
@@ -50,7 +53,7 @@ export async function createReport(formData: FormData) {
     metric: series[0]?.metric ?? null,
     series,
     chart_type: chartType,
-    compare_previous: comparePrevious,
+    is_template: isTemplate,
     date_from: dateFrom,
     date_to: dateTo,
   });
@@ -77,7 +80,7 @@ export async function updateReport(formData: FormData) {
 
   const dateFrom = String(formData.get("date_from") ?? "").trim() || null;
   const dateTo = String(formData.get("date_to") ?? "").trim() || null;
-  const comparePrevious = formData.get("compare_previous") === "on" && chartType === "kpi_card" && Boolean(dateFrom && dateTo);
+  const isTemplate = formData.get("is_template") === "on";
 
   await supabase
     .from("reports")
@@ -86,7 +89,7 @@ export async function updateReport(formData: FormData) {
       metric: series[0]?.metric ?? null,
       series,
       chart_type: chartType,
-      compare_previous: comparePrevious,
+      is_template: isTemplate,
       date_from: dateFrom,
       date_to: dateTo,
     })

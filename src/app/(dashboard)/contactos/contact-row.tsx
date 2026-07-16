@@ -14,22 +14,22 @@ function ignoreInteractiveClick(e: MouseEvent<HTMLTableRowElement>) {
 
 type Contact = {
   id: string;
-  first_name: string;
-  last_name: string | null;
+  nombre: string;
+  apellido: string | null;
   full_name: string;
-  email: string | null;
-  phone: string | null;
+  correo_electronico: string | null;
+  numero_telefono: string | null;
   phone_prefix: string | null;
   phone_country: string | null;
-  company_id: string | null;
-  source: Channel | null;
-  source_detail: string | null;
+  empresa_principal_asociada: string | null;
+  fuente_trafico_original: Channel | null;
+  desglose_fuente_original_1: string | null;
   source_url: string | null;
   tax_id: string | null;
   fiscal_address: string | null;
-  last_activity_at: string | null;
+  ultimo_contacto: string | null;
   last_activity_by: string | null;
-  companies: { name: string } | null;
+  companies: { nombre_empresa: string } | null;
 };
 
 export function ContactRow({
@@ -41,7 +41,7 @@ export function ContactRow({
   onToggleSelect,
 }: {
   contact: Contact;
-  companies: { id: string; name: string }[];
+  companies: { id: string; nombre_empresa: string }[];
   lastActivityByEmail: string | null;
   detailFields: DetailField[];
   selected: boolean;
@@ -64,21 +64,21 @@ export function ContactRow({
             <input type="hidden" name="id" value={contact.id} />
             <input
               name="first_name"
-              defaultValue={contact.first_name}
+              defaultValue={contact.nombre}
               placeholder="Nombre"
               required
               className="rounded-md border border-border px-2 py-1 text-sm"
             />
             <input
               name="last_name"
-              defaultValue={contact.last_name ?? ""}
+              defaultValue={contact.apellido ?? ""}
               placeholder="Apellidos"
               className="rounded-md border border-border px-2 py-1 text-sm"
             />
             <input
               name="email"
               type="email"
-              defaultValue={contact.email ?? ""}
+              defaultValue={contact.correo_electronico ?? ""}
               placeholder="Email"
               className="rounded-md border border-border px-2 py-1 text-sm"
             />
@@ -90,7 +90,7 @@ export function ContactRow({
             />
             <input
               name="phone"
-              defaultValue={contact.phone ?? ""}
+              defaultValue={contact.numero_telefono ?? ""}
               placeholder="Teléfono"
               className="rounded-md border border-border px-2 py-1 text-sm"
             />
@@ -102,19 +102,19 @@ export function ContactRow({
             />
             <select
               name="company_id"
-              defaultValue={contact.company_id ?? ""}
+              defaultValue={contact.empresa_principal_asociada ?? ""}
               className="rounded-md border border-border px-2 py-1 text-sm"
             >
               <option value="">Sin empresa</option>
               {companies.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.name}
+                  {c.nombre_empresa}
                 </option>
               ))}
             </select>
             <select
               name="source"
-              defaultValue={contact.source ?? ""}
+              defaultValue={contact.fuente_trafico_original ?? ""}
               className="rounded-md border border-border px-2 py-1 text-sm"
             >
               <option value="">¿De dónde vino?</option>
@@ -126,7 +126,7 @@ export function ContactRow({
             </select>
             <input
               name="source_detail"
-              defaultValue={contact.source_detail ?? ""}
+              defaultValue={contact.desglose_fuente_original_1 ?? ""}
               placeholder="Detalle del canal"
               className="rounded-md border border-border px-2 py-1 text-sm"
             />
@@ -165,20 +165,20 @@ export function ContactRow({
     );
   }
 
-  const phoneDisplay = contact.phone ? [contact.phone_prefix, contact.phone].filter(Boolean).join(" ") : null;
+  const phoneDisplay = contact.numero_telefono ? [contact.phone_prefix, contact.numero_telefono].filter(Boolean).join(" ") : null;
 
   const values: Record<string, string | null> = {
-    email: contact.email,
-    phone: phoneDisplay,
+    correo_electronico: contact.correo_electronico,
+    numero_telefono: phoneDisplay,
     phone_country: contact.phone_country,
-    company: contact.companies?.name ?? null,
-    source: contact.source ? CHANNEL_LABELS[contact.source] : null,
-    source_detail: contact.source_detail,
+    company: contact.companies?.nombre_empresa ?? null,
+    fuente_trafico_original: contact.fuente_trafico_original ? CHANNEL_LABELS[contact.fuente_trafico_original] : null,
+    desglose_fuente_original_1: contact.desglose_fuente_original_1,
     source_url: contact.source_url,
     tax_id: contact.tax_id,
     fiscal_address: contact.fiscal_address,
-    last_activity_at: contact.last_activity_at
-      ? `${formatDateTime(contact.last_activity_at)}${lastActivityByEmail ? ` · ${lastActivityByEmail}` : ""}`
+    ultimo_contacto: contact.ultimo_contacto
+      ? `${formatDateTime(contact.ultimo_contacto)}${lastActivityByEmail ? ` · ${lastActivityByEmail}` : ""}`
       : null,
   };
 
@@ -195,24 +195,24 @@ export function ContactRow({
         <input type="checkbox" checked={selected} onChange={onToggleSelect} aria-label={`Seleccionar ${contact.full_name}`} />
       </td>
       <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">{contact.full_name}</td>
-      <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">{contact.email}</td>
+      <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">{contact.correo_electronico}</td>
       <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap" title={phoneDisplay ?? undefined}>
         {phoneDisplay}
       </td>
-      <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">{contact.companies?.name}</td>
+      <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">{contact.companies?.nombre_empresa}</td>
       <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">
-        {contact.source ? (
-          <span title={[contact.source_detail, contact.source_url].filter(Boolean).join(" · ") || undefined}>
-            {CHANNEL_LABELS[contact.source]}
+        {contact.fuente_trafico_original ? (
+          <span title={[contact.desglose_fuente_original_1, contact.source_url].filter(Boolean).join(" · ") || undefined}>
+            {CHANNEL_LABELS[contact.fuente_trafico_original]}
           </span>
         ) : (
           <span className="text-ink-mute">—</span>
         )}
       </td>
       <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap text-ink-soft">
-        {contact.last_activity_at ? (
+        {contact.ultimo_contacto ? (
           <span title={lastActivityByEmail ? `Por ${lastActivityByEmail}` : undefined}>
-            {formatDateTime(contact.last_activity_at)}
+            {formatDateTime(contact.ultimo_contacto)}
             {lastActivityByEmail && <span className="text-ink-mute"> · {lastActivityByEmail}</span>}
           </span>
         ) : (

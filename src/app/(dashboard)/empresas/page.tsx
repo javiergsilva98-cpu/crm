@@ -11,8 +11,8 @@ import { AdvancedFilters } from "@/components/advanced-filters";
 import { applyFilters, parseFilters } from "@/lib/table-filters";
 
 const FILTER_FIELDS = [
-  { key: "name", label: "Nombre" },
-  { key: "website", label: "Sitio web" },
+  { key: "nombre_empresa", label: "Nombre de la empresa" },
+  { key: "nombre_dominio_empresa", label: "Nombre de dominio de la empresa" },
   { key: "industry", label: "Industria" },
   { key: "tax_id", label: "NIF / CIF" },
   { key: "fiscal_address", label: "Dirección fiscal" },
@@ -29,11 +29,11 @@ export default async function EmpresasPage({
 
   let query = supabase
     .from("companies")
-    .select("id, name, website, industry, tax_id, fiscal_address, created_at")
-    .order("created_at", { ascending: false });
+    .select("id, nombre_empresa, nombre_dominio_empresa, industry, tax_id, fiscal_address, fecha_creacion")
+    .order("fecha_creacion", { ascending: false });
 
   if (q) {
-    query = query.or(`name.ilike.%${q}%,industry.ilike.%${q}%`);
+    query = query.or(`nombre_empresa.ilike.%${q}%,industry.ilike.%${q}%`);
   }
   query = applyFilters(query, filters);
 

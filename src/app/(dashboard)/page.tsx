@@ -60,12 +60,12 @@ export default async function DashboardHome() {
     await Promise.all([
       supabase.from("companies").select("*", { count: "exact", head: true }),
       supabase.from("contacts").select("*", { count: "exact", head: true }),
-      supabase.from("opportunities").select("stage, amount"),
+      supabase.from("opportunities").select("stage:etapa_negocio, amount:cantidad"),
       supabase
         .from("contacts")
-        .select("source")
-        .gte("created_at", start.toISOString())
-        .lt("created_at", end.toISOString()),
+        .select("fuente_trafico_original")
+        .gte("fecha_creacion", start.toISOString())
+        .lt("fecha_creacion", end.toISOString()),
     ]);
 
   const opportunityCount = opportunities?.length ?? 0;
@@ -84,8 +84,8 @@ export default async function DashboardHome() {
 
   const countByChannel = new Map<Channel, number>();
   for (const c of monthContacts ?? []) {
-    if (c.source && (CHANNELS as readonly string[]).includes(c.source)) {
-      countByChannel.set(c.source as Channel, (countByChannel.get(c.source as Channel) ?? 0) + 1);
+    if (c.fuente_trafico_original && (CHANNELS as readonly string[]).includes(c.fuente_trafico_original)) {
+      countByChannel.set(c.fuente_trafico_original as Channel, (countByChannel.get(c.fuente_trafico_original as Channel) ?? 0) + 1);
     }
   }
   const totalWithSource = [...countByChannel.values()].reduce((a, b) => a + b, 0);

@@ -9,7 +9,7 @@ export async function getOpportunityDetail(id: string) {
     supabase
       .from("opportunities")
       .select(
-        "id, title, stage, amount, notes, created_at, stage_entered_at, updated_at, company_id, contact_id, companies!company_id(name), contacts!contact_id(full_name)",
+        "id, title:nombre_negocio, stage:etapa_negocio, amount:cantidad, notes, created_at:fecha_creacion, stage_entered_at, updated_at:fecha_ultima_modificacion, company_id:empresa_asociada_principal, contact_id, companies!empresa_asociada_principal(name:nombre_empresa), contacts!contact_id(full_name)",
       )
       .eq("id", id)
       .single(),

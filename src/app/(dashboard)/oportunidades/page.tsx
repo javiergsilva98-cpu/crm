@@ -12,7 +12,7 @@ import { AdvancedFilters } from "@/components/advanced-filters";
 import { applyFilters, parseFilters } from "@/lib/table-filters";
 
 const FILTER_FIELDS = [
-  { key: "title", label: "Título" },
+  { key: "nombre_negocio", label: "Título" },
   { key: "notes", label: "Notas" },
 ];
 
@@ -28,18 +28,18 @@ export default async function OportunidadesPage({
   let query = supabase
     .from("opportunities")
     .select(
-      "id, title, stage, amount, notes, created_at, company_id, contact_id, companies!company_id(name), contacts!contact_id(full_name)",
+      "id, title:nombre_negocio, stage:etapa_negocio, amount:cantidad, notes, created_at:fecha_creacion, company_id:empresa_asociada_principal, contact_id, companies!empresa_asociada_principal(name:nombre_empresa), contacts!contact_id(full_name)",
     )
-    .order("created_at", { ascending: false });
+    .order("fecha_creacion", { ascending: false });
 
   if (q) {
-    query = query.ilike("title", `%${q}%`);
+    query = query.ilike("nombre_negocio", `%${q}%`);
   }
   if (empresa) {
-    query = query.eq("company_id", empresa);
+    query = query.eq("empresa_asociada_principal", empresa);
   }
   if (etapa) {
-    query = query.eq("stage", etapa);
+    query = query.eq("etapa_negocio", etapa);
   }
   query = applyFilters(query, filters);
 
@@ -48,7 +48,7 @@ export default async function OportunidadesPage({
   } = await supabase.auth.getUser();
   const [{ data: opportunities, error: opportunitiesError }, { data: companies }, { data: viewSettings }] = await Promise.all([
     query,
-    supabase.from("companies").select("id, name").order("name"),
+    supabase.from("companies").select("id, name:nombre_empresa").order("nombre_empresa"),
     user
       ? supabase.from("detail_view_settings").select("fields").eq("owner_id", user.id).eq("table_name", "opportunities").maybeSingle()
       : Promise.resolve({ data: null }),

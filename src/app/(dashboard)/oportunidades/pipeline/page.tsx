@@ -7,8 +7,10 @@ export default async function PipelinePage() {
   const supabase = await createClient();
   const { data: opportunities } = await supabase
     .from("opportunities")
-    .select("id, title, stage, amount, stage_entered_at, updated_at, companies!company_id(name)")
-    .order("created_at", { ascending: false });
+    .select(
+      "id, title:nombre_negocio, stage:etapa_negocio, amount:cantidad, stage_entered_at, updated_at:fecha_ultima_modificacion, companies!empresa_asociada_principal(name:nombre_empresa)",
+    )
+    .order("fecha_creacion", { ascending: false });
 
   return (
     <div>

@@ -25,7 +25,7 @@ export default async function PresupuestosPage({
   let query = supabase
     .from("quotes")
     .select(
-      "id, quote_number, issue_date, valid_until, status, converted_invoice_id, tax_rate, companies!company_id(name), quote_items(quantity, unit_price)",
+      "id, quote_number, issue_date, valid_until, status, converted_invoice_id, tax_rate, companies!company_id(name:nombre_empresa), quote_items(quantity, unit_price)",
     )
     .order("quote_number", { ascending: false });
 
@@ -34,7 +34,7 @@ export default async function PresupuestosPage({
 
   const [{ data: quotes, error: quotesError }, { data: companies }] = await Promise.all([
     query,
-    supabase.from("companies").select("id, name").order("name"),
+    supabase.from("companies").select("id, name:nombre_empresa").order("nombre_empresa"),
   ]);
 
   return (

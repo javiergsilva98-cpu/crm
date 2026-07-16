@@ -5,12 +5,12 @@ export async function GET() {
   const supabase = await createClient();
   const { data: companies } = await supabase
     .from("companies")
-    .select("name, website, industry, created_at")
-    .order("created_at", { ascending: false });
+    .select("nombre_empresa, nombre_dominio_empresa, industry, fecha_creacion")
+    .order("fecha_creacion", { ascending: false });
 
   const csv = toCsv(
     ["Nombre", "Sitio web", "Industria", "Creado"],
-    (companies ?? []).map((c) => [c.name, c.website, c.industry, c.created_at]),
+    (companies ?? []).map((c) => [c.nombre_empresa, c.nombre_dominio_empresa, c.industry, c.fecha_creacion]),
   );
 
   return new Response(csv, {

@@ -28,7 +28,7 @@ export async function findCompanyByEmailDomain(
   const domain = normalizeDomain(email.split("@")[1] ?? "");
   if (!domain || PUBLIC_EMAIL_DOMAINS.has(domain)) return null;
 
-  const { data: companies } = await supabase.from("companies").select("id, website");
+  const { data: companies } = await supabase.from("companies").select("id, website:nombre_dominio_empresa");
 
   const match = companies?.find(
     (company) => company.website && normalizeDomain(company.website) === domain,

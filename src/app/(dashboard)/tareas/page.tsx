@@ -9,11 +9,11 @@ export default async function TareasPage() {
   const [{ data: tasks, error: tasksError }, { data: companies }, { data: opportunities }] = await Promise.all([
     supabase
       .from("tasks")
-      .select("id, title, due_date, completed, companies!company_id(name), opportunities!opportunity_id(title)")
+      .select("id, title, due_date, completed, companies!company_id(name:nombre_empresa), opportunities!opportunity_id(title:nombre_negocio)")
       .order("completed", { ascending: true })
       .order("due_date", { ascending: true, nullsFirst: false }),
-    supabase.from("companies").select("id, name").order("name"),
-    supabase.from("opportunities").select("id, title").order("created_at", { ascending: false }),
+    supabase.from("companies").select("id, name:nombre_empresa").order("nombre_empresa"),
+    supabase.from("opportunities").select("id, title:nombre_negocio").order("fecha_creacion", { ascending: false }),
   ]);
 
   return (

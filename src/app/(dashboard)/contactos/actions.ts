@@ -39,15 +39,15 @@ export async function createContact(formData: FormData) {
 
   const { error } = await supabase.from("contacts").insert({
     owner_id: user.id,
-    first_name: firstName,
-    last_name: lastName || null,
-    email: email || null,
-    phone: String(formData.get("phone") ?? "").trim() || null,
+    nombre: firstName,
+    apellido: lastName || null,
+    correo_electronico: email || null,
+    numero_telefono: String(formData.get("phone") ?? "").trim() || null,
     phone_prefix: String(formData.get("phone_prefix") ?? "").trim() || null,
     phone_country: String(formData.get("phone_country") ?? "").trim() || null,
-    company_id: companyId,
-    source: parseSource(formData.get("source")),
-    source_detail: String(formData.get("source_detail") ?? "").trim() || null,
+    empresa_principal_asociada: companyId,
+    fuente_trafico_original: parseSource(formData.get("source")),
+    desglose_fuente_original_1: String(formData.get("source_detail") ?? "").trim() || null,
     source_url: String(formData.get("source_url") ?? "").trim() || null,
     tax_id: String(formData.get("tax_id") ?? "").trim() || null,
     fiscal_address: String(formData.get("fiscal_address") ?? "").trim() || null,
@@ -77,15 +77,15 @@ export async function updateContact(formData: FormData) {
   await supabase
     .from("contacts")
     .update({
-      first_name: firstName,
-      last_name: lastName || null,
-      email: email || null,
-      phone: String(formData.get("phone") ?? "").trim() || null,
+      nombre: firstName,
+      apellido: lastName || null,
+      correo_electronico: email || null,
+      numero_telefono: String(formData.get("phone") ?? "").trim() || null,
       phone_prefix: String(formData.get("phone_prefix") ?? "").trim() || null,
       phone_country: String(formData.get("phone_country") ?? "").trim() || null,
-      company_id: companyId,
-      source: parseSource(formData.get("source")),
-      source_detail: String(formData.get("source_detail") ?? "").trim() || null,
+      empresa_principal_asociada: companyId,
+      fuente_trafico_original: parseSource(formData.get("source")),
+      desglose_fuente_original_1: String(formData.get("source_detail") ?? "").trim() || null,
       source_url: String(formData.get("source_url") ?? "").trim() || null,
       tax_id: String(formData.get("tax_id") ?? "").trim() || null,
       fiscal_address: String(formData.get("fiscal_address") ?? "").trim() || null,
@@ -112,14 +112,14 @@ export async function bulkDeleteContacts(ids: string[]) {
 export async function bulkUpdateContactsCompany(ids: string[], companyId: string | null) {
   if (ids.length === 0) return;
   const supabase = await createClient();
-  await supabase.from("contacts").update({ company_id: companyId }).in("id", ids);
+  await supabase.from("contacts").update({ empresa_principal_asociada: companyId }).in("id", ids);
   revalidatePath("/contactos");
 }
 
 export async function bulkUpdateContactsSource(ids: string[], source: string | null) {
   if (ids.length === 0) return;
   const supabase = await createClient();
-  await supabase.from("contacts").update({ source: parseSource(source) }).in("id", ids);
+  await supabase.from("contacts").update({ fuente_trafico_original: parseSource(source) }).in("id", ids);
   revalidatePath("/contactos");
 }
 
@@ -139,7 +139,7 @@ export async function importContacts(
   } = await supabase.auth.getUser();
   if (!user) return { imported: 0, skipped: rows.length };
 
-  const { data: companies } = await supabase.from("companies").select("id, name, website");
+  const { data: companies } = await supabase.from("companies").select("id, name:nombre_empresa, website:nombre_dominio_empresa");
 
   let imported = 0;
   let skipped = 0;
@@ -166,12 +166,12 @@ export async function importContacts(
 
     const { error } = await supabase.from("contacts").insert({
       owner_id: user.id,
-      first_name: firstName,
-      last_name: row.last_name.trim() || null,
-      email: email || null,
-      phone: row.phone.trim() || null,
-      company_id: companyId,
-      source: normalizeSource(row.source),
+      nombre: firstName,
+      apellido: row.last_name.trim() || null,
+      correo_electronico: email || null,
+      numero_telefono: row.phone.trim() || null,
+      empresa_principal_asociada: companyId,
+      fuente_trafico_original: normalizeSource(row.source),
     });
 
     if (error) {

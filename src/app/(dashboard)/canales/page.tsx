@@ -13,17 +13,17 @@ export default async function CanalesPage() {
   const [{ data: contacts }, { data: spend }] = await Promise.all([
     supabase
       .from("contacts")
-      .select("id, source")
-      .gte("created_at", start.toISOString())
-      .lt("created_at", end.toISOString()),
+      .select("id, fuente_trafico_original")
+      .gte("fecha_creacion", start.toISOString())
+      .lt("fecha_creacion", end.toISOString()),
     supabase.from("channel_spend").select("channel, amount").eq("month", month),
   ]);
 
   const countByChannel = new Map<Channel, number>();
   let withoutSource = 0;
   for (const c of contacts ?? []) {
-    if (c.source && (CHANNELS as readonly string[]).includes(c.source)) {
-      countByChannel.set(c.source as Channel, (countByChannel.get(c.source as Channel) ?? 0) + 1);
+    if (c.fuente_trafico_original && (CHANNELS as readonly string[]).includes(c.fuente_trafico_original)) {
+      countByChannel.set(c.fuente_trafico_original as Channel, (countByChannel.get(c.fuente_trafico_original as Channel) ?? 0) + 1);
     } else {
       withoutSource++;
     }

@@ -14,9 +14,9 @@ import { applyFilters, parseFilters } from "@/lib/table-filters";
 
 const FILTER_FIELDS = [
   { key: "full_name", label: "Nombre completo" },
-  { key: "email", label: "Email" },
-  { key: "phone", label: "Teléfono" },
-  { key: "source_detail", label: "Detalle del canal" },
+  { key: "correo_electronico", label: "Email" },
+  { key: "numero_telefono", label: "Teléfono" },
+  { key: "desglose_fuente_original_1", label: "Detalle del canal" },
   { key: "tax_id", label: "NIF" },
   { key: "fiscal_address", label: "Dirección fiscal" },
 ];
@@ -33,18 +33,18 @@ export default async function ContactosPage({
   let query = supabase
     .from("contacts")
     .select(
-      "id, first_name, last_name, full_name, email, phone, phone_prefix, phone_country, company_id, source, source_detail, source_url, tax_id, fiscal_address, last_activity_at, last_activity_by, companies!company_id(name)",
+      "id, nombre, apellido, full_name, correo_electronico, numero_telefono, phone_prefix, phone_country, empresa_principal_asociada, fuente_trafico_original, desglose_fuente_original_1, source_url, tax_id, fiscal_address, ultimo_contacto, last_activity_by, companies!empresa_principal_asociada(nombre_empresa)",
     )
-    .order("created_at", { ascending: false });
+    .order("fecha_creacion", { ascending: false });
 
   if (q) {
-    query = query.or(`full_name.ilike.%${q}%,email.ilike.%${q}%`);
+    query = query.or(`full_name.ilike.%${q}%,correo_electronico.ilike.%${q}%`);
   }
   if (empresa) {
-    query = query.eq("company_id", empresa);
+    query = query.eq("empresa_principal_asociada", empresa);
   }
   if (canal) {
-    query = query.eq("source", canal);
+    query = query.eq("fuente_trafico_original", canal);
   }
   query = applyFilters(query, filters);
 
@@ -54,7 +54,7 @@ export default async function ContactosPage({
   const [{ data: contacts, error: contactsError }, { data: companies }, { data: profiles }, { data: viewSettings }] =
     await Promise.all([
       query,
-      supabase.from("companies").select("id, name").order("name"),
+      supabase.from("companies").select("id, nombre_empresa").order("nombre_empresa"),
       supabase.from("profiles").select("id, email"),
       user
         ? supabase.from("detail_view_settings").select("fields").eq("owner_id", user.id).eq("table_name", "contacts").maybeSingle()
@@ -96,7 +96,7 @@ export default async function ContactosPage({
                 <option value="">Detectar por email / sin empresa</option>
                 {companies?.map((company) => (
                   <option key={company.id} value={company.id}>
-                    {company.name}
+                    {company.nombre_empresa}
                   </option>
                 ))}
               </select>
@@ -142,7 +142,7 @@ export default async function ContactosPage({
           <option value="">Todas las empresas</option>
           {companies?.map((company) => (
             <option key={company.id} value={company.id}>
-              {company.name}
+              {company.nombre_empresa}
             </option>
           ))}
         </select>
@@ -177,7 +177,7 @@ export default async function ContactosPage({
       <ContactsTable
         contacts={(contacts ?? []).map((contact) => ({
           ...contact,
-          companies: (contact.companies as unknown as { name: string } | null) ?? null,
+          companies: (contact.companies as unknown as { nombre_empresa: string } | null) ?? null,
         }))}
         companies={companies ?? []}
         profileEmailById={profileEmailById}

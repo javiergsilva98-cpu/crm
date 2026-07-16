@@ -18,10 +18,10 @@ export async function createOpportunity(formData: FormData) {
 
   const { error } = await supabase.from("opportunities").insert({
     owner_id: user.id,
-    title,
-    company_id: companyId || null,
-    amount: Number.isFinite(amount) ? amount : 0,
-    stage: "nuevo",
+    nombre_negocio: title,
+    empresa_asociada_principal: companyId || null,
+    cantidad: Number.isFinite(amount) ? amount : 0,
+    etapa_negocio: "nuevo",
   });
 
   if (error) return { error: "No se pudo guardar la oportunidad. Inténtalo de nuevo." };
@@ -41,9 +41,9 @@ export async function updateOpportunity(formData: FormData) {
   await supabase
     .from("opportunities")
     .update({
-      title,
-      company_id: companyId || null,
-      amount: Number.isFinite(amount) ? amount : 0,
+      nombre_negocio: title,
+      empresa_asociada_principal: companyId || null,
+      cantidad: Number.isFinite(amount) ? amount : 0,
     })
     .eq("id", id);
 
@@ -54,7 +54,7 @@ export async function updateStage(formData: FormData) {
   const supabase = await createClient();
   const id = String(formData.get("id"));
   const stage = String(formData.get("stage"));
-  await supabase.from("opportunities").update({ stage }).eq("id", id);
+  await supabase.from("opportunities").update({ etapa_negocio: stage }).eq("id", id);
   revalidatePath("/oportunidades");
 }
 
@@ -75,13 +75,13 @@ export async function bulkDeleteOpportunities(ids: string[]) {
 export async function bulkUpdateOpportunitiesStage(ids: string[], stage: string) {
   if (ids.length === 0) return;
   const supabase = await createClient();
-  await supabase.from("opportunities").update({ stage }).in("id", ids);
+  await supabase.from("opportunities").update({ etapa_negocio: stage }).in("id", ids);
   revalidatePath("/oportunidades");
 }
 
 export async function bulkUpdateOpportunitiesCompany(ids: string[], companyId: string | null) {
   if (ids.length === 0) return;
   const supabase = await createClient();
-  await supabase.from("opportunities").update({ company_id: companyId }).in("id", ids);
+  await supabase.from("opportunities").update({ empresa_asociada_principal: companyId }).in("id", ids);
   revalidatePath("/oportunidades");
 }

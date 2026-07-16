@@ -24,7 +24,7 @@ export default async function PresupuestoDetailPage({ params }: { params: Promis
     supabase
       .from("quotes")
       .select(
-        "id, quote_number, issue_date, valid_until, status, tax_rate, notes, converted_invoice_id, companies!company_id(name, tax_id, fiscal_address), contacts!contact_id(full_name, tax_id, fiscal_address), opportunities!opportunity_id(title), quote_templates!template_id(name, logo_path, primary_color, secondary_color, header_text, footer_text)",
+        "id, quote_number, issue_date, valid_until, status, tax_rate, notes, converted_invoice_id, companies!company_id(name:nombre_empresa, tax_id, fiscal_address), contacts!contact_id(full_name, tax_id, fiscal_address), opportunities!opportunity_id(title:nombre_negocio), quote_templates!template_id(name, logo_path, primary_color, secondary_color, header_text, footer_text)",
       )
       .eq("id", id)
       .single(),

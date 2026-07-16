@@ -4,9 +4,9 @@ import type { RawData } from "./aggregate";
 export async function fetchRawData(supabase: SupabaseClient): Promise<RawData> {
   const [{ data: companies }, { data: contacts }, { data: opportunities }, { data: expenses }, { data: invoiceItems }, { data: channelSessions }] =
     await Promise.all([
-      supabase.from("companies").select("created_at"),
-      supabase.from("contacts").select("created_at, source"),
-      supabase.from("opportunities").select("created_at, stage, amount"),
+      supabase.from("companies").select("created_at:fecha_creacion"),
+      supabase.from("contacts").select("fecha_creacion, fuente_trafico_original"),
+      supabase.from("opportunities").select("created_at:fecha_creacion, stage:etapa_negocio, amount:cantidad"),
       supabase.from("expenses").select("expense_date, category, amount, tax_rate"),
       supabase
         .from("invoice_items")

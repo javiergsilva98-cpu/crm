@@ -31,7 +31,7 @@ export function metricInfo(key: string) {
 
 export type RawData = {
   companies: { created_at: string }[];
-  contacts: { created_at: string; source: string | null }[];
+  contacts: { fecha_creacion: string; fuente_trafico_original: string | null }[];
   opportunities: { created_at: string; stage: string; amount: number }[];
   invoices: { issue_date: string; status: string; base: number; tax: number }[];
   expenses: { expense_date: string; category: string; amount: number; tax_rate: number }[];
@@ -103,8 +103,8 @@ export function aggregateMetric(
   if (metric === "contacts_by_source") {
     const totals = new Map<string, number>();
     for (const row of raw.contacts) {
-      if (!inRange(row.created_at, dateFrom, dateTo)) continue;
-      const key = row.source ?? "otro";
+      if (!inRange(row.fecha_creacion, dateFrom, dateTo)) continue;
+      const key = row.fuente_trafico_original ?? "otro";
       totals.set(key, (totals.get(key) ?? 0) + 1);
     }
     return Array.from(totals.entries())

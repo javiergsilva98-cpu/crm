@@ -25,19 +25,19 @@ export default async function CompanyDetailPage({
     await Promise.all([
       supabase
         .from("companies")
-        .select("id, name, website, industry, notes, tax_id, fiscal_address")
+        .select("id, nombre_empresa, nombre_dominio_empresa, industry, notes, tax_id, fiscal_address")
         .eq("id", id)
         .single(),
       supabase
         .from("contacts")
-        .select("id, full_name, email, phone")
-        .eq("company_id", id)
+        .select("id, full_name, correo_electronico, numero_telefono")
+        .eq("empresa_principal_asociada", id)
         .order("full_name"),
       supabase
         .from("opportunities")
-        .select("id, title, stage, amount")
-        .eq("company_id", id)
-        .order("created_at", { ascending: false }),
+        .select("id, title:nombre_negocio, stage:etapa_negocio, amount:cantidad")
+        .eq("empresa_asociada_principal", id)
+        .order("fecha_creacion", { ascending: false }),
       supabase
         .from("activities")
         .select("id, body, created_at")
@@ -68,7 +68,7 @@ export default async function CompanyDetailPage({
 
       <div className="mb-8 rounded-lg border border-border bg-raised p-6">
         <h1 className="flex items-center gap-2 font-heading text-3xl font-semibold text-ink">
-          {company.name}
+          {company.nombre_empresa}
           <HelpButton slug="ficha-empresa" label="Ficha de empresa" />
         </h1>
 
@@ -102,7 +102,7 @@ export default async function CompanyDetailPage({
         <dl className="mt-4 grid grid-cols-1 gap-3 text-sm sm:grid-cols-3">
           <div>
             <dt className="text-ink-mute">Sitio web</dt>
-            <dd>{company.website || "—"}</dd>
+            <dd>{company.nombre_dominio_empresa || "—"}</dd>
           </div>
           <div>
             <dt className="text-ink-mute">Industria</dt>
@@ -138,8 +138,8 @@ export default async function CompanyDetailPage({
               {contacts?.map((contact) => (
                 <tr key={contact.id} className="border-t border-border transition-colors hover:bg-sunken">
                   <td className="px-4 py-2">{contact.full_name}</td>
-                  <td className="px-4 py-2">{contact.email}</td>
-                  <td className="px-4 py-2">{contact.phone}</td>
+                  <td className="px-4 py-2">{contact.correo_electronico}</td>
+                  <td className="px-4 py-2">{contact.numero_telefono}</td>
                 </tr>
               ))}
               {contacts?.length === 0 && (

@@ -9,12 +9,12 @@ import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 
 type Company = {
   id: string;
-  name: string;
-  website: string | null;
+  nombre_empresa: string;
+  nombre_dominio_empresa: string | null;
   industry: string | null;
   tax_id: string | null;
   fiscal_address: string | null;
-  created_at: string;
+  fecha_creacion: string;
 };
 
 function ignoreInteractiveClick(e: MouseEvent<HTMLTableRowElement>) {
@@ -49,13 +49,13 @@ export function CompanyRow({
             <input type="hidden" name="id" value={company.id} />
             <input
               name="name"
-              defaultValue={company.name}
+              defaultValue={company.nombre_empresa}
               required
               className="rounded-md border border-border px-2 py-1 text-sm"
             />
             <input
               name="website"
-              defaultValue={company.website ?? ""}
+              defaultValue={company.nombre_dominio_empresa ?? ""}
               placeholder="Sitio web (ej. miempresa.com)"
               pattern="^(https?:\/\/)?[\w-]+(\.[\w-]+)+.*$"
               title="Escribe un dominio válido, ej. miempresa.com o https://miempresa.com"
@@ -96,11 +96,11 @@ export function CompanyRow({
   }
 
   const values: Record<string, string | null> = {
-    website: company.website,
+    nombre_dominio_empresa: company.nombre_dominio_empresa,
     industry: company.industry,
     tax_id: company.tax_id,
     fiscal_address: company.fiscal_address,
-    created_at: new Date(company.created_at).toLocaleDateString("es-ES"),
+    fecha_creacion: new Date(company.fecha_creacion).toLocaleDateString("es-ES"),
   };
 
   return (
@@ -113,14 +113,14 @@ export function CompanyRow({
         }}
       >
         <td className="px-4 py-2">
-          <input type="checkbox" checked={selected} onChange={onToggleSelect} aria-label={`Seleccionar ${company.name}`} />
+          <input type="checkbox" checked={selected} onChange={onToggleSelect} aria-label={`Seleccionar ${company.nombre_empresa}`} />
         </td>
         <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">
           <Link href={`/empresas/${company.id}`} className="text-ink hover:underline">
-            {company.name}
+            {company.nombre_empresa}
           </Link>
         </td>
-        <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">{company.website}</td>
+        <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">{company.nombre_dominio_empresa}</td>
         <td className="overflow-hidden px-4 py-2 overflow-ellipsis whitespace-nowrap">{company.industry}</td>
         <td className="sticky right-0 border-l border-border bg-raised px-4 py-2 text-right">
           <div className="flex justify-end gap-3">
@@ -130,7 +130,7 @@ export function CompanyRow({
             <form action={deleteCompany}>
               <input type="hidden" name="id" value={company.id} />
               <ConfirmSubmitButton
-                confirmMessage={`¿Eliminar ${company.name}? Esta acción no se puede deshacer.`}
+                confirmMessage={`¿Eliminar ${company.nombre_empresa}? Esta acción no se puede deshacer.`}
                 className="text-danger hover:underline"
               >
                 Eliminar

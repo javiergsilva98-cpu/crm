@@ -11,22 +11,22 @@ import { bulkDeleteContacts, bulkUpdateContactsCompany, bulkUpdateContactsSource
 
 type Contact = {
   id: string;
-  first_name: string;
-  last_name: string | null;
+  nombre: string;
+  apellido: string | null;
   full_name: string;
-  email: string | null;
-  phone: string | null;
+  correo_electronico: string | null;
+  numero_telefono: string | null;
   phone_prefix: string | null;
   phone_country: string | null;
-  company_id: string | null;
-  source: Channel | null;
-  source_detail: string | null;
+  empresa_principal_asociada: string | null;
+  fuente_trafico_original: Channel | null;
+  desglose_fuente_original_1: string | null;
   source_url: string | null;
   tax_id: string | null;
   fiscal_address: string | null;
-  last_activity_at: string | null;
+  ultimo_contacto: string | null;
   last_activity_by: string | null;
-  companies: { name: string } | null;
+  companies: { nombre_empresa: string } | null;
 };
 
 function downloadCsv(filename: string, csv: string) {
@@ -50,7 +50,7 @@ export function ContactsTable({
   emptyBody,
 }: {
   contacts: Contact[];
-  companies: { id: string; name: string }[];
+  companies: { id: string; nombre_empresa: string }[];
   profileEmailById: Map<string, string>;
   detailFields: DetailField[];
   emptyTitle: string;
@@ -81,12 +81,12 @@ export function ContactsTable({
     const csv = toCsv(
       ["Nombre", "Apellidos", "Email", "Teléfono", "Empresa", "Canal"],
       rows.map((c) => [
-        c.first_name,
-        c.last_name ?? "",
-        c.email,
-        [c.phone_prefix, c.phone].filter(Boolean).join(" "),
-        c.companies?.name ?? "",
-        c.source ? CHANNEL_LABELS[c.source] : "",
+        c.nombre,
+        c.apellido ?? "",
+        c.correo_electronico,
+        [c.phone_prefix, c.numero_telefono].filter(Boolean).join(" "),
+        c.companies?.nombre_empresa ?? "",
+        c.fuente_trafico_original ? CHANNEL_LABELS[c.fuente_trafico_original] : "",
       ]),
     );
     downloadCsv("contactos_seleccion.csv", csv);
@@ -125,7 +125,7 @@ export function ContactsTable({
               <option value="">Sin empresa</option>
               {companies.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.name}
+                  {c.nombre_empresa}
                 </option>
               ))}
             </select>

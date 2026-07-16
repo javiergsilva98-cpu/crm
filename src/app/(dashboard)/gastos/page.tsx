@@ -18,7 +18,7 @@ export default async function GastosPage({
 
   let query = supabase
     .from("expenses")
-    .select("id, description, category, amount, tax_rate, expense_date, company_id, companies!company_id(name)")
+    .select("id, description, category, amount, tax_rate, expense_date, company_id, companies!company_id(name:nombre_empresa)")
     .order("expense_date", { ascending: false });
 
   if (empresa) query = query.eq("company_id", empresa);
@@ -26,7 +26,7 @@ export default async function GastosPage({
 
   const [{ data: expenses, error: expensesError }, { data: companies }] = await Promise.all([
     query,
-    supabase.from("companies").select("id, name").order("name"),
+    supabase.from("companies").select("id, name:nombre_empresa").order("nombre_empresa"),
   ]);
 
   const totals = (expenses ?? []).reduce(

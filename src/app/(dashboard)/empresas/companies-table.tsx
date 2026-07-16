@@ -10,12 +10,12 @@ import { bulkDeleteCompanies, bulkUpdateCompaniesIndustry } from "./actions";
 
 type Company = {
   id: string;
-  name: string;
-  website: string | null;
+  nombre_empresa: string;
+  nombre_dominio_empresa: string | null;
   industry: string | null;
   tax_id: string | null;
   fiscal_address: string | null;
-  created_at: string;
+  fecha_creacion: string;
 };
 
 function downloadCsv(filename: string, csv: string) {
@@ -64,7 +64,7 @@ export function CompaniesTable({
     const rows = companies.filter((c) => selected.has(c.id));
     const csv = toCsv(
       ["Nombre", "Sitio web", "Industria"],
-      rows.map((c) => [c.name, c.website ?? "", c.industry ?? ""]),
+      rows.map((c) => [c.nombre_empresa, c.nombre_dominio_empresa ?? "", c.industry ?? ""]),
     );
     downloadCsv("empresas_seleccion.csv", csv);
   }

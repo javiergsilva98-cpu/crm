@@ -24,9 +24,9 @@ export default async function EditarFacturaPage({
         .eq("id", id)
         .single(),
       supabase.from("invoice_items").select("description, quantity, unit_price").eq("invoice_id", id).order("position"),
-      supabase.from("companies").select("id, name").order("name"),
+      supabase.from("companies").select("id, name:nombre_empresa").order("nombre_empresa"),
       supabase.from("contacts").select("id, full_name").order("full_name"),
-      supabase.from("opportunities").select("id, title").order("created_at", { ascending: false }),
+      supabase.from("opportunities").select("id, title:nombre_negocio").order("fecha_creacion", { ascending: false }),
       supabase.from("services").select("id, name, description, unit_price").eq("owner_id", user?.id ?? "").order("name"),
     ]);
 

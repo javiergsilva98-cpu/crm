@@ -24,7 +24,7 @@ export default async function FacturasPage({
 
   let query = supabase
     .from("invoices")
-    .select("id, invoice_number, issue_date, status, paid_at, tax_rate, companies!company_id(name), invoice_items(quantity, unit_price)")
+    .select("id, invoice_number, issue_date, status, paid_at, tax_rate, companies!company_id(name:nombre_empresa), invoice_items(quantity, unit_price)")
     .order("invoice_number", { ascending: false });
 
   if (empresa) query = query.eq("company_id", empresa);
@@ -32,7 +32,7 @@ export default async function FacturasPage({
 
   const [{ data: invoices, error: invoicesError }, { data: companies }] = await Promise.all([
     query,
-    supabase.from("companies").select("id, name").order("name"),
+    supabase.from("companies").select("id, name:nombre_empresa").order("nombre_empresa"),
   ]);
 
   return (

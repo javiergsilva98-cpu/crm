@@ -17,14 +17,14 @@ export async function createCompany(formData: FormData) {
     .from("companies")
     .select("id")
     .eq("owner_id", user.id)
-    .ilike("name", name)
+    .ilike("nombre_empresa", name)
     .limit(1)
     .maybeSingle();
 
   const { error } = await supabase.from("companies").insert({
     owner_id: user.id,
-    name,
-    website: String(formData.get("website") ?? "").trim() || null,
+    nombre_empresa: name,
+    nombre_dominio_empresa: String(formData.get("website") ?? "").trim() || null,
     industry: String(formData.get("industry") ?? "").trim() || null,
     tax_id: String(formData.get("tax_id") ?? "").trim() || null,
     fiscal_address: String(formData.get("fiscal_address") ?? "").trim() || null,
@@ -46,8 +46,8 @@ export async function updateCompany(formData: FormData) {
   await supabase
     .from("companies")
     .update({
-      name,
-      website: String(formData.get("website") ?? "").trim() || null,
+      nombre_empresa: name,
+      nombre_dominio_empresa: String(formData.get("website") ?? "").trim() || null,
       industry: String(formData.get("industry") ?? "").trim() || null,
       tax_id: String(formData.get("tax_id") ?? "").trim() || null,
       fiscal_address: String(formData.get("fiscal_address") ?? "").trim() || null,

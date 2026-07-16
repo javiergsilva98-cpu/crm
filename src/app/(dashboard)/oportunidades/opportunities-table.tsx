@@ -6,6 +6,7 @@ import { EmptyStateRow } from "@/components/empty-state";
 import { ResizableTh } from "@/components/resizable-th";
 import type { DetailField } from "@/lib/detail-fields";
 import { STAGES, STAGE_LABELS } from "@/lib/stages";
+import type { Channel } from "@/lib/channels";
 import { toCsv } from "@/lib/csv";
 import { bulkDeleteOpportunities, bulkUpdateOpportunitiesStage, bulkUpdateOpportunitiesCompany } from "./actions";
 
@@ -18,6 +19,14 @@ type Opportunity = {
   created_at: string;
   company_id: string | null;
   contact_id: string | null;
+  fecha_cierre: string | null;
+  ultimo_contacto: string | null;
+  fuente_trafico_original: Channel | null;
+  desglose_fuente_original_1: string | null;
+  desglose_fuente_original_2: string | null;
+  esta_cerrado_ganado: boolean;
+  esta_cerrado_perdido: boolean;
+  fecha_ultima_modificacion: string | null;
   companies: { name: string } | null;
   contacts: { full_name: string } | null;
 };

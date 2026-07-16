@@ -2,6 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { LIFECYCLE_STAGES } from "@/lib/contact-lifecycle";
+
+function parseLifecycleStage(value: FormDataEntryValue | null): string | null {
+  const v = String(value ?? "").trim();
+  return (LIFECYCLE_STAGES as readonly string[]).includes(v) ? v : null;
+}
 
 export async function createCompany(formData: FormData) {
   const supabase = await createClient();
@@ -26,6 +32,8 @@ export async function createCompany(formData: FormData) {
     nombre_empresa: name,
     nombre_dominio_empresa: String(formData.get("website") ?? "").trim() || null,
     industry: String(formData.get("industry") ?? "").trim() || null,
+    numero_telefono: String(formData.get("phone") ?? "").trim() || null,
+    etapa_ciclo_vida: parseLifecycleStage(formData.get("lifecycle_stage")),
     tax_id: String(formData.get("tax_id") ?? "").trim() || null,
     fiscal_address: String(formData.get("fiscal_address") ?? "").trim() || null,
   });
@@ -49,6 +57,8 @@ export async function updateCompany(formData: FormData) {
       nombre_empresa: name,
       nombre_dominio_empresa: String(formData.get("website") ?? "").trim() || null,
       industry: String(formData.get("industry") ?? "").trim() || null,
+      numero_telefono: String(formData.get("phone") ?? "").trim() || null,
+      etapa_ciclo_vida: parseLifecycleStage(formData.get("lifecycle_stage")),
       tax_id: String(formData.get("tax_id") ?? "").trim() || null,
       fiscal_address: String(formData.get("fiscal_address") ?? "").trim() || null,
     })

@@ -2,6 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { CHANNELS } from "@/lib/channels";
+
+function parseSource(value: FormDataEntryValue | null): string | null {
+  const source = String(value ?? "").trim();
+  return (CHANNELS as readonly string[]).includes(source) ? source : null;
+}
 
 export async function createOpportunity(formData: FormData) {
   const supabase = await createClient();
@@ -37,6 +43,7 @@ export async function updateOpportunity(formData: FormData) {
 
   const companyId = String(formData.get("company_id") ?? "").trim();
   const amount = Number(formData.get("amount") ?? 0);
+  const closeDate = String(formData.get("close_date") ?? "").trim();
 
   await supabase
     .from("opportunities")
@@ -44,6 +51,10 @@ export async function updateOpportunity(formData: FormData) {
       nombre_negocio: title,
       empresa_asociada_principal: companyId || null,
       cantidad: Number.isFinite(amount) ? amount : 0,
+      fecha_cierre: closeDate || null,
+      fuente_trafico_original: parseSource(formData.get("source")),
+      desglose_fuente_original_1: String(formData.get("source_detail") ?? "").trim() || null,
+      desglose_fuente_original_2: String(formData.get("source_detail_2") ?? "").trim() || null,
     })
     .eq("id", id);
 

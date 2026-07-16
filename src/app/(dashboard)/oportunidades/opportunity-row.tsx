@@ -6,6 +6,8 @@ import { StageSelect } from "./stage-select";
 import { ExpandableDetail } from "@/components/expandable-detail";
 import type { DetailField } from "@/lib/detail-fields";
 import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
+import { CHANNELS, CHANNEL_LABELS, type Channel } from "@/lib/channels";
+import { formatDateTime } from "@/lib/format";
 
 type Opportunity = {
   id: string;
@@ -16,6 +18,14 @@ type Opportunity = {
   created_at: string;
   company_id: string | null;
   contact_id: string | null;
+  fecha_cierre: string | null;
+  ultimo_contacto: string | null;
+  fuente_trafico_original: Channel | null;
+  desglose_fuente_original_1: string | null;
+  desglose_fuente_original_2: string | null;
+  esta_cerrado_ganado: boolean;
+  esta_cerrado_perdido: boolean;
+  fecha_ultima_modificacion: string | null;
   companies: { name: string } | null;
   contacts: { full_name: string } | null;
 };
@@ -77,6 +87,36 @@ export function OpportunityRow({
                 </option>
               ))}
             </select>
+            <input
+              name="close_date"
+              type="date"
+              defaultValue={opportunity.fecha_cierre ? opportunity.fecha_cierre.slice(0, 10) : ""}
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <select
+              name="source"
+              defaultValue={opportunity.fuente_trafico_original ?? ""}
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            >
+              <option value="">Fuente de tráfico original</option>
+              {CHANNELS.map((c) => (
+                <option key={c} value={c}>
+                  {CHANNEL_LABELS[c]}
+                </option>
+              ))}
+            </select>
+            <input
+              name="source_detail"
+              defaultValue={opportunity.desglose_fuente_original_1 ?? ""}
+              placeholder="Desglose de la fuente 1"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <input
+              name="source_detail_2"
+              defaultValue={opportunity.desglose_fuente_original_2 ?? ""}
+              placeholder="Desglose de la fuente 2"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
             <button type="submit" className="rounded-md bg-calm px-3 py-1 text-sm text-base transition-colors hover:bg-calm-hover">
               Guardar
             </button>
@@ -99,6 +139,14 @@ export function OpportunityRow({
     amount: `${Number(opportunity.amount).toLocaleString("es-ES")}€`,
     notes: opportunity.notes,
     created_at: new Date(opportunity.created_at).toLocaleDateString("es-ES"),
+    fecha_cierre: opportunity.fecha_cierre ? new Date(opportunity.fecha_cierre).toLocaleDateString("es-ES") : null,
+    ultimo_contacto: opportunity.ultimo_contacto ? formatDateTime(opportunity.ultimo_contacto) : null,
+    fuente_trafico_original: opportunity.fuente_trafico_original ? CHANNEL_LABELS[opportunity.fuente_trafico_original] : null,
+    desglose_fuente_original_1: opportunity.desglose_fuente_original_1,
+    desglose_fuente_original_2: opportunity.desglose_fuente_original_2,
+    esta_cerrado_ganado: opportunity.esta_cerrado_ganado ? "Sí" : "No",
+    esta_cerrado_perdido: opportunity.esta_cerrado_perdido ? "Sí" : "No",
+    fecha_ultima_modificacion: opportunity.fecha_ultima_modificacion ? formatDateTime(opportunity.fecha_ultima_modificacion) : null,
   };
 
   return (

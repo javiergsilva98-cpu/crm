@@ -6,15 +6,21 @@ import { updateCompany, deleteCompany } from "./actions";
 import { ExpandableDetail } from "@/components/expandable-detail";
 import type { DetailField } from "@/lib/detail-fields";
 import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
+import { LIFECYCLE_STAGES, LIFECYCLE_STAGE_LABELS } from "@/lib/contact-lifecycle";
+import { formatDateTime } from "@/lib/format";
 
 type Company = {
   id: string;
   nombre_empresa: string;
   nombre_dominio_empresa: string | null;
   industry: string | null;
+  numero_telefono: string | null;
+  etapa_ciclo_vida: string | null;
+  ultimo_contacto: string | null;
   tax_id: string | null;
   fiscal_address: string | null;
   fecha_creacion: string;
+  fecha_ultima_modificacion: string | null;
 };
 
 function ignoreInteractiveClick(e: MouseEvent<HTMLTableRowElement>) {
@@ -68,6 +74,24 @@ export function CompanyRow({
               className="rounded-md border border-border px-2 py-1 text-sm"
             />
             <input
+              name="phone"
+              defaultValue={company.numero_telefono ?? ""}
+              placeholder="Número de teléfono"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <select
+              name="lifecycle_stage"
+              defaultValue={company.etapa_ciclo_vida ?? ""}
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            >
+              <option value="">Etapa del ciclo de vida</option>
+              {LIFECYCLE_STAGES.map((s) => (
+                <option key={s} value={s}>
+                  {LIFECYCLE_STAGE_LABELS[s]}
+                </option>
+              ))}
+            </select>
+            <input
               name="tax_id"
               defaultValue={company.tax_id ?? ""}
               placeholder="NIF / CIF"
@@ -98,9 +122,15 @@ export function CompanyRow({
   const values: Record<string, string | null> = {
     nombre_dominio_empresa: company.nombre_dominio_empresa,
     industry: company.industry,
+    numero_telefono: company.numero_telefono,
+    etapa_ciclo_vida: company.etapa_ciclo_vida
+      ? LIFECYCLE_STAGE_LABELS[company.etapa_ciclo_vida as keyof typeof LIFECYCLE_STAGE_LABELS]
+      : null,
+    ultimo_contacto: company.ultimo_contacto ? formatDateTime(company.ultimo_contacto) : null,
     tax_id: company.tax_id,
     fiscal_address: company.fiscal_address,
     fecha_creacion: new Date(company.fecha_creacion).toLocaleDateString("es-ES"),
+    fecha_ultima_modificacion: company.fecha_ultima_modificacion ? formatDateTime(company.fecha_ultima_modificacion) : null,
   };
 
   return (

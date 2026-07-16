@@ -9,6 +9,7 @@ import { DETAIL_FIELD_CATALOG, resolveDetailFields } from "@/lib/detail-fields";
 import { HelpButton } from "@/components/help-button";
 import { AdvancedFilters } from "@/components/advanced-filters";
 import { applyFilters, parseFilters } from "@/lib/table-filters";
+import { LIFECYCLE_STAGES, LIFECYCLE_STAGE_LABELS } from "@/lib/contact-lifecycle";
 
 const FILTER_FIELDS = [
   { key: "nombre_empresa", label: "Nombre de la empresa" },
@@ -29,7 +30,9 @@ export default async function EmpresasPage({
 
   let query = supabase
     .from("companies")
-    .select("id, nombre_empresa, nombre_dominio_empresa, industry, tax_id, fiscal_address, fecha_creacion")
+    .select(
+      "id, nombre_empresa, nombre_dominio_empresa, industry, numero_telefono, etapa_ciclo_vida, ultimo_contacto, tax_id, fiscal_address, fecha_creacion, fecha_ultima_modificacion",
+    )
     .order("fecha_creacion", { ascending: false });
 
   if (q) {
@@ -79,6 +82,15 @@ export default async function EmpresasPage({
               className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto"
             />
             <input name="industry" placeholder="Industria" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
+            <input name="phone" placeholder="Número de teléfono" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
+            <select name="lifecycle_stage" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
+              <option value="">Etapa del ciclo de vida</option>
+              {LIFECYCLE_STAGES.map((s) => (
+                <option key={s} value={s}>
+                  {LIFECYCLE_STAGE_LABELS[s]}
+                </option>
+              ))}
+            </select>
             <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-base transition-colors hover:bg-calm-hover sm:w-auto">
               Agregar
             </button>

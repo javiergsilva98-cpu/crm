@@ -13,9 +13,13 @@ type Company = {
   nombre_empresa: string;
   nombre_dominio_empresa: string | null;
   industry: string | null;
+  numero_telefono: string | null;
+  etapa_ciclo_vida: string | null;
+  ultimo_contacto: string | null;
   tax_id: string | null;
   fiscal_address: string | null;
   fecha_creacion: string;
+  fecha_ultima_modificacion: string | null;
 };
 
 function downloadCsv(filename: string, csv: string) {

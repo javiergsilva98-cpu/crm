@@ -4,10 +4,21 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { findCompanyByEmailDomain } from "@/lib/match-company";
 import { CHANNELS } from "@/lib/channels";
+import { LIFECYCLE_STAGES, LEAD_STATUSES } from "@/lib/contact-lifecycle";
 
 function parseSource(value: FormDataEntryValue | null): string | null {
   const source = String(value ?? "").trim();
   return (CHANNELS as readonly string[]).includes(source) ? source : null;
+}
+
+function parseLifecycleStage(value: FormDataEntryValue | null): string | null {
+  const v = String(value ?? "").trim();
+  return (LIFECYCLE_STAGES as readonly string[]).includes(v) ? v : null;
+}
+
+function parseLeadStatus(value: FormDataEntryValue | null): string | null {
+  const v = String(value ?? "").trim();
+  return (LEAD_STATUSES as readonly string[]).includes(v) ? v : null;
 }
 
 export async function createContact(formData: FormData) {
@@ -81,12 +92,21 @@ export async function updateContact(formData: FormData) {
       apellido: lastName || null,
       correo_electronico: email || null,
       numero_telefono: String(formData.get("phone") ?? "").trim() || null,
+      numero_telefono_movil: String(formData.get("mobile_phone") ?? "").trim() || null,
       phone_prefix: String(formData.get("phone_prefix") ?? "").trim() || null,
       phone_country: String(formData.get("phone_country") ?? "").trim() || null,
       empresa_principal_asociada: companyId,
+      nombre_empresa: String(formData.get("company_name") ?? "").trim() || null,
       fuente_trafico_original: parseSource(formData.get("source")),
+      ultima_fuente_trafico: parseSource(formData.get("latest_source")),
       desglose_fuente_original_1: String(formData.get("source_detail") ?? "").trim() || null,
+      desglose_fuente_original_2: String(formData.get("source_detail_2") ?? "").trim() || null,
       source_url: String(formData.get("source_url") ?? "").trim() || null,
+      id_clic_google_ads_gclid: String(formData.get("gclid") ?? "").trim() || null,
+      id_clic_facebook_fbclid: String(formData.get("fbclid") ?? "").trim() || null,
+      etapa_ciclo_vida: parseLifecycleStage(formData.get("lifecycle_stage")),
+      estado_lead: parseLeadStatus(formData.get("lead_status")),
+      cancelacion_suscripcion_todos_correos: formData.get("email_optout") === "on",
       tax_id: String(formData.get("tax_id") ?? "").trim() || null,
       fiscal_address: String(formData.get("fiscal_address") ?? "").trim() || null,
     })

@@ -33,7 +33,7 @@ export default async function ContactosPage({
   let query = supabase
     .from("contacts")
     .select(
-      "id, nombre, apellido, full_name, correo_electronico, numero_telefono, phone_prefix, phone_country, empresa_principal_asociada, fuente_trafico_original, desglose_fuente_original_1, source_url, tax_id, fiscal_address, ultimo_contacto, last_activity_by, companies!empresa_principal_asociada(nombre_empresa)",
+      "id, nombre, apellido, full_name, correo_electronico, numero_telefono, numero_telefono_movil, phone_prefix, phone_country, empresa_principal_asociada, nombre_empresa, fuente_trafico_original, ultima_fuente_trafico, desglose_fuente_original_1, desglose_fuente_original_2, source_url, id_clic_google_ads_gclid, id_clic_facebook_fbclid, etapa_ciclo_vida, estado_lead, cancelacion_suscripcion_todos_correos, tax_id, fiscal_address, ultimo_contacto, fecha_ultima_modificacion, last_activity_by, companies!empresa_principal_asociada(nombre_empresa)",
     )
     .order("fecha_creacion", { ascending: false });
 

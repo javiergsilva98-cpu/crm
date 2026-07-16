@@ -19,3 +19,22 @@ export const LEAD_STATUS_LABELS: Record<LeadStatus, string> = {
   en_progreso: "En progreso",
   descartado: "Descartado",
 };
+
+export const LEGAL_BASES = [
+  "consentimiento",
+  "ejecucion_contrato",
+  "obligacion_legal",
+  "interes_vital",
+  "interes_publico",
+  "interes_legitimo",
+] as const;
+export type LegalBasis = (typeof LEGAL_BASES)[number];
+
+export const LEGAL_BASIS_LABELS: Record<LegalBasis, string> = {
+  consentimiento: "Consentimiento",
+  ejecucion_contrato: "Ejecución de un contrato",
+  obligacion_legal: "Obligación legal",
+  interes_vital: "Interés vital",
+  interes_publico: "Interés público",
+  interes_legitimo: "Interés legítimo",
+};

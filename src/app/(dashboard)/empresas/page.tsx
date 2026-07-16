@@ -31,7 +31,7 @@ export default async function EmpresasPage({
   let query = supabase
     .from("companies")
     .select(
-      "id, nombre_empresa, nombre_dominio_empresa, industry, numero_telefono, etapa_ciclo_vida, ultimo_contacto, tax_id, fiscal_address, fecha_creacion, fecha_ultima_modificacion",
+      "id, nombre_empresa, nombre_dominio_empresa, industry, numero_telefono, etapa_ciclo_vida, ultimo_contacto, tax_id, fiscal_address, fecha_creacion, fecha_ultima_modificacion, direccion, direccion_2, ciudad, estado_region, codigo_postal, pais_region, descripcion, industria, ingresos_anuales, numero_empleados, pagina_empresa_linkedin, tipo, fuente_registro, estado_oportunidad_venta, fecha_cierre_se_hizo_cliente, fuente_trafico_original, ultima_fuente_trafico, desglose_fuente_original_1, desglose_fuente_original_2, datos_ultima_fuente_1, datos_ultima_fuente_2, fecha_ultima_fuente_trafico, primera_conversion, fecha_primera_conversion, conversion_reciente, fecha_conversion_reciente",
     )
     .order("fecha_creacion", { ascending: false });
 

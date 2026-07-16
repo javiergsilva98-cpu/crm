@@ -28,7 +28,7 @@ export default async function OportunidadesPage({
   let query = supabase
     .from("opportunities")
     .select(
-      "id, title:nombre_negocio, stage:etapa_negocio, amount:cantidad, notes, created_at:fecha_creacion, company_id:empresa_asociada_principal, contact_id, fecha_cierre, ultimo_contacto, fuente_trafico_original, desglose_fuente_original_1, desglose_fuente_original_2, esta_cerrado_ganado, esta_cerrado_perdido, fecha_ultima_modificacion, companies!empresa_asociada_principal(name:nombre_empresa), contacts!contact_id(full_name)",
+      "id, title:nombre_negocio, stage:etapa_negocio, amount:cantidad, notes, created_at:fecha_creacion, company_id:empresa_asociada_principal, contact_id, fecha_cierre, ultimo_contacto, fuente_trafico_original, desglose_fuente_original_1, desglose_fuente_original_2, esta_cerrado_ganado, esta_cerrado_perdido, fecha_ultima_modificacion, tipo_negocio, siguiente_paso, fuente_registro, probabilidad_negocio, valor_ponderado, motivo_cierre_perdido, motivo_cierre_ganado, ultima_fuente_trafico, desglose_ultima_fuente_1, desglose_ultima_fuente_2, descripcion_negocio, prioridad, categoria_prevision, ingresos_recurrentes_mensuales_mrr, companies!empresa_asociada_principal(name:nombre_empresa), contacts!contact_id(full_name)",
     )
     .order("fecha_creacion", { ascending: false });
 

@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { findCompanyByEmailDomain } from "@/lib/match-company";
 import { CHANNELS } from "@/lib/channels";
-import { LIFECYCLE_STAGES, LEAD_STATUSES } from "@/lib/contact-lifecycle";
+import { LIFECYCLE_STAGES, LEAD_STATUSES, LEGAL_BASES } from "@/lib/contact-lifecycle";
 
 function parseSource(value: FormDataEntryValue | null): string | null {
   const source = String(value ?? "").trim();
@@ -19,6 +19,11 @@ function parseLifecycleStage(value: FormDataEntryValue | null): string | null {
 function parseLeadStatus(value: FormDataEntryValue | null): string | null {
   const v = String(value ?? "").trim();
   return (LEAD_STATUSES as readonly string[]).includes(v) ? v : null;
+}
+
+function parseLegalBasis(value: FormDataEntryValue | null): string | null {
+  const v = String(value ?? "").trim();
+  return (LEGAL_BASES as readonly string[]).includes(v) ? v : null;
 }
 
 export async function createContact(formData: FormData) {
@@ -58,6 +63,7 @@ export async function createContact(formData: FormData) {
     phone_country: String(formData.get("phone_country") ?? "").trim() || null,
     empresa_principal_asociada: companyId,
     fuente_trafico_original: parseSource(formData.get("source")),
+    fuente_registro: "manual",
     desglose_fuente_original_1: String(formData.get("source_detail") ?? "").trim() || null,
     source_url: String(formData.get("source_url") ?? "").trim() || null,
     tax_id: String(formData.get("tax_id") ?? "").trim() || null,
@@ -109,6 +115,20 @@ export async function updateContact(formData: FormData) {
       cancelacion_suscripcion_todos_correos: formData.get("email_optout") === "on",
       tax_id: String(formData.get("tax_id") ?? "").trim() || null,
       fiscal_address: String(formData.get("fiscal_address") ?? "").trim() || null,
+      ciudad: String(formData.get("city") ?? "").trim() || null,
+      estado_region: String(formData.get("state") ?? "").trim() || null,
+      codigo_postal: String(formData.get("zip") ?? "").trim() || null,
+      pais_region: String(formData.get("country") ?? "").trim() || null,
+      direccion: String(formData.get("address") ?? "").trim() || null,
+      cargo: String(formData.get("jobtitle") ?? "").trim() || null,
+      industria: String(formData.get("contact_industry") ?? "").trim() || null,
+      url_sitio_web: String(formData.get("contact_website") ?? "").trim() || null,
+      url_linkedin: String(formData.get("linkedin_url") ?? "").trim() || null,
+      mensaje: String(formData.get("message") ?? "").trim() || null,
+      correos_electronicos_adicionales: String(formData.get("additional_emails") ?? "").trim() || null,
+      base_juridica_tratamiento_datos: parseLegalBasis(formData.get("legal_basis")),
+      fecha_siguiente_actividad: String(formData.get("next_activity_date") ?? "").trim() || null,
+      direccion_correo_no_valida: formData.get("bad_email") === "on",
     })
     .eq("id", id);
 
@@ -192,6 +212,7 @@ export async function importContacts(
       numero_telefono: row.phone.trim() || null,
       empresa_principal_asociada: companyId,
       fuente_trafico_original: normalizeSource(row.source),
+      fuente_registro: "importacion",
     });
 
     if (error) {

@@ -33,7 +33,7 @@ export default async function ContactosPage({
   let query = supabase
     .from("contacts")
     .select(
-      "id, nombre, apellido, full_name, correo_electronico, numero_telefono, numero_telefono_movil, phone_prefix, phone_country, empresa_principal_asociada, nombre_empresa, fuente_trafico_original, ultima_fuente_trafico, desglose_fuente_original_1, desglose_fuente_original_2, source_url, id_clic_google_ads_gclid, id_clic_facebook_fbclid, etapa_ciclo_vida, estado_lead, cancelacion_suscripcion_todos_correos, tax_id, fiscal_address, ultimo_contacto, fecha_ultima_modificacion, last_activity_by, companies!empresa_principal_asociada(nombre_empresa)",
+      "id, nombre, apellido, full_name, correo_electronico, numero_telefono, numero_telefono_movil, phone_prefix, phone_country, empresa_principal_asociada, nombre_empresa, fuente_trafico_original, ultima_fuente_trafico, desglose_fuente_original_1, desglose_fuente_original_2, source_url, id_clic_google_ads_gclid, id_clic_facebook_fbclid, etapa_ciclo_vida, estado_lead, cancelacion_suscripcion_todos_correos, tax_id, fiscal_address, ultimo_contacto, fecha_ultima_modificacion, last_activity_by, ciudad, estado_region, codigo_postal, pais_region, direccion, cargo, industria, url_sitio_web, url_linkedin, mensaje, correos_electronicos_adicionales, contacto_sin_gestionar, fuente_registro, base_juridica_tratamiento_datos, desglose_ultima_fuente_1, desglose_ultima_fuente_2, fecha_ultima_fuente_trafico, primera_conversion, fecha_primera_conversion, conversion_reciente, fecha_conversion_reciente, fecha_siguiente_actividad, direccion_correo_no_valida, fecha_cierre_se_hizo_cliente, companies!empresa_principal_asociada(nombre_empresa)",
     )
     .order("fecha_creacion", { ascending: false });
 

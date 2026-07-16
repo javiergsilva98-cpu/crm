@@ -8,6 +8,14 @@ import type { DetailField } from "@/lib/detail-fields";
 import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { CHANNELS, CHANNEL_LABELS, type Channel } from "@/lib/channels";
 import { formatDateTime } from "@/lib/format";
+import {
+  DEAL_TYPES,
+  DEAL_TYPE_LABELS,
+  DEAL_PRIORITIES,
+  DEAL_PRIORITY_LABELS,
+  FORECAST_CATEGORIES,
+  FORECAST_CATEGORY_LABELS,
+} from "@/lib/opportunity-fields";
 
 type Opportunity = {
   id: string;
@@ -26,6 +34,20 @@ type Opportunity = {
   esta_cerrado_ganado: boolean;
   esta_cerrado_perdido: boolean;
   fecha_ultima_modificacion: string | null;
+  tipo_negocio: string | null;
+  siguiente_paso: string | null;
+  fuente_registro: string | null;
+  probabilidad_negocio: number;
+  valor_ponderado: number;
+  motivo_cierre_perdido: string | null;
+  motivo_cierre_ganado: string | null;
+  ultima_fuente_trafico: Channel | null;
+  desglose_ultima_fuente_1: string | null;
+  desglose_ultima_fuente_2: string | null;
+  descripcion_negocio: string | null;
+  prioridad: string | null;
+  categoria_prevision: string | null;
+  ingresos_recurrentes_mensuales_mrr: number | null;
   companies: { name: string } | null;
   contacts: { full_name: string } | null;
 };
@@ -117,6 +139,98 @@ export function OpportunityRow({
               placeholder="Desglose de la fuente 2"
               className="rounded-md border border-border px-2 py-1 text-sm"
             />
+            <select
+              name="deal_type"
+              defaultValue={opportunity.tipo_negocio ?? ""}
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            >
+              <option value="">Tipo de negocio</option>
+              {DEAL_TYPES.map((t) => (
+                <option key={t} value={t}>
+                  {DEAL_TYPE_LABELS[t]}
+                </option>
+              ))}
+            </select>
+            <input
+              name="next_step"
+              defaultValue={opportunity.siguiente_paso ?? ""}
+              placeholder="Siguiente paso"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <select
+              name="priority"
+              defaultValue={opportunity.prioridad ?? ""}
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            >
+              <option value="">Prioridad</option>
+              {DEAL_PRIORITIES.map((p) => (
+                <option key={p} value={p}>
+                  {DEAL_PRIORITY_LABELS[p]}
+                </option>
+              ))}
+            </select>
+            <select
+              name="forecast_category"
+              defaultValue={opportunity.categoria_prevision ?? ""}
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            >
+              <option value="">Categoría de previsión</option>
+              {FORECAST_CATEGORIES.map((c) => (
+                <option key={c} value={c}>
+                  {FORECAST_CATEGORY_LABELS[c]}
+                </option>
+              ))}
+            </select>
+            <select
+              name="latest_source"
+              defaultValue={opportunity.ultima_fuente_trafico ?? ""}
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            >
+              <option value="">Última fuente de tráfico</option>
+              {CHANNELS.map((c) => (
+                <option key={c} value={c}>
+                  {CHANNEL_LABELS[c]}
+                </option>
+              ))}
+            </select>
+            <input
+              name="latest_source_detail"
+              defaultValue={opportunity.desglose_ultima_fuente_1 ?? ""}
+              placeholder="Desglose de la última fuente 1"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <input
+              name="latest_source_detail_2"
+              defaultValue={opportunity.desglose_ultima_fuente_2 ?? ""}
+              placeholder="Desglose de la última fuente 2"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <input
+              name="deal_description"
+              defaultValue={opportunity.descripcion_negocio ?? ""}
+              placeholder="Descripción del negocio"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <input
+              name="mrr"
+              type="number"
+              step="0.01"
+              defaultValue={opportunity.ingresos_recurrentes_mensuales_mrr ?? ""}
+              placeholder="MRR"
+              className="w-28 rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <input
+              name="closed_won_reason"
+              defaultValue={opportunity.motivo_cierre_ganado ?? ""}
+              placeholder="Motivo de cierre ganado"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <input
+              name="closed_lost_reason"
+              defaultValue={opportunity.motivo_cierre_perdido ?? ""}
+              placeholder="Motivo de cierre perdido"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
             <button type="submit" className="rounded-md bg-calm px-3 py-1 text-sm text-base transition-colors hover:bg-calm-hover">
               Guardar
             </button>
@@ -147,6 +261,25 @@ export function OpportunityRow({
     esta_cerrado_ganado: opportunity.esta_cerrado_ganado ? "Sí" : "No",
     esta_cerrado_perdido: opportunity.esta_cerrado_perdido ? "Sí" : "No",
     fecha_ultima_modificacion: opportunity.fecha_ultima_modificacion ? formatDateTime(opportunity.fecha_ultima_modificacion) : null,
+    tipo_negocio: opportunity.tipo_negocio ? DEAL_TYPE_LABELS[opportunity.tipo_negocio as keyof typeof DEAL_TYPE_LABELS] : null,
+    siguiente_paso: opportunity.siguiente_paso,
+    fuente_registro: opportunity.fuente_registro,
+    probabilidad_negocio: `${opportunity.probabilidad_negocio}%`,
+    valor_ponderado: `${Number(opportunity.valor_ponderado).toLocaleString("es-ES")}€`,
+    motivo_cierre_perdido: opportunity.motivo_cierre_perdido,
+    motivo_cierre_ganado: opportunity.motivo_cierre_ganado,
+    ultima_fuente_trafico: opportunity.ultima_fuente_trafico ? CHANNEL_LABELS[opportunity.ultima_fuente_trafico] : null,
+    desglose_ultima_fuente_1: opportunity.desglose_ultima_fuente_1,
+    desglose_ultima_fuente_2: opportunity.desglose_ultima_fuente_2,
+    descripcion_negocio: opportunity.descripcion_negocio,
+    prioridad: opportunity.prioridad ? DEAL_PRIORITY_LABELS[opportunity.prioridad as keyof typeof DEAL_PRIORITY_LABELS] : null,
+    categoria_prevision: opportunity.categoria_prevision
+      ? FORECAST_CATEGORY_LABELS[opportunity.categoria_prevision as keyof typeof FORECAST_CATEGORY_LABELS]
+      : null,
+    ingresos_recurrentes_mensuales_mrr:
+      opportunity.ingresos_recurrentes_mensuales_mrr !== null
+        ? `${opportunity.ingresos_recurrentes_mensuales_mrr.toLocaleString("es-ES")}€`
+        : null,
   };
 
   return (

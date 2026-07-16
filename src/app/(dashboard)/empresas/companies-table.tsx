@@ -5,6 +5,7 @@ import { CompanyRow } from "./company-row";
 import { EmptyStateRow } from "@/components/empty-state";
 import { ResizableTh } from "@/components/resizable-th";
 import type { DetailField } from "@/lib/detail-fields";
+import type { Channel } from "@/lib/channels";
 import { toCsv } from "@/lib/csv";
 import { bulkDeleteCompanies, bulkUpdateCompaniesIndustry } from "./actions";
 
@@ -20,6 +21,32 @@ type Company = {
   fiscal_address: string | null;
   fecha_creacion: string;
   fecha_ultima_modificacion: string | null;
+  direccion: string | null;
+  direccion_2: string | null;
+  ciudad: string | null;
+  estado_region: string | null;
+  codigo_postal: string | null;
+  pais_region: string | null;
+  descripcion: string | null;
+  industria: string | null;
+  ingresos_anuales: number | null;
+  numero_empleados: number | null;
+  pagina_empresa_linkedin: string | null;
+  tipo: string | null;
+  fuente_registro: string | null;
+  estado_oportunidad_venta: string | null;
+  fecha_cierre_se_hizo_cliente: string | null;
+  fuente_trafico_original: Channel | null;
+  ultima_fuente_trafico: Channel | null;
+  desglose_fuente_original_1: string | null;
+  desglose_fuente_original_2: string | null;
+  datos_ultima_fuente_1: string | null;
+  datos_ultima_fuente_2: string | null;
+  fecha_ultima_fuente_trafico: string | null;
+  primera_conversion: string | null;
+  fecha_primera_conversion: string | null;
+  conversion_reciente: string | null;
+  fecha_conversion_reciente: string | null;
 };
 
 function downloadCsv(filename: string, csv: string) {

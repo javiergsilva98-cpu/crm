@@ -35,7 +35,7 @@ export default async function CompanyDetailPage({
         .order("full_name"),
       supabase
         .from("opportunities")
-        .select("id, title:nombre_negocio, stage:etapa_negocio, amount:cantidad")
+        .select("id, title:nombre_negocio, stage:etapa_negocio, amount:cantidad, fecha_cierre, created_at:fecha_creacion")
         .eq("empresa_asociada_principal", id)
         .order("fecha_creacion", { ascending: false }),
       supabase
@@ -59,6 +59,25 @@ export default async function CompanyDetailPage({
   const tags = (taggables ?? [])
     .map((t) => t.tags as unknown as { id: string; name: string; color: string } | null)
     .filter((t): t is { id: string; name: string; color: string } => t !== null);
+
+  // Contadores estilo HubSpot, calculados al vuelo (no se guardan como
+  // columna aparte para no arrastrar un dato duplicado).
+  const opportunityList = opportunities ?? [];
+  const numeroContactosAsociados = contacts?.length ?? 0;
+  const numeroNegociosAsociados = opportunityList.length;
+  const numeroNegociosAbiertos = opportunityList.filter((o) => o.stage !== "ganado" && o.stage !== "perdido").length;
+  const ingresosTotales = opportunityList.filter((o) => o.stage === "ganado").reduce((sum, o) => sum + Number(o.amount), 0);
+  const negocioReciente = opportunityList[0] ?? null;
+  const wonWithCloseDate = opportunityList.filter((o) => o.stage === "ganado" && o.fecha_cierre);
+  const diasCierre =
+    wonWithCloseDate.length > 0
+      ? Math.round(
+          wonWithCloseDate.reduce(
+            (sum, o) => sum + (new Date(o.fecha_cierre!).getTime() - new Date(o.created_at).getTime()) / 86400000,
+            0,
+          ) / wonWithCloseDate.length,
+        )
+      : null;
 
   return (
     <div>
@@ -119,6 +138,37 @@ export default async function CompanyDetailPage({
           <div className="sm:col-span-2">
             <dt className="text-ink-mute">Dirección fiscal</dt>
             <dd>{company.fiscal_address || "—"}</dd>
+          </div>
+        </dl>
+
+        <dl className="mt-6 grid grid-cols-2 gap-3 border-t border-border pt-4 text-sm sm:grid-cols-4">
+          <div>
+            <dt className="text-ink-mute">Contactos asociados</dt>
+            <dd>{numeroContactosAsociados}</dd>
+          </div>
+          <div>
+            <dt className="text-ink-mute">Negocios asociados</dt>
+            <dd>{numeroNegociosAsociados}</dd>
+          </div>
+          <div>
+            <dt className="text-ink-mute">Negocios abiertos</dt>
+            <dd>{numeroNegociosAbiertos}</dd>
+          </div>
+          <div>
+            <dt className="text-ink-mute">Ingresos totales</dt>
+            <dd>{ingresosTotales.toLocaleString("es-ES")}€</dd>
+          </div>
+          <div>
+            <dt className="text-ink-mute">Negocio más reciente</dt>
+            <dd>{negocioReciente ? `${Number(negocioReciente.amount).toLocaleString("es-ES")}€` : "—"}</dd>
+          </div>
+          <div>
+            <dt className="text-ink-mute">Cierre del negocio reciente</dt>
+            <dd>{negocioReciente?.fecha_cierre ? new Date(negocioReciente.fecha_cierre).toLocaleDateString("es-ES") : "—"}</dd>
+          </div>
+          <div>
+            <dt className="text-ink-mute">Días para el cierre (media)</dt>
+            <dd>{diasCierre !== null ? `${diasCierre} días` : "—"}</dd>
           </div>
         </dl>
       </div>

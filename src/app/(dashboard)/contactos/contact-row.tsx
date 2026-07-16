@@ -7,7 +7,14 @@ import { ExpandableDetail } from "@/components/expandable-detail";
 import type { DetailField } from "@/lib/detail-fields";
 import { formatDateTime } from "@/lib/format";
 import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
-import { LIFECYCLE_STAGES, LIFECYCLE_STAGE_LABELS, LEAD_STATUSES, LEAD_STATUS_LABELS } from "@/lib/contact-lifecycle";
+import {
+  LIFECYCLE_STAGES,
+  LIFECYCLE_STAGE_LABELS,
+  LEAD_STATUSES,
+  LEAD_STATUS_LABELS,
+  LEGAL_BASES,
+  LEGAL_BASIS_LABELS,
+} from "@/lib/contact-lifecycle";
 
 function ignoreInteractiveClick(e: MouseEvent<HTMLTableRowElement>) {
   return (e.target as HTMLElement).closest("a, button, input, select, form") !== null;
@@ -40,6 +47,30 @@ type Contact = {
   ultimo_contacto: string | null;
   fecha_ultima_modificacion: string | null;
   last_activity_by: string | null;
+  ciudad: string | null;
+  estado_region: string | null;
+  codigo_postal: string | null;
+  pais_region: string | null;
+  direccion: string | null;
+  cargo: string | null;
+  industria: string | null;
+  url_sitio_web: string | null;
+  url_linkedin: string | null;
+  mensaje: string | null;
+  correos_electronicos_adicionales: string | null;
+  contacto_sin_gestionar: boolean;
+  fuente_registro: string | null;
+  base_juridica_tratamiento_datos: string | null;
+  desglose_ultima_fuente_1: string | null;
+  desglose_ultima_fuente_2: string | null;
+  fecha_ultima_fuente_trafico: string | null;
+  primera_conversion: string | null;
+  fecha_primera_conversion: string | null;
+  conversion_reciente: string | null;
+  fecha_conversion_reciente: string | null;
+  fecha_siguiente_actividad: string | null;
+  direccion_correo_no_valida: boolean;
+  fecha_cierre_se_hizo_cliente: string | null;
   companies: { nombre_empresa: string } | null;
 };
 
@@ -230,6 +261,99 @@ export function ContactRow({
               placeholder="Dirección fiscal"
               className="rounded-md border border-border px-2 py-1 text-sm"
             />
+            <input
+              name="address"
+              defaultValue={contact.direccion ?? ""}
+              placeholder="Dirección"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <input
+              name="city"
+              defaultValue={contact.ciudad ?? ""}
+              placeholder="Ciudad"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <input
+              name="state"
+              defaultValue={contact.estado_region ?? ""}
+              placeholder="Provincia/CCAA"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <input
+              name="zip"
+              defaultValue={contact.codigo_postal ?? ""}
+              placeholder="Código postal"
+              className="w-28 rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <input
+              name="country"
+              defaultValue={contact.pais_region ?? ""}
+              placeholder="País"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <input
+              name="jobtitle"
+              defaultValue={contact.cargo ?? ""}
+              placeholder="Cargo"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <input
+              name="contact_industry"
+              defaultValue={contact.industria ?? ""}
+              placeholder="Industria"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <input
+              name="contact_website"
+              type="url"
+              defaultValue={contact.url_sitio_web ?? ""}
+              placeholder="URL del sitio web"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <input
+              name="linkedin_url"
+              type="url"
+              defaultValue={contact.url_linkedin ?? ""}
+              placeholder="URL de LinkedIn"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <input
+              name="additional_emails"
+              defaultValue={contact.correos_electronicos_adicionales ?? ""}
+              placeholder="Correos adicionales"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <input
+              name="message"
+              defaultValue={contact.mensaje ?? ""}
+              placeholder="Mensaje"
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            />
+            <select
+              name="legal_basis"
+              defaultValue={contact.base_juridica_tratamiento_datos ?? ""}
+              className="rounded-md border border-border px-2 py-1 text-sm"
+            >
+              <option value="">Base jurídica (RGPD)</option>
+              {LEGAL_BASES.map((b) => (
+                <option key={b} value={b}>
+                  {LEGAL_BASIS_LABELS[b]}
+                </option>
+              ))}
+            </select>
+            <label className="flex items-center gap-1 text-sm text-ink-soft">
+              Siguiente actividad
+              <input
+                name="next_activity_date"
+                type="date"
+                defaultValue={contact.fecha_siguiente_actividad ? contact.fecha_siguiente_actividad.slice(0, 10) : ""}
+                className="rounded-md border border-border px-2 py-1 text-sm"
+              />
+            </label>
+            <label className="flex items-center gap-1.5 text-sm text-ink-soft">
+              <input type="checkbox" name="bad_email" defaultChecked={contact.direccion_correo_no_valida} />
+              Correo no válido
+            </label>
             <button type="submit" className="rounded-md bg-calm px-3 py-1 text-sm text-base transition-colors hover:bg-calm-hover">
               Guardar
             </button>
@@ -271,6 +395,32 @@ export function ContactRow({
       ? `${formatDateTime(contact.ultimo_contacto)}${lastActivityByEmail ? ` · ${lastActivityByEmail}` : ""}`
       : null,
     fecha_ultima_modificacion: contact.fecha_ultima_modificacion ? formatDateTime(contact.fecha_ultima_modificacion) : null,
+    ciudad: contact.ciudad,
+    estado_region: contact.estado_region,
+    codigo_postal: contact.codigo_postal,
+    pais_region: contact.pais_region,
+    direccion: contact.direccion,
+    cargo: contact.cargo,
+    industria: contact.industria,
+    url_sitio_web: contact.url_sitio_web,
+    url_linkedin: contact.url_linkedin,
+    mensaje: contact.mensaje,
+    correos_electronicos_adicionales: contact.correos_electronicos_adicionales,
+    contacto_sin_gestionar: contact.contacto_sin_gestionar ? "Sí" : "No",
+    fuente_registro: contact.fuente_registro,
+    base_juridica_tratamiento_datos: contact.base_juridica_tratamiento_datos
+      ? LEGAL_BASIS_LABELS[contact.base_juridica_tratamiento_datos as keyof typeof LEGAL_BASIS_LABELS]
+      : null,
+    desglose_ultima_fuente_1: contact.desglose_ultima_fuente_1,
+    desglose_ultima_fuente_2: contact.desglose_ultima_fuente_2,
+    fecha_ultima_fuente_trafico: contact.fecha_ultima_fuente_trafico ? formatDateTime(contact.fecha_ultima_fuente_trafico) : null,
+    primera_conversion: contact.primera_conversion,
+    fecha_primera_conversion: contact.fecha_primera_conversion ? formatDateTime(contact.fecha_primera_conversion) : null,
+    conversion_reciente: contact.conversion_reciente,
+    fecha_conversion_reciente: contact.fecha_conversion_reciente ? formatDateTime(contact.fecha_conversion_reciente) : null,
+    fecha_siguiente_actividad: contact.fecha_siguiente_actividad ? new Date(contact.fecha_siguiente_actividad).toLocaleDateString("es-ES") : null,
+    direccion_correo_no_valida: contact.direccion_correo_no_valida ? "Sí" : "No",
+    fecha_cierre_se_hizo_cliente: contact.fecha_cierre_se_hizo_cliente ? formatDateTime(contact.fecha_cierre_se_hizo_cliente) : null,
   };
 
   return (

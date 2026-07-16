@@ -3,10 +3,16 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { CHANNELS } from "@/lib/channels";
+import { DEAL_TYPES, DEAL_PRIORITIES, FORECAST_CATEGORIES } from "@/lib/opportunity-fields";
 
 function parseSource(value: FormDataEntryValue | null): string | null {
   const source = String(value ?? "").trim();
   return (CHANNELS as readonly string[]).includes(source) ? source : null;
+}
+
+function parseFromList<T extends readonly string[]>(list: T, value: FormDataEntryValue | null): string | null {
+  const v = String(value ?? "").trim();
+  return (list as readonly string[]).includes(v) ? v : null;
 }
 
 export async function createOpportunity(formData: FormData) {
@@ -28,6 +34,7 @@ export async function createOpportunity(formData: FormData) {
     empresa_asociada_principal: companyId || null,
     cantidad: Number.isFinite(amount) ? amount : 0,
     etapa_negocio: "nuevo",
+    fuente_registro: "manual",
   });
 
   if (error) return { error: "No se pudo guardar la oportunidad. Inténtalo de nuevo." };
@@ -55,6 +62,17 @@ export async function updateOpportunity(formData: FormData) {
       fuente_trafico_original: parseSource(formData.get("source")),
       desglose_fuente_original_1: String(formData.get("source_detail") ?? "").trim() || null,
       desglose_fuente_original_2: String(formData.get("source_detail_2") ?? "").trim() || null,
+      tipo_negocio: parseFromList(DEAL_TYPES, formData.get("deal_type")),
+      siguiente_paso: String(formData.get("next_step") ?? "").trim() || null,
+      motivo_cierre_perdido: String(formData.get("closed_lost_reason") ?? "").trim() || null,
+      motivo_cierre_ganado: String(formData.get("closed_won_reason") ?? "").trim() || null,
+      ultima_fuente_trafico: parseSource(formData.get("latest_source")),
+      desglose_ultima_fuente_1: String(formData.get("latest_source_detail") ?? "").trim() || null,
+      desglose_ultima_fuente_2: String(formData.get("latest_source_detail_2") ?? "").trim() || null,
+      descripcion_negocio: String(formData.get("deal_description") ?? "").trim() || null,
+      prioridad: parseFromList(DEAL_PRIORITIES, formData.get("priority")),
+      categoria_prevision: parseFromList(FORECAST_CATEGORIES, formData.get("forecast_category")),
+      ingresos_recurrentes_mensuales_mrr: Number(formData.get("mrr") ?? "") || null,
     })
     .eq("id", id);
 

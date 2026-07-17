@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, type ReactNode } from "react";
+import { useDisclosureClose } from "./add-disclosure";
 
 type ActionResult = { error?: string; warning?: string } | void;
 
@@ -19,6 +20,7 @@ export function CreateForm({
   const [error, setError] = useState<string | null>(null);
   const [warning, setWarning] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const closeDisclosure = useDisclosureClose();
 
   return (
     <form
@@ -47,6 +49,7 @@ export function CreateForm({
           return;
         }
         onSuccess?.();
+        closeDisclosure?.();
       }}
     >
       {children}

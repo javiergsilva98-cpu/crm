@@ -71,8 +71,7 @@ export default async function EmpresasPage({
       </div>
 
       <AddDisclosure label="Agregar empresa">
-        {(close) => (
-          <CreateForm action={createCompany} onSuccess={close} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+        <CreateForm action={createCompany} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <input name="name" placeholder="Nombre" required className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
             <input
               name="website"
@@ -94,8 +93,7 @@ export default async function EmpresasPage({
             <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-base transition-colors hover:bg-calm-hover sm:w-auto">
               Agregar
             </button>
-          </CreateForm>
-        )}
+        </CreateForm>
       </AddDisclosure>
 
       <form method="get" className="mb-6 flex flex-col gap-2 sm:flex-row">

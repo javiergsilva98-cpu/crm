@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { createContext, useContext, useState, type ReactNode } from "react";
 
-export function AddDisclosure({
-  label,
-  children,
-}: {
-  label: string;
-  children: ReactNode | ((close: () => void) => ReactNode);
-}) {
+const DisclosureCloseContext = createContext<(() => void) | null>(null);
+
+export function useDisclosureClose(): (() => void) | null {
+  return useContext(DisclosureCloseContext);
+}
+
+export function AddDisclosure({ label, children }: { label: string; children: ReactNode }) {
   const [open, setOpen] = useState(false);
 
   if (!open) {
@@ -37,7 +37,7 @@ export function AddDisclosure({
           ×
         </button>
       </div>
-      {typeof children === "function" ? children(() => setOpen(false)) : children}
+      <DisclosureCloseContext.Provider value={() => setOpen(false)}>{children}</DisclosureCloseContext.Provider>
     </div>
   );
 }

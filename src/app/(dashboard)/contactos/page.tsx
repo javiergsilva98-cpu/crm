@@ -83,9 +83,8 @@ export default async function ContactosPage({
       </div>
 
       <AddDisclosure label="Agregar contacto">
-        {(close) => (
-          <>
-            <CreateForm action={createContact} onSuccess={close} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+        <>
+          <CreateForm action={createContact} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <input name="first_name" placeholder="Nombre" required className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
               <input name="last_name" placeholder="Apellidos" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
               <input name="email" type="email" placeholder="Email" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
@@ -126,8 +125,7 @@ export default async function ContactosPage({
             <p className="mt-2 text-xs text-ink-mute">
               Si dejas &quot;Detectar por email&quot;, se vincula automáticamente a la empresa cuyo sitio web coincida con el dominio del email (ej. juan@acme.com → Acme, si su sitio web es acme.com).
             </p>
-          </>
-        )}
+        </>
       </AddDisclosure>
 
       <form method="get" className="mb-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap">

@@ -22,8 +22,7 @@ export default async function TareasPage() {
       <p className="mb-8 text-sm text-ink-mute">Lo que tienes pendiente con tus clientes.</p>
 
       <AddDisclosure label="Agregar tarea">
-        {(close) => (
-          <CreateForm action={createTask} onSuccess={close} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+        <CreateForm action={createTask} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <input name="title" placeholder="¿Qué hay que hacer?" required className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
             <input name="due_date" type="date" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto" />
             <select name="company_id" className="w-full rounded-md border border-border bg-base px-3 py-2 text-sm text-ink sm:w-auto">
@@ -45,8 +44,7 @@ export default async function TareasPage() {
             <button type="submit" className="w-full rounded-md bg-calm px-4 py-2 text-sm font-medium text-base transition-colors hover:bg-calm-hover sm:w-auto">
               Agregar
             </button>
-          </CreateForm>
-        )}
+        </CreateForm>
       </AddDisclosure>
 
       {tasksError && (

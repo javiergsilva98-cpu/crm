@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole } from "@/lib/demo-context";
 import { CheckIcon, XIcon } from "@/components/icons";
+import { SubmitButton } from "@/components/submit-button";
 import { EventForm } from "./event-form";
 import { ReservationForm } from "./reservation-form";
 import { CalendarioViews } from "./calendar-views";
@@ -103,28 +104,26 @@ export default async function CalendarioPage() {
                       ))}
                     </select>
                   </div>
-                  <button
-                    type="submit"
+                  <SubmitButton
                     formAction={async (fd) => {
                       "use server";
                       await approveReservation(fd);
                     }}
-                    className="flex items-center gap-1 rounded-xl bg-success px-3 py-1.5 text-xs font-semibold text-white"
+                    className="flex items-center gap-1 rounded-xl bg-success px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50"
                   >
                     <CheckIcon className="h-3.5 w-3.5" />
                     Aprobar
-                  </button>
-                  <button
-                    type="submit"
+                  </SubmitButton>
+                  <SubmitButton
                     formAction={async (fd) => {
                       "use server";
                       await rejectReservation(fd);
                     }}
-                    className="flex items-center gap-1 rounded-xl border border-border bg-card px-3 py-1.5 text-xs font-semibold text-muted"
+                    className="flex items-center gap-1 rounded-xl border border-border bg-card px-3 py-1.5 text-xs font-semibold text-muted disabled:opacity-50"
                   >
                     <XIcon className="h-3.5 w-3.5" />
                     Rechazar
-                  </button>
+                  </SubmitButton>
                 </div>
               </form>
             ))}

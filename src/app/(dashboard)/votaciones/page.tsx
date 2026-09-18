@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
 import { VoteIcon } from "@/components/icons";
+import { SubmitButton } from "@/components/submit-button";
 import { VoteForm } from "./vote-form";
 import { CastForm } from "./cast-form";
 import { closeVote } from "./actions";
@@ -150,12 +151,12 @@ export default async function VotacionesPage() {
                   }}
                 >
                   <input type="hidden" name="id" value={v.id} />
-                  <button
-                    type="submit"
-                    className="rounded-full border border-border px-2.5 py-1 text-[11px] font-semibold text-muted transition-colors hover:text-foreground"
+                  <SubmitButton
+                    pendingLabel="Cerrando..."
+                    className="rounded-full border border-border px-2.5 py-1 text-[11px] font-semibold text-muted transition-colors hover:text-foreground disabled:opacity-50"
                   >
                     Cerrar votación
-                  </button>
+                  </SubmitButton>
                 </form>
               )}
             </div>

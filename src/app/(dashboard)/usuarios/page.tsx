@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole } from "@/lib/demo-context";
 import { CLUB_ROLE_LABELS } from "@/lib/demo-role";
+import { SubmitButton } from "@/components/submit-button";
 import { UserForm } from "./user-form";
 import { updateUserAccount, deleteUserAccount } from "./actions";
 
@@ -82,22 +83,22 @@ export default async function UsuariosPage() {
                 </option>
               ))}
             </select>
-            <button
-              type="submit"
-              className="rounded-full border border-border px-2.5 py-1 text-[11px] font-semibold text-muted transition-colors hover:text-foreground"
+            <SubmitButton
+              pendingLabel="..."
+              className="rounded-full border border-border px-2.5 py-1 text-[11px] font-semibold text-muted transition-colors hover:text-foreground disabled:opacity-50"
             >
               Guardar
-            </button>
-            <button
-              type="submit"
+            </SubmitButton>
+            <SubmitButton
+              pendingLabel="..."
               formAction={async (fd) => {
                 "use server";
                 await deleteUserAccount(fd);
               }}
-              className="rounded-full border border-border px-2.5 py-1 text-[11px] font-semibold text-warning transition-colors hover:bg-warning-soft"
+              className="rounded-full border border-border px-2.5 py-1 text-[11px] font-semibold text-warning transition-colors hover:bg-warning-soft disabled:opacity-50"
             >
               Eliminar
-            </button>
+            </SubmitButton>
           </form>
         ))}
         {profiles.length === 0 && (

@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
 import { CLUB_ROLE_LABELS, type ClubRole } from "@/lib/demo-role";
 import { ExportLink } from "@/components/export-link";
+import { SubmitButton } from "@/components/submit-button";
 import { MemberForm } from "./member-form";
 import { toggleMemberStatus } from "./actions";
 
@@ -124,12 +125,12 @@ export default async function SociosPage() {
               >
                 <input type="hidden" name="id" value={m.id} />
                 <input type="hidden" name="next_status" value={m.status === "activo" ? "baja" : "activo"} />
-                <button
-                  type="submit"
-                  className="rounded-full border border-border px-2.5 py-1 text-[11px] font-semibold text-muted transition-colors hover:text-foreground"
+                <SubmitButton
+                  pendingLabel="..."
+                  className="rounded-full border border-border px-2.5 py-1 text-[11px] font-semibold text-muted transition-colors hover:text-foreground disabled:opacity-50"
                 >
                   {m.status === "activo" ? "Dar de baja" : "Reactivar"}
-                </button>
+                </SubmitButton>
               </form>
             )}
           </div>

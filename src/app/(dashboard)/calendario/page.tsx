@@ -1,8 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole } from "@/lib/demo-context";
-import { CalendarIcon, KeyIcon, CheckIcon, XIcon } from "@/components/icons";
+import { CheckIcon, XIcon } from "@/components/icons";
 import { EventForm } from "./event-form";
 import { ReservationForm } from "./reservation-form";
+import { CalendarioViews } from "./calendar-views";
 import { approveReservation, rejectReservation } from "./actions";
 
 const MANAGEMENT_ROLES = ["admin", "presidente", "secretario", "tesorero"];
@@ -131,48 +132,19 @@ export default async function CalendarioPage() {
         </div>
       )}
 
-      <p className="mb-2.5 text-xs font-bold uppercase tracking-wide text-muted">Próximas fechas</p>
-      <div className="mb-7 overflow-hidden rounded-[18px] border border-border bg-card">
-        {visible.map((e, idx) => (
-          <div
-            key={e.id}
-            className={`flex items-start gap-3 px-3.5 py-3 ${idx !== visible.length - 1 ? "border-b border-border" : ""}`}
-          >
-            <div className="flex h-[34px] w-[34px] flex-shrink-0 items-center justify-center rounded-xl bg-accent-soft">
-              <CalendarIcon className="h-4 w-4 text-accent" />
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-semibold text-foreground">{e.name}</p>
-                {e.kind === "reserva" && (
-                  <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[10px] font-bold text-accent">
-                    Reserva
-                  </span>
-                )}
-                {e.status === "rechazado" && (
-                  <span className="rounded-full bg-warning-soft px-2 py-0.5 text-[10px] font-bold text-warning">
-                    Rechazada
-                  </span>
-                )}
-              </div>
-              <p className="text-xs text-muted">
-                {formatDate(e.event_date)}
-                {e.end_date ? ` – ${formatDate(e.end_date)}` : ""}
-              </p>
-              {(e.opens || e.closes) && (
-                <p className="mt-1 flex items-center gap-1 text-xs text-muted">
-                  <KeyIcon className="h-3.5 w-3.5" />
-                  Abre: {e.opens?.full_name ?? "—"} · Cierra: {e.closes?.full_name ?? "—"}
-                </p>
-              )}
-              {e.notes && <p className="mt-1 text-xs text-muted">{e.notes}</p>}
-            </div>
-          </div>
-        ))}
-        {visible.length === 0 && (
-          <p className="px-3.5 py-6 text-center text-sm text-muted">Todavía no hay fechas en el calendario.</p>
-        )}
-      </div>
+      <CalendarioViews
+        events={visible.map((e) => ({
+          id: e.id,
+          name: e.name,
+          event_date: e.event_date,
+          end_date: e.end_date,
+          kind: e.kind,
+          status: e.status,
+          notes: e.notes,
+          opensName: e.opens?.full_name ?? null,
+          closesName: e.closes?.full_name ?? null,
+        }))}
+      />
 
       {canManage && (
         <>

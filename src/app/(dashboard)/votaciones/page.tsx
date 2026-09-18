@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
-import { MemberSwitcher } from "@/components/member-switcher";
 import { VoteIcon } from "@/components/icons";
 import { VoteForm } from "./vote-form";
 import { CastForm } from "./cast-form";
@@ -68,13 +67,7 @@ export default async function VotacionesPage() {
 
   return (
     <div>
-      <div className="mb-5 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-extrabold tracking-tight text-foreground">Votaciones</h1>
-          <p className="text-sm text-muted">Votando como</p>
-        </div>
-        {members.length > 0 && <MemberSwitcher members={members} current={currentMemberId} />}
-      </div>
+      <h1 className="mb-5 text-xl font-extrabold tracking-tight text-foreground">Votaciones</h1>
 
       <div className="flex flex-col gap-3">
         {enriched.map((v) => {

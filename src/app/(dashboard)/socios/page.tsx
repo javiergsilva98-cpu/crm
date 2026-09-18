@@ -1,7 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
 import { CLUB_ROLE_LABELS, type ClubRole } from "@/lib/demo-role";
-import { MemberSwitcher } from "@/components/member-switcher";
 
 function initials(name: string) {
   return name
@@ -41,10 +40,7 @@ export default async function SociosPage() {
 
     return (
       <div>
-        <div className="mb-5 flex items-center justify-between">
-          <h1 className="text-xl font-extrabold tracking-tight text-foreground">Mi ficha</h1>
-          <MemberSwitcher members={socios} current={currentId ?? ""} />
-        </div>
+        <h1 className="mb-5 text-xl font-extrabold tracking-tight text-foreground">Mi ficha</h1>
         {me ? (
           <div className="rounded-[18px] border border-border bg-card p-5">
             <div className="flex items-center gap-3">

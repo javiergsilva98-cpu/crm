@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
-import { MemberSwitcher } from "@/components/member-switcher";
 import { WalletIcon } from "@/components/icons";
 
 const INGRESO_TYPES = ["cuota", "ingreso"];
@@ -83,10 +82,7 @@ export default async function TesoreriaPage() {
 
     return (
       <div>
-        <div className="mb-5 flex items-center justify-between">
-          <h1 className="text-xl font-extrabold tracking-tight text-foreground">Tesorería</h1>
-          <MemberSwitcher members={members} current={currentId} />
-        </div>
+        <h1 className="mb-5 text-xl font-extrabold tracking-tight text-foreground">Tesorería</h1>
 
         <div className="rounded-[26px] bg-accent p-6 text-accent-foreground shadow-[0_16px_30px_-14px_var(--color-accent)]">
           <span className="text-sm font-semibold text-white/80">Tu saldo</span>

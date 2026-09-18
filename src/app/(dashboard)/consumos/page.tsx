@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
-import { MemberSwitcher } from "@/components/member-switcher";
 import { CupIcon, PlusIcon } from "@/components/icons";
 import { markConsumption } from "./actions";
 
@@ -46,12 +45,9 @@ export default async function ConsumosPage() {
 
     return (
       <div>
-        <div className="mb-5 flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-extrabold tracking-tight text-foreground">Consumos</h1>
-            <p className="text-sm text-muted">Toca para marcar lo que tomes</p>
-          </div>
-          <MemberSwitcher members={list} current={currentId} />
+        <div className="mb-5">
+          <h1 className="text-xl font-extrabold tracking-tight text-foreground">Consumos</h1>
+          <p className="text-sm text-muted">Toca para marcar lo que tomes</p>
         </div>
 
         <MenuSection title="Bebidas" items={bebidas} memberId={currentId} />

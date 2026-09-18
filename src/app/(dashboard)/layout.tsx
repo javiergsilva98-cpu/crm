@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { getDemoRole } from "@/lib/demo-context";
+import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
 import { NAV_BY_ROLE } from "@/lib/demo-role";
 import { RoleSwitcher } from "@/components/role-switcher";
+import { MemberSwitcher } from "@/components/member-switcher";
 import { BottomNav } from "@/components/bottom-nav";
 import { LogOutIcon } from "@/components/icons";
 
@@ -26,6 +27,19 @@ export default async function DashboardLayout({
   const mobileNavItems = [{ href: "/", label: "Panel" }, ...navItems];
   const firstName = (user.email ?? "").split("@")[0];
   const displayName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
+
+  let socios: { id: string; full_name: string }[] = [];
+  let currentMemberId = "";
+  if (demoRole === "socio") {
+    const { data } = await supabase
+      .from("members")
+      .select("id, full_name")
+      .eq("club_role", "socio")
+      .order("full_name");
+    socios = data ?? [];
+    const cookieId = await getDemoMemberIdCookie();
+    currentMemberId = socios.find((m) => m.id === cookieId)?.id ?? socios[0]?.id ?? "";
+  }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -57,6 +71,9 @@ export default async function DashboardLayout({
           </nav>
 
           <div className="flex items-center gap-2">
+            {demoRole === "socio" && socios.length > 0 && (
+              <MemberSwitcher members={socios} current={currentMemberId} />
+            )}
             <RoleSwitcher current={demoRole} />
             <form action="/auth/signout" method="post">
               <button

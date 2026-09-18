@@ -46,7 +46,12 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
 3. **Consumiciones** (`/consumos`): carta de bebidas/aperitivos, marcar
    una consumición e historial personal. Gestión ve el registro completo
    de la barra y administra la carta (crear, editar y activar/desactivar
-   artículos).
+   artículos). Cada artículo se vende 1:1 con bodega: o es individual
+   (lata, botellín, paquete — cada consumo resta una unidad) o es
+   compartido (una botella que se abre y se reparte entre varios socios,
+   con el coste dividido y una sola unidad descontada de bodega). No hay
+   artículos "por ración" ni "por copa" sueltos, porque no encajan en ese
+   descuento 1:1.
 4. **Tesorería** (`/tesoreria`): saldo del club en tiempo real, desglose
    cuota fija vs. cargos de evento, saldo por socio y alta manual de
    movimientos.

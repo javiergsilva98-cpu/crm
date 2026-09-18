@@ -51,7 +51,11 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
    cuota fija vs. cargos de evento, saldo por socio y alta manual de
    movimientos.
 5. **Inventario** (`/inventario`): stock de la bodega y registro de
-   reposiciones (actualiza el stock automáticamente).
+   reposiciones (actualiza el stock automáticamente). Cada artículo
+   tiene su propio umbral de aviso (editable por admin, presidencia y
+   bodeguero); cuando el stock baja de ahí salta un aviso en la propia
+   pantalla y una insignia en el acceso rápido del Panel, visible para
+   admin, presidencia, tesorería y bodeguero.
 6. **Calendario** (`/calendario`): eventos del club y reservas del local
    por días solicitadas por cualquier socio (quedan pendientes hasta que
    gestión las aprueba o rechaza), con quién abre y quién cierra cada

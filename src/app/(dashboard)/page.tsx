@@ -56,6 +56,14 @@ export default async function DashboardHome() {
   const demoRole = await getDemoRole();
   const navItems = NAV_BY_ROLE[demoRole];
 
+  let lowStockCount = 0;
+  if (["admin", "presidente", "tesorero", "bodeguero"].includes(demoRole)) {
+    const { data: inventoryData } = await supabase
+      .from("inventory_items")
+      .select("current_stock, low_stock_threshold");
+    lowStockCount = (inventoryData ?? []).filter((i) => i.current_stock <= i.low_stock_threshold).length;
+  }
+
   let heroLabel = "Socios activos";
   let heroValue = "0";
   let heroBadge: string | null = null;
@@ -235,8 +243,13 @@ export default async function DashboardHome() {
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-[18px] border border-border bg-card p-3.5 transition-colors hover:border-accent"
+              className="relative rounded-[18px] border border-border bg-card p-3.5 transition-colors hover:border-accent"
             >
+              {item.href === "/inventario" && lowStockCount > 0 && (
+                <span className="absolute right-3 top-3 flex h-5 min-w-5 items-center justify-center rounded-full bg-warning px-1 text-[10px] font-bold text-white">
+                  {lowStockCount}
+                </span>
+              )}
               <div className="flex h-[38px] w-[38px] items-center justify-center rounded-xl bg-accent-soft">
                 <Icon className="h-[19px] w-[19px] text-accent" />
               </div>

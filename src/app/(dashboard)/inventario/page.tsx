@@ -1,8 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole } from "@/lib/demo-context";
-import { BoxIcon } from "@/components/icons";
 import { ExportLink } from "@/components/export-link";
 import { RestockForm } from "./restock-form";
+import { InventoryItemRow } from "./inventory-item-row";
 
 const EXPORT_ROLES = ["admin", "presidente", "tesorero"];
 
@@ -20,12 +20,16 @@ export default async function InventarioPage() {
   }
 
   const [{ data: items }, { data: members }] = await Promise.all([
-    supabase.from("inventory_items").select("id, name, unit, current_stock").order("name"),
+    supabase
+      .from("inventory_items")
+      .select("id, name, unit, current_stock, low_stock_threshold")
+      .order("name"),
     supabase.from("members").select("id, full_name").eq("status", "activo").order("full_name"),
   ]);
 
   const rows = items ?? [];
   const canRestock = demoRole === "admin" || demoRole === "presidente" || demoRole === "bodeguero";
+  const lowStock = rows.filter((item) => item.current_stock <= item.low_stock_threshold);
 
   return (
     <div>
@@ -34,20 +38,25 @@ export default async function InventarioPage() {
         {EXPORT_ROLES.includes(demoRole) && <ExportLink href="/api/export/inventario" label="Reposiciones" />}
       </div>
 
+      {lowStock.length > 0 && (
+        <div className="mb-5 rounded-[18px] border border-warning-soft bg-warning-soft/40 p-4">
+          <p className="text-sm font-bold text-warning">
+            Quedan pocas unidades de {lowStock.length} artículo{lowStock.length === 1 ? "" : "s"}
+          </p>
+          <p className="mt-0.5 text-xs text-muted">
+            {lowStock.map((i) => `${i.name} (${i.current_stock} ${i.unit})`).join(" · ")}
+          </p>
+        </div>
+      )}
+
       <div className="mb-7 overflow-hidden rounded-[18px] border border-border bg-card">
         {rows.map((item, idx) => (
-          <div
+          <InventoryItemRow
             key={item.id}
-            className={`flex items-center gap-3 px-3.5 py-3 ${idx !== rows.length - 1 ? "border-b border-border" : ""}`}
-          >
-            <div className="flex h-[34px] w-[34px] flex-shrink-0 items-center justify-center rounded-xl bg-accent-soft">
-              <BoxIcon className="h-4 w-4 text-accent" />
-            </div>
-            <p className="flex-1 text-sm font-semibold text-foreground">{item.name}</p>
-            <p className="text-sm font-bold text-foreground">
-              {item.current_stock} <span className="font-normal text-muted">{item.unit}</span>
-            </p>
-          </div>
+            item={item}
+            isLast={idx === rows.length - 1}
+            canEditThreshold={canRestock}
+          />
         ))}
         {rows.length === 0 && (
           <p className="px-3.5 py-6 text-center text-sm text-muted">No hay artículos de ejemplo todavía.</p>

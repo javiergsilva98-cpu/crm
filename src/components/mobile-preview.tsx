@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 import { PhoneIcon, XIcon } from "@/components/icons";
 
@@ -53,7 +54,7 @@ export function MobilePreviewButton() {
         <PhoneIcon className="h-[18px] w-[18px]" />
       </button>
 
-      {open && (
+      {open && createPortal(
         <div
           className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 p-4"
           onClick={handleClose}
@@ -110,7 +111,8 @@ export function MobilePreviewButton() {
               />
             </div>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   );

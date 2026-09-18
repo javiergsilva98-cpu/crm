@@ -128,6 +128,7 @@ export function DocumentRow({
             type="button"
             disabled={pending}
             onClick={() => {
+              if (!window.confirm(`¿Eliminar "${doc.name}"? No se puede deshacer.`)) return;
               const fd = new FormData();
               fd.set("id", doc.id);
               run(deleteDocument, fd);

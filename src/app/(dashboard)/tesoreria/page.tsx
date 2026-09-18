@@ -23,6 +23,10 @@ function eur(n: number) {
   return `${n.toFixed(2)} €`;
 }
 
+function formatDate(value: string) {
+  return new Date(`${value}T00:00:00`).toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" });
+}
+
 export default async function TesoreriaPage() {
   const supabase = await createClient();
   const demoRole = await getDemoRole();
@@ -174,7 +178,7 @@ export default async function TesoreriaPage() {
               <p className="text-sm font-semibold capitalize text-foreground">
                 {m.description ?? m.movement_type.replace("_", " ")}
               </p>
-              <p className="text-xs text-muted">{m.movement_date}</p>
+              <p className="text-xs text-muted">{formatDate(m.movement_date)}</p>
             </div>
             <p
               className={`text-sm font-bold ${

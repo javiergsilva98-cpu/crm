@@ -96,6 +96,7 @@ export default async function UsuariosPage() {
                 "use server";
                 await deleteUserAccount(fd);
               }}
+              confirmMessage={`¿Eliminar la cuenta de ${p.email ?? "este usuario"}? Perderá el acceso de inmediato y no se puede deshacer.`}
               className="rounded-full border border-border px-2.5 py-1 text-[11px] font-semibold text-warning transition-colors hover:bg-warning-soft disabled:opacity-50"
             >
               Eliminar

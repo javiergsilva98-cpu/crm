@@ -110,7 +110,10 @@ export function MenuItemRow({
       <button
         type="button"
         disabled={pending}
-        onClick={(e) => run(deleteMenuItem, new FormData(e.currentTarget.form!))}
+        onClick={(e) => {
+          if (!window.confirm(`¿Eliminar "${item.name}" de la carta? No se puede deshacer.`)) return;
+          run(deleteMenuItem, new FormData(e.currentTarget.form!));
+        }}
         className="rounded-full border border-border px-2.5 py-1 text-[11px] font-semibold text-warning transition-colors hover:bg-warning-soft disabled:opacity-50"
       >
         Eliminar

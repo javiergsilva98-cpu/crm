@@ -11,6 +11,7 @@ import {
   CalendarIcon,
   VoteIcon,
   FolderIcon,
+  ShieldIcon,
   UserPlusIcon,
 } from "@/components/icons";
 
@@ -24,6 +25,7 @@ const ICON_BY_HREF: Record<string, (props: { className?: string }) => React.JSX.
   "/votaciones": VoteIcon,
   "/documentos": FolderIcon,
   "/usuarios": UserPlusIcon,
+  "/auditoria": ShieldIcon,
 };
 
 export function BottomNav({ items }: { items: { href: string; label: string }[] }) {

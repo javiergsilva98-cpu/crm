@@ -33,6 +33,7 @@ export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = 
     { href: "/votaciones", label: "Votaciones" },
     { href: "/documentos", label: "Documentación" },
     { href: "/usuarios", label: "Usuarios" },
+    { href: "/auditoria", label: "Auditoría" },
   ],
   presidente: [
     { href: "/socios", label: "Socios" },
@@ -43,6 +44,7 @@ export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = 
     { href: "/votaciones", label: "Votaciones" },
     { href: "/documentos", label: "Documentación" },
     { href: "/usuarios", label: "Usuarios" },
+    { href: "/auditoria", label: "Auditoría" },
   ],
   secretario: [
     { href: "/socios", label: "Socios" },
@@ -55,6 +57,7 @@ export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = 
     { href: "/tesoreria", label: "Tesorería" },
     { href: "/calendario", label: "Calendario" },
     { href: "/votaciones", label: "Votaciones" },
+    { href: "/auditoria", label: "Auditoría" },
   ],
   bodeguero: [
     { href: "/inventario", label: "Inventario" },

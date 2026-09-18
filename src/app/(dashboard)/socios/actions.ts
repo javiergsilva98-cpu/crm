@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { assertCanManageAccounts } from "@/lib/account-auth";
+import { logAudit } from "@/lib/audit";
 
 type ActionResult = { error?: string } | void;
 type CreateAccountResult = { error?: string } | { password: string };
@@ -59,6 +60,12 @@ export async function createMemberAccount(formData: FormData): Promise<CreateAcc
     return { error: profileError.message };
   }
 
+  await logAudit("members", memberRow.id, "insert", {
+    full_name: fullName,
+    club_role: clubRole,
+    key_number: keyNumber,
+    email,
+  });
   revalidatePath("/socios");
   revalidatePath("/usuarios");
   return { password };

@@ -11,6 +11,7 @@ import {
   VoteIcon,
   UserPlusIcon,
   FolderIcon,
+  ShieldIcon,
   CheckIcon,
 } from "@/components/icons";
 
@@ -25,6 +26,7 @@ const TILE_ICON: Record<string, Icon> = {
   "/votaciones": VoteIcon,
   "/documentos": FolderIcon,
   "/usuarios": UserPlusIcon,
+  "/auditoria": ShieldIcon,
 };
 
 const TILE_SUBTITLE: Record<string, string> = {
@@ -36,6 +38,7 @@ const TILE_SUBTITLE: Record<string, string> = {
   "/votaciones": "Vota y consulta resultados",
   "/documentos": "Estatutos, actas y normativa",
   "/usuarios": "Crear y gestionar cuentas",
+  "/auditoria": "Historial de cambios",
 };
 
 type ActivityRow = {

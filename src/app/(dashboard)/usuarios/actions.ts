@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { assertCanManageAccounts } from "@/lib/account-auth";
 import { generatePassword } from "@/lib/generate-password";
+import { logAudit } from "@/lib/audit";
 
 type ActionResult = { error?: string } | void;
 type ResetResult = { error?: string } | { password: string };
@@ -43,6 +44,7 @@ export async function createUserAccount(formData: FormData): Promise<ActionResul
     return { error: profileError.message };
   }
 
+  await logAudit("profiles", created.user.id, "insert", { email, role, member_id: memberId });
   revalidatePath("/usuarios");
 }
 
@@ -63,6 +65,7 @@ export async function updateUserAccount(formData: FormData): Promise<ActionResul
     return { error: error.message };
   }
 
+  await logAudit("profiles", id, "update", { role, member_id: memberId });
   revalidatePath("/usuarios");
 }
 
@@ -81,6 +84,7 @@ export async function deleteUserAccount(formData: FormData): Promise<ActionResul
     return { error: error.message };
   }
 
+  await logAudit("profiles", id, "delete");
   revalidatePath("/usuarios");
 }
 
@@ -108,6 +112,7 @@ export async function resetUserPassword(id: string): Promise<ResetResult> {
     return { error: profileError.message };
   }
 
+  await logAudit("profiles", id, "update", { action: "reset_password" });
   revalidatePath("/usuarios");
   return { password };
 }

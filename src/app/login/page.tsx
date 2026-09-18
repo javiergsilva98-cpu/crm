@@ -6,7 +6,6 @@ import { createClient } from "@/lib/supabase/client";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -16,20 +15,11 @@ export default function LoginPage() {
     setMessage(null);
     const supabase = createClient();
 
-    if (mode === "signin") {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) {
-        setMessage(error.message);
-      } else {
-        window.location.href = "/";
-      }
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      setMessage(error.message);
     } else {
-      const { error } = await supabase.auth.signUp({ email, password });
-      if (error) {
-        setMessage(error.message);
-      } else {
-        window.location.href = "/";
-      }
+      window.location.href = "/";
     }
     setLoading(false);
   }
@@ -38,9 +28,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-8 shadow-sm">
         <h1 className="mb-1 text-lg font-semibold tracking-tight text-foreground">CLUB 26</h1>
-        <p className="mb-6 text-sm text-muted">
-          {mode === "signin" ? "Inicia sesión en tu cuenta" : "Crea tu cuenta"}
-        </p>
+        <p className="mb-6 text-sm text-muted">Inicia sesión en tu cuenta</p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="mb-1 block text-sm font-medium text-foreground">Email</label>
@@ -69,16 +57,12 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full rounded-xl bg-accent px-3 py-2.5 text-sm font-medium text-accent-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
           >
-            {loading ? "Cargando..." : mode === "signin" ? "Entrar" : "Registrarme"}
+            {loading ? "Cargando..." : "Entrar"}
           </button>
         </form>
-        <button
-          type="button"
-          onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-          className="mt-4 text-sm text-muted underline-offset-2 hover:text-foreground hover:underline"
-        >
-          {mode === "signin" ? "¿No tienes cuenta? Regístrate" : "¿Ya tienes cuenta? Inicia sesión"}
-        </button>
+        <p className="mt-4 text-center text-xs text-muted">
+          El registro es solo por invitación. Pide a un administrador que te cree la cuenta.
+        </p>
       </div>
     </div>
   );

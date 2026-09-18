@@ -2,7 +2,16 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
 import { NAV_BY_ROLE } from "@/lib/demo-role";
-import { UsersIcon, CupIcon, WalletIcon, BoxIcon, CalendarIcon, VoteIcon, CheckIcon } from "@/components/icons";
+import {
+  UsersIcon,
+  CupIcon,
+  WalletIcon,
+  BoxIcon,
+  CalendarIcon,
+  VoteIcon,
+  UserPlusIcon,
+  CheckIcon,
+} from "@/components/icons";
 
 type Icon = (props: { className?: string }) => React.JSX.Element;
 
@@ -13,6 +22,7 @@ const TILE_ICON: Record<string, Icon> = {
   "/inventario": BoxIcon,
   "/calendario": CalendarIcon,
   "/votaciones": VoteIcon,
+  "/usuarios": UserPlusIcon,
 };
 
 const TILE_SUBTITLE: Record<string, string> = {
@@ -22,6 +32,7 @@ const TILE_SUBTITLE: Record<string, string> = {
   "/inventario": "Stock de bodega",
   "/calendario": "Eventos y reservas",
   "/votaciones": "Vota y consulta resultados",
+  "/usuarios": "Crear y gestionar cuentas",
 };
 
 type ActivityRow = {
@@ -63,7 +74,8 @@ export default async function DashboardHome() {
     const cookieId = await getDemoMemberIdCookie();
     const currentId = members.find((m) => m.id === cookieId)?.id ?? members[0]?.id ?? "";
 
-    const currentYearStart = `${new Date().getFullYear()}-01-01`;
+    const now = new Date();
+    const currentMonthStart = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
     const [{ data: cuotaData }, { data: consumptionsData }, { data: historyData }] = await Promise.all([
       supabase
         .from("treasury_movements")
@@ -80,7 +92,7 @@ export default async function DashboardHome() {
     ]);
 
     const paid = (cuotaData ?? []).reduce((acc, m) => acc + m.amount, 0);
-    const paidThisYear = (cuotaData ?? []).some((m) => m.movement_date >= currentYearStart);
+    const paidThisYear = (cuotaData ?? []).some((m) => m.movement_date >= currentMonthStart);
     const consumed = (consumptionsData ?? []).reduce((acc, c) => acc + c.quantity * c.unit_price, 0);
     const balance = paid - consumed;
 

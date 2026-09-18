@@ -28,14 +28,15 @@ export default async function SociosPage() {
     );
   }
 
-  const currentYearStart = `${new Date().getFullYear()}-01-01`;
+  const now = new Date();
+  const currentMonthStart = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
   const [{ data: members }, { data: cuotas }] = await Promise.all([
     supabase.from("members").select("id, full_name, club_role, status, key_number, joined_at").order("full_name"),
     supabase
       .from("treasury_movements")
       .select("member_id")
       .eq("movement_type", "cuota")
-      .gte("movement_date", currentYearStart),
+      .gte("movement_date", currentMonthStart),
   ]);
 
   const paidIds = new Set((cuotas ?? []).map((c) => c.member_id));

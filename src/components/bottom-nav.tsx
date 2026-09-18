@@ -2,7 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { HomeIcon, UsersIcon, CupIcon, WalletIcon, BoxIcon, CalendarIcon, VoteIcon } from "@/components/icons";
+import {
+  HomeIcon,
+  UsersIcon,
+  CupIcon,
+  WalletIcon,
+  BoxIcon,
+  CalendarIcon,
+  VoteIcon,
+  UserPlusIcon,
+} from "@/components/icons";
 
 const ICON_BY_HREF: Record<string, (props: { className?: string }) => React.JSX.Element> = {
   "/": HomeIcon,
@@ -12,6 +21,7 @@ const ICON_BY_HREF: Record<string, (props: { className?: string }) => React.JSX.
   "/inventario": BoxIcon,
   "/calendario": CalendarIcon,
   "/votaciones": VoteIcon,
+  "/usuarios": UserPlusIcon,
 };
 
 export function BottomNav({ items }: { items: { href: string; label: string }[] }) {

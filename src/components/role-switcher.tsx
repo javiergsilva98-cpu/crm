@@ -12,15 +12,13 @@ export function RoleSwitcher({ current }: { current: ClubRole }) {
   }
 
   return (
-    <div className="flex items-center gap-2">
-      <label htmlFor="demo-role" className="text-sm text-muted">
-        Viendo como
-      </label>
+    <div className="flex items-center gap-2 rounded-full border border-border bg-card py-1 pl-3 pr-2 text-xs">
+      <span className="hidden text-muted sm:inline">Viendo como</span>
       <select
         id="demo-role"
         value={current}
         onChange={(e) => handleChange(e.target.value)}
-        className="rounded-md border border-border px-2 py-1 text-sm"
+        className="rounded-full bg-transparent py-1 text-xs font-semibold text-foreground outline-none"
       >
         {CLUB_ROLES.map((role) => (
           <option key={role} value={role}>

@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
 import { MemberSwitcher } from "@/components/member-switcher";
+import { CupIcon, PlusIcon } from "@/components/icons";
 import { markConsumption } from "./actions";
 
 type MenuItem = { id: string; name: string; category: string; price: number };
@@ -45,15 +46,18 @@ export default async function ConsumosPage() {
 
     return (
       <div>
-        <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold">Consumos</h1>
+        <div className="mb-5 flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-extrabold tracking-tight text-foreground">Consumos</h1>
+            <p className="text-sm text-muted">Toca para marcar lo que tomes</p>
+          </div>
           <MemberSwitcher members={list} current={currentId} />
         </div>
 
         <MenuSection title="Bebidas" items={bebidas} memberId={currentId} />
         <MenuSection title="Aperitivos" items={aperitivos} memberId={currentId} />
 
-        <h2 className="mb-3 mt-8 text-lg font-semibold">Tu historial reciente</h2>
+        <p className="mb-2.5 mt-7 text-xs font-bold uppercase tracking-wide text-muted">Tu historial reciente</p>
         <HistoryTable
           rows={history.map((h) => ({
             date: h.consumed_at,
@@ -82,10 +86,9 @@ export default async function ConsumosPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-semibold">Consumos recientes</h1>
-      <p className="mb-4 text-sm text-muted">
-        Vista de gestión: toda la barra. Cambia a &quot;Socio&quot; para ver el flujo de marcar un
-        consumo.
+      <h1 className="text-xl font-extrabold tracking-tight text-foreground">Consumos recientes</h1>
+      <p className="mb-5 mt-1 text-sm text-muted">
+        Vista de gestión: toda la barra. Cambia a &quot;Socio&quot; para ver el flujo de marcar un consumo.
       </p>
       <HistoryTable
         rows={recent.map((h) => ({
@@ -111,30 +114,32 @@ function MenuSection({
 }) {
   return (
     <div className="mb-6">
-      <h2 className="mb-3 text-lg font-semibold">{title}</h2>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <p className="mb-2.5 text-xs font-bold uppercase tracking-wide text-muted">{title}</p>
+      <div className="grid grid-cols-2 gap-2.5">
         {items.map((item) => (
           <form
             key={item.id}
             action={markConsumption}
-            className="flex items-center justify-between rounded-2xl border border-border bg-card px-4 py-3"
+            className="relative rounded-[18px] border border-border bg-card p-3.5"
           >
             <input type="hidden" name="member_id" value={memberId} />
             <input type="hidden" name="menu_item_id" value={item.id} />
             <input type="hidden" name="unit_price" value={item.price} />
-            <div>
-              <p className="text-sm font-medium text-foreground">{item.name}</p>
-              <p className="text-xs text-muted">{item.price.toFixed(2)} €</p>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-soft">
+              <CupIcon className="h-[17px] w-[17px] text-accent" />
             </div>
+            <p className="mt-2.5 text-sm font-bold text-foreground">{item.name}</p>
+            <p className="mt-0.5 text-xs text-muted">{item.price.toFixed(2)} €</p>
             <button
               type="submit"
-              className="rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-white"
+              aria-label={`Marcar ${item.name}`}
+              className="absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-xl bg-accent text-accent-foreground shadow-[0_6px_14px_-6px_var(--color-accent)] transition-transform active:scale-95"
             >
-              Marcar
+              <PlusIcon className="h-4 w-4" />
             </button>
           </form>
         ))}
-        {items.length === 0 && <p className="text-sm text-muted/70">Sin artículos.</p>}
+        {items.length === 0 && <p className="text-sm text-muted">Sin artículos.</p>}
       </div>
     </div>
   );
@@ -147,38 +152,30 @@ function HistoryTable({
 }) {
   const showMember = rows.some((r) => r.member !== undefined);
   return (
-    <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted/70">
-            <th className="px-4 py-3">Fecha</th>
-            {showMember && <th className="px-4 py-3">Socio</th>}
-            <th className="px-4 py-3">Consumo</th>
-            <th className="px-4 py-3">Cantidad</th>
-            <th className="px-4 py-3">Importe</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r, idx) => (
-            <tr key={idx} className="border-b border-border/60 last:border-0">
-              <td className="px-4 py-3 text-muted">
-                {new Date(r.date).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" })}
-              </td>
-              {showMember && <td className="px-4 py-3 text-foreground">{r.member}</td>}
-              <td className="px-4 py-3 text-foreground">{r.item}</td>
-              <td className="px-4 py-3 text-muted">{r.quantity}</td>
-              <td className="px-4 py-3 text-muted">{r.total.toFixed(2)} €</td>
-            </tr>
-          ))}
-          {rows.length === 0 && (
-            <tr>
-              <td colSpan={showMember ? 5 : 4} className="px-4 py-6 text-center text-muted/70">
-                Todavía no hay consumos.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+    <div className="overflow-hidden rounded-[18px] border border-border bg-card">
+      {rows.map((r, idx) => (
+        <div
+          key={idx}
+          className={`flex items-center gap-3 px-3.5 py-3 ${idx !== rows.length - 1 ? "border-b border-border" : ""}`}
+        >
+          <div className="flex h-[34px] w-[34px] flex-shrink-0 items-center justify-center rounded-full bg-accent-soft text-[11px] font-extrabold text-accent">
+            {r.quantity}×
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-foreground">
+              {r.item}
+              {showMember && <span className="font-normal text-muted"> · {r.member}</span>}
+            </p>
+            <p className="text-xs text-muted">
+              {new Date(r.date).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" })}
+            </p>
+          </div>
+          <p className="text-sm font-bold text-foreground">{r.total.toFixed(2)} €</p>
+        </div>
+      ))}
+      {rows.length === 0 && (
+        <p className="px-3.5 py-6 text-center text-sm text-muted">Todavía no hay consumos.</p>
+      )}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
 import { MemberSwitcher } from "@/components/member-switcher";
+import { WalletIcon } from "@/components/icons";
 
 const INGRESO_TYPES = ["cuota", "ingreso"];
 
@@ -82,24 +83,20 @@ export default async function TesoreriaPage() {
 
     return (
       <div>
-        <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold">Tesorería</h1>
+        <div className="mb-5 flex items-center justify-between">
+          <h1 className="text-xl font-extrabold tracking-tight text-foreground">Tesorería</h1>
           <MemberSwitcher members={members} current={currentId} />
         </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="rounded-2xl border border-border bg-card p-6">
-            <p className="text-sm text-muted">Saldo del club</p>
-            <p className="mt-2 text-3xl font-semibold">{eur(clubBalance)}</p>
-          </div>
-          <div className="rounded-2xl border border-border bg-card p-6">
-            <p className="text-sm text-muted">Tu saldo</p>
-            <p className={`mt-2 text-3xl font-semibold ${balance < 0 ? "text-amber-700" : "text-green-700"}`}>
-              {eur(balance)}
-            </p>
-            <p className="mt-1 text-xs text-muted/70">
-              {balance < 0 ? "Debes al club" : "A tu favor"}
-            </p>
-          </div>
+
+        <div className="rounded-[26px] bg-accent p-6 text-accent-foreground shadow-[0_16px_30px_-14px_var(--color-accent)]">
+          <span className="text-sm font-semibold text-white/80">Tu saldo</span>
+          <div className="mt-2 text-4xl font-extrabold tracking-tight">{eur(balance)}</div>
+          <p className="mt-1 text-sm text-white/85">{balance < 0 ? "Debes al club" : "A tu favor"}</p>
+        </div>
+
+        <div className="mt-3 rounded-[18px] border border-border bg-card p-4">
+          <p className="text-xs font-bold uppercase tracking-wide text-muted">Saldo del club</p>
+          <p className="mt-1.5 text-2xl font-extrabold text-foreground">{eur(clubBalance)}</p>
         </div>
       </div>
     );
@@ -107,15 +104,17 @@ export default async function TesoreriaPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-semibold">Tesorería</h1>
+      <h1 className="mb-5 text-xl font-extrabold tracking-tight text-foreground">Tesorería</h1>
 
-      <div className="mb-6 rounded-2xl border border-border bg-card p-6">
-        <p className="text-sm text-muted">Saldo del club</p>
-        <p className="mt-2 text-3xl font-semibold">{eur(clubBalance)}</p>
+      <div className="rounded-[26px] bg-accent p-6 text-accent-foreground shadow-[0_16px_30px_-14px_var(--color-accent)]">
+        <span className="text-sm font-semibold text-white/80">Saldo del club</span>
+        <div className="mt-2 text-4xl font-extrabold tracking-tight">{eur(clubBalance)}</div>
       </div>
 
-      <h2 className="mb-3 text-lg font-semibold">Cuota fija vs. cargos de evento</h2>
-      <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <p className="mb-2.5 mt-7 text-xs font-bold uppercase tracking-wide text-muted">
+        Cuota fija vs. cargos de evento
+      </p>
+      <div className="mb-7 grid grid-cols-2 gap-2.5">
         <BreakdownCard label="Cuotas" value={breakdown.cuotas} />
         <BreakdownCard label="Ingresos de eventos" value={breakdown.ingresosEventos} />
         <BreakdownCard label="Otros ingresos" value={breakdown.otrosIngresos} />
@@ -125,74 +124,64 @@ export default async function TesoreriaPage() {
         <BreakdownCard label="Urgencias" value={-breakdown.urgencias} />
       </div>
 
-      <h2 className="mb-3 text-lg font-semibold">Saldo por socio</h2>
-      <div className="mb-8 overflow-x-auto rounded-2xl border border-border bg-card">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted/70">
-              <th className="px-4 py-3">Socio</th>
-              <th className="px-4 py-3">Saldo</th>
-            </tr>
-          </thead>
-          <tbody>
-            {members.map((m) => {
-              const balance = memberBalance(m.id);
-              return (
-                <tr key={m.id} className="border-b border-border/60 last:border-0">
-                  <td className="px-4 py-3 font-medium text-foreground">{m.full_name}</td>
-                  <td className={`px-4 py-3 font-medium ${balance < 0 ? "text-amber-700" : "text-green-700"}`}>
-                    {eur(balance)}
-                  </td>
-                </tr>
-              );
-            })}
-            {members.length === 0 && (
-              <tr>
-                <td colSpan={2} className="px-4 py-6 text-center text-muted/70">
-                  No hay socios de ejemplo todavía.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+      <p className="mb-2.5 text-xs font-bold uppercase tracking-wide text-muted">Saldo por socio</p>
+      <div className="mb-7 overflow-hidden rounded-[18px] border border-border bg-card">
+        {members.map((m, idx) => {
+          const balance = memberBalance(m.id);
+          return (
+            <div
+              key={m.id}
+              className={`flex items-center justify-between px-3.5 py-3 ${
+                idx !== members.length - 1 ? "border-b border-border" : ""
+              }`}
+            >
+              <span className="text-sm font-semibold text-foreground">{m.full_name}</span>
+              <span className={`text-sm font-bold ${balance < 0 ? "text-warning" : "text-success"}`}>
+                {eur(balance)}
+              </span>
+            </div>
+          );
+        })}
+        {members.length === 0 && (
+          <p className="px-3.5 py-6 text-center text-sm text-muted">No hay socios de ejemplo todavía.</p>
+        )}
       </div>
 
-      <h2 className="mb-3 text-lg font-semibold">Movimientos recientes</h2>
-      <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted/70">
-              <th className="px-4 py-3">Fecha</th>
-              <th className="px-4 py-3">Tipo</th>
-              <th className="px-4 py-3">Descripción</th>
-              <th className="px-4 py-3">Importe</th>
-            </tr>
-          </thead>
-          <tbody>
-            {movements.slice(0, 20).map((m) => (
-              <tr key={m.id} className="border-b border-border/60 last:border-0">
-                <td className="px-4 py-3 text-muted">{m.movement_date}</td>
-                <td className="px-4 py-3 capitalize text-muted">{m.movement_type.replace("_", " ")}</td>
-                <td className="px-4 py-3 text-foreground">{m.description ?? "—"}</td>
-                <td
-                  className={`px-4 py-3 font-medium ${
-                    INGRESO_TYPES.includes(m.movement_type) ? "text-green-700" : "text-amber-700"
-                  }`}
-                >
-                  {INGRESO_TYPES.includes(m.movement_type) ? "+" : "-"}
-                  {eur(m.amount)}
-                </td>
-              </tr>
-            ))}
-            {movements.length === 0 && (
-              <tr>
-                <td colSpan={4} className="px-4 py-6 text-center text-muted/70">
-                  No hay movimientos de ejemplo todavía.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+      <p className="mb-2.5 text-xs font-bold uppercase tracking-wide text-muted">Movimientos recientes</p>
+      <div className="overflow-hidden rounded-[18px] border border-border bg-card">
+        {movements.slice(0, 20).map((m, idx, arr) => (
+          <div
+            key={m.id}
+            className={`flex items-center gap-3 px-3.5 py-3 ${idx !== arr.length - 1 ? "border-b border-border" : ""}`}
+          >
+            <div
+              className={`flex h-[34px] w-[34px] flex-shrink-0 items-center justify-center rounded-xl ${
+                INGRESO_TYPES.includes(m.movement_type) ? "bg-success-soft" : "bg-accent-soft"
+              }`}
+            >
+              <WalletIcon
+                className={`h-4 w-4 ${INGRESO_TYPES.includes(m.movement_type) ? "text-success" : "text-accent"}`}
+              />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold capitalize text-foreground">
+                {m.description ?? m.movement_type.replace("_", " ")}
+              </p>
+              <p className="text-xs text-muted">{m.movement_date}</p>
+            </div>
+            <p
+              className={`text-sm font-bold ${
+                INGRESO_TYPES.includes(m.movement_type) ? "text-success" : "text-foreground"
+              }`}
+            >
+              {INGRESO_TYPES.includes(m.movement_type) ? "+" : "-"}
+              {eur(m.amount)}
+            </p>
+          </div>
+        ))}
+        {movements.length === 0 && (
+          <p className="px-3.5 py-6 text-center text-sm text-muted">No hay movimientos de ejemplo todavía.</p>
+        )}
       </div>
     </div>
   );
@@ -200,11 +189,9 @@ export default async function TesoreriaPage() {
 
 function BreakdownCard({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-4">
+    <div className="rounded-[18px] border border-border bg-card p-3.5">
       <p className="text-xs text-muted">{label}</p>
-      <p className={`mt-1 text-lg font-semibold ${value < 0 ? "text-amber-700" : "text-foreground"}`}>
-        {eur(value)}
-      </p>
+      <p className={`mt-1 text-base font-bold ${value < 0 ? "text-warning" : "text-foreground"}`}>{eur(value)}</p>
     </div>
   );
 }

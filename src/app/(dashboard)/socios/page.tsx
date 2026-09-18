@@ -3,6 +3,15 @@ import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
 import { CLUB_ROLE_LABELS, type ClubRole } from "@/lib/demo-role";
 import { MemberSwitcher } from "@/components/member-switcher";
 
+function initials(name: string) {
+  return name
+    .split(" ")
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+}
+
 export default async function SociosPage() {
   const supabase = await createClient();
   const demoRole = await getDemoRole();
@@ -32,35 +41,34 @@ export default async function SociosPage() {
 
     return (
       <div>
-        <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold">Mi ficha</h1>
+        <div className="mb-5 flex items-center justify-between">
+          <h1 className="text-xl font-extrabold tracking-tight text-foreground">Mi ficha</h1>
           <MemberSwitcher members={socios} current={currentId ?? ""} />
         </div>
         {me ? (
-          <dl className="max-w-sm space-y-3 rounded-2xl border border-border bg-card p-6">
-            <div>
-              <dt className="text-xs uppercase tracking-wide text-muted/70">Nombre</dt>
-              <dd className="text-sm text-foreground">{me.full_name}</dd>
+          <div className="rounded-[18px] border border-border bg-card p-5">
+            <div className="flex items-center gap-3">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-soft text-lg font-extrabold text-accent">
+                {initials(me.full_name)}
+              </div>
+              <div>
+                <p className="text-base font-bold text-foreground">{me.full_name}</p>
+                <p className="text-sm text-muted">{CLUB_ROLE_LABELS[me.club_role as ClubRole]}</p>
+              </div>
             </div>
-            <div>
-              <dt className="text-xs uppercase tracking-wide text-muted/70">Rol</dt>
-              <dd className="text-sm text-foreground">{CLUB_ROLE_LABELS[me.club_role as ClubRole]}</dd>
+            <div className="mt-5 divide-y divide-border border-t border-border">
+              <Field label="Estado" value={<span className="capitalize">{me.status}</span>} />
+              <Field label="Nº de llave" value={me.key_number ?? "—"} />
+              <Field
+                label="Cuota"
+                value={
+                  <span className={me.cuotaAlDia ? "text-success" : "text-warning"}>
+                    {me.cuotaAlDia ? "Al día" : "Pendiente"}
+                  </span>
+                }
+              />
             </div>
-            <div>
-              <dt className="text-xs uppercase tracking-wide text-muted/70">Estado</dt>
-              <dd className="text-sm text-foreground capitalize">{me.status}</dd>
-            </div>
-            <div>
-              <dt className="text-xs uppercase tracking-wide text-muted/70">Nº de llave</dt>
-              <dd className="text-sm text-foreground">{me.key_number ?? "—"}</dd>
-            </div>
-            <div>
-              <dt className="text-xs uppercase tracking-wide text-muted/70">Cuota</dt>
-              <dd className={`text-sm font-medium ${me.cuotaAlDia ? "text-green-700" : "text-amber-700"}`}>
-                {me.cuotaAlDia ? "Al día" : "Pendiente"}
-              </dd>
-            </div>
-          </dl>
+          </div>
         ) : (
           <p className="text-sm text-muted">No hay socios de ejemplo todavía.</p>
         )}
@@ -70,42 +78,45 @@ export default async function SociosPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-semibold">Socios</h1>
-      <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted/70">
-              <th className="px-4 py-3">Nombre</th>
-              <th className="px-4 py-3">Rol</th>
-              <th className="px-4 py-3">Estado</th>
-              <th className="px-4 py-3">Llave</th>
-              <th className="px-4 py-3">Alta</th>
-              <th className="px-4 py-3">Cuota</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((m) => (
-              <tr key={m.id} className="border-b border-border/60 last:border-0">
-                <td className="px-4 py-3 font-medium text-foreground">{m.full_name}</td>
-                <td className="px-4 py-3 text-muted">{CLUB_ROLE_LABELS[m.club_role as ClubRole]}</td>
-                <td className="px-4 py-3 capitalize text-muted">{m.status}</td>
-                <td className="px-4 py-3 text-muted">{m.key_number ?? "—"}</td>
-                <td className="px-4 py-3 text-muted">{m.joined_at}</td>
-                <td className={`px-4 py-3 font-medium ${m.cuotaAlDia ? "text-green-700" : "text-amber-700"}`}>
-                  {m.cuotaAlDia ? "Al día" : "Pendiente"}
-                </td>
-              </tr>
-            ))}
-            {rows.length === 0 && (
-              <tr>
-                <td colSpan={6} className="px-4 py-6 text-center text-muted/70">
-                  No hay socios de ejemplo todavía.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+      <h1 className="mb-5 text-xl font-extrabold tracking-tight text-foreground">Socios</h1>
+      <div className="overflow-hidden rounded-[18px] border border-border bg-card">
+        {rows.map((m, idx) => (
+          <div
+            key={m.id}
+            className={`flex items-center gap-3 px-3.5 py-3 ${idx !== rows.length - 1 ? "border-b border-border" : ""}`}
+          >
+            <div className="flex h-[38px] w-[38px] flex-shrink-0 items-center justify-center rounded-xl bg-accent-soft text-xs font-extrabold text-accent">
+              {initials(m.full_name)}
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-foreground">{m.full_name}</p>
+              <p className="text-xs capitalize text-muted">
+                {CLUB_ROLE_LABELS[m.club_role as ClubRole]} · {m.status}
+                {m.key_number ? ` · llave ${m.key_number}` : ""}
+              </p>
+            </div>
+            <span
+              className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${
+                m.cuotaAlDia ? "bg-success-soft text-success" : "bg-warning-soft text-warning"
+              }`}
+            >
+              {m.cuotaAlDia ? "Al día" : "Pendiente"}
+            </span>
+          </div>
+        ))}
+        {rows.length === 0 && (
+          <p className="px-3.5 py-6 text-center text-sm text-muted">No hay socios de ejemplo todavía.</p>
+        )}
       </div>
+    </div>
+  );
+}
+
+function Field({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-between py-2.5">
+      <span className="text-sm text-muted">{label}</span>
+      <span className="text-sm font-semibold text-foreground">{value}</span>
     </div>
   );
 }

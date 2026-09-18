@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole } from "@/lib/demo-context";
+import { BoxIcon } from "@/components/icons";
 import { RestockForm } from "./restock-form";
 
 export default async function InventarioPage() {
@@ -25,39 +26,31 @@ export default async function InventarioPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-semibold">Inventario</h1>
+      <h1 className="mb-5 text-xl font-extrabold tracking-tight text-foreground">Inventario</h1>
 
-      <div className="mb-8 overflow-x-auto rounded-2xl border border-border bg-card">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted/70">
-              <th className="px-4 py-3">Artículo</th>
-              <th className="px-4 py-3">Stock actual</th>
-              <th className="px-4 py-3">Unidad</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((item) => (
-              <tr key={item.id} className="border-b border-border/60 last:border-0">
-                <td className="px-4 py-3 font-medium text-foreground">{item.name}</td>
-                <td className="px-4 py-3 text-muted">{item.current_stock}</td>
-                <td className="px-4 py-3 text-muted">{item.unit}</td>
-              </tr>
-            ))}
-            {rows.length === 0 && (
-              <tr>
-                <td colSpan={3} className="px-4 py-6 text-center text-muted/70">
-                  No hay artículos de ejemplo todavía.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+      <div className="mb-7 overflow-hidden rounded-[18px] border border-border bg-card">
+        {rows.map((item, idx) => (
+          <div
+            key={item.id}
+            className={`flex items-center gap-3 px-3.5 py-3 ${idx !== rows.length - 1 ? "border-b border-border" : ""}`}
+          >
+            <div className="flex h-[34px] w-[34px] flex-shrink-0 items-center justify-center rounded-xl bg-accent-soft">
+              <BoxIcon className="h-4 w-4 text-accent" />
+            </div>
+            <p className="flex-1 text-sm font-semibold text-foreground">{item.name}</p>
+            <p className="text-sm font-bold text-foreground">
+              {item.current_stock} <span className="font-normal text-muted">{item.unit}</span>
+            </p>
+          </div>
+        ))}
+        {rows.length === 0 && (
+          <p className="px-3.5 py-6 text-center text-sm text-muted">No hay artículos de ejemplo todavía.</p>
+        )}
       </div>
 
       {canRestock ? (
         <>
-          <h2 className="mb-3 text-lg font-semibold">Registrar reposición</h2>
+          <p className="mb-2.5 text-xs font-bold uppercase tracking-wide text-muted">Registrar reposición</p>
           <RestockForm items={rows} members={members ?? []} />
         </>
       ) : (

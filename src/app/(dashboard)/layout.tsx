@@ -22,6 +22,11 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
+  const { data: profile } = await supabase.from("profiles").select("must_change_password").eq("id", user.id).single();
+  if (profile?.must_change_password) {
+    redirect("/cambiar-password");
+  }
+
   const demoRole = await getDemoRole();
   const navItems = NAV_BY_ROLE[demoRole];
   const mobileNavItems = [{ href: "/", label: "Panel" }, ...navItems];

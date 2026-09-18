@@ -7,7 +7,17 @@ import { MemberForm } from "./member-form";
 import { toggleMemberStatus } from "./actions";
 
 const MEMBER_MANAGE_ROLES = ["admin", "presidente", "secretario"];
+const ACCOUNT_CREATE_ROLES = ["admin", "presidente"];
 const EXPORT_ROLES = ["admin", "presidente", "tesorero"];
+
+function nextKeyNumber(members: { key_number: string | null }[]): string {
+  const numeric = members
+    .map((m) => m.key_number)
+    .filter((k): k is string => !!k && /^\d+$/.test(k))
+    .map(Number);
+  const next = numeric.length > 0 ? Math.max(...numeric) + 1 : 1;
+  return String(next).padStart(2, "0");
+}
 
 function initials(name: string) {
   return name
@@ -140,10 +150,10 @@ export default async function SociosPage() {
         )}
       </div>
 
-      {canManage && (
+      {ACCOUNT_CREATE_ROLES.includes(demoRole) && (
         <>
           <p className="mb-2.5 text-xs font-bold uppercase tracking-wide text-muted">Dar de alta un socio</p>
-          <MemberForm />
+          <MemberForm suggestedKeyNumber={nextKeyNumber(rows)} />
         </>
       )}
     </div>

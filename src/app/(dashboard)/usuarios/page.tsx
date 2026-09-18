@@ -3,6 +3,7 @@ import { getDemoRole } from "@/lib/demo-context";
 import { CLUB_ROLE_LABELS } from "@/lib/demo-role";
 import { SubmitButton } from "@/components/submit-button";
 import { UserForm } from "./user-form";
+import { ResetPasswordButton } from "./reset-password-button";
 import { updateUserAccount, deleteUserAccount } from "./actions";
 
 const USER_MANAGE_ROLES = ["admin", "presidente"];
@@ -99,6 +100,7 @@ export default async function UsuariosPage() {
             >
               Eliminar
             </SubmitButton>
+            <ResetPasswordButton profileId={p.id} />
           </form>
         ))}
         {profiles.length === 0 && (

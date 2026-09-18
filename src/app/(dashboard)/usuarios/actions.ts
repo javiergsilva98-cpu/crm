@@ -1,33 +1,15 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { assertCanManageAccounts } from "@/lib/account-auth";
+import { generatePassword } from "@/lib/generate-password";
 
 type ActionResult = { error?: string } | void;
-
-const USER_MANAGE_ROLES = ["admin", "presidente"];
-
-// Comprobación real (rol de la fila `profiles` del usuario autenticado),
-// no el selector de vista de la demo: gestionar cuentas es sensible y
-// no debe depender de una cookie que cualquiera puede cambiar.
-async function assertCanManageUsers(): Promise<string | null> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return "No has iniciado sesión.";
-  }
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-  if (!profile || !USER_MANAGE_ROLES.includes(profile.role)) {
-    return "No tienes permiso para gestionar usuarios.";
-  }
-  return null;
-}
+type ResetResult = { error?: string } | { password: string };
 
 export async function createUserAccount(formData: FormData): Promise<ActionResult> {
-  const permError = await assertCanManageUsers();
+  const permError = await assertCanManageAccounts();
   if (permError) {
     return { error: permError };
   }
@@ -54,7 +36,7 @@ export async function createUserAccount(formData: FormData): Promise<ActionResul
 
   const { error: profileError } = await admin
     .from("profiles")
-    .update({ role, member_id: memberId })
+    .update({ role, member_id: memberId, must_change_password: true })
     .eq("id", created.user.id);
 
   if (profileError) {
@@ -65,7 +47,7 @@ export async function createUserAccount(formData: FormData): Promise<ActionResul
 }
 
 export async function updateUserAccount(formData: FormData): Promise<ActionResult> {
-  const permError = await assertCanManageUsers();
+  const permError = await assertCanManageAccounts();
   if (permError) {
     return { error: permError };
   }
@@ -85,7 +67,7 @@ export async function updateUserAccount(formData: FormData): Promise<ActionResul
 }
 
 export async function deleteUserAccount(formData: FormData): Promise<ActionResult> {
-  const permError = await assertCanManageUsers();
+  const permError = await assertCanManageAccounts();
   if (permError) {
     return { error: permError };
   }
@@ -100,4 +82,32 @@ export async function deleteUserAccount(formData: FormData): Promise<ActionResul
   }
 
   revalidatePath("/usuarios");
+}
+
+// Genera una contraseña provisional nueva para una cuenta existente (por
+// si el socio la ha perdido) y le vuelve a exigir cambiarla al entrar.
+export async function resetUserPassword(id: string): Promise<ResetResult> {
+  const permError = await assertCanManageAccounts();
+  if (permError) {
+    return { error: permError };
+  }
+
+  const password = generatePassword();
+  const admin = createAdminClient();
+
+  const { error: authError } = await admin.auth.admin.updateUserById(id, { password });
+  if (authError) {
+    return { error: authError.message };
+  }
+
+  const { error: profileError } = await admin
+    .from("profiles")
+    .update({ must_change_password: true })
+    .eq("id", id);
+  if (profileError) {
+    return { error: profileError.message };
+  }
+
+  revalidatePath("/usuarios");
+  return { password };
 }

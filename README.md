@@ -37,8 +37,12 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
 
 1. **Panel** (`/`): resumen y accesos según el rol.
 2. **Socios** (`/socios`): ficha de socios (nombre, rol, estado, cuota
-   del mes, nº de llave), alta y baja. Como "Socio" solo se ve la ficha
-   propia.
+   del mes, nº de llave) y baja. Como "Socio" solo se ve la ficha propia.
+   Admin y presidencia dan de alta socios nuevos directamente con su
+   cuenta de acceso: nombre, email, rol, número de socio (se sugiere el
+   siguiente disponible) y una contraseña provisional generada ahí
+   mismo — se le entrega a la persona y tendrá que cambiarla la primera
+   vez que entre, antes de poder usar el resto de la app.
 3. **Consumiciones** (`/consumos`): carta de bebidas/aperitivos, marcar
    una consumición e historial personal. Gestión ve el registro completo
    de la barra y administra la carta (crear, editar y activar/desactivar
@@ -55,7 +59,10 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
 7. **Votaciones** (`/votaciones`): la directiva crea votaciones públicas
    o anónimas; cada socio vota una vez; resultados en vivo.
 8. **Usuarios** (`/usuarios`, solo admin/presidencia): crear cuentas,
-   asignar rol y vincularlas a un socio.
+   asignar rol y vincularlas a un socio. También permite recuperar el
+   acceso de alguien que ha perdido su contraseña: genera una nueva
+   provisional (que también habrá que entregarle en mano) y le vuelve a
+   exigir cambiarla al entrar.
 
 Admin, presidencia y tesorero pueden exportar a CSV (se abre directamente
 en Excel) los movimientos de tesorería, el saldo por socio, el listado de

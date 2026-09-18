@@ -6,6 +6,7 @@ import { NAV_BY_ROLE } from "@/lib/demo-role";
 import { RoleSwitcher } from "@/components/role-switcher";
 import { MemberSwitcher } from "@/components/member-switcher";
 import { BottomNav } from "@/components/bottom-nav";
+import { MobilePreviewButton } from "@/components/mobile-preview";
 import { LogOutIcon } from "@/components/icons";
 
 export default async function DashboardLayout({
@@ -80,6 +81,7 @@ export default async function DashboardLayout({
             {demoRole === "socio" && socios.length > 0 && (
               <MemberSwitcher members={socios} current={currentMemberId} />
             )}
+            <MobilePreviewButton />
             <RoleSwitcher current={demoRole} />
             <form action="/auth/signout" method="post">
               <button

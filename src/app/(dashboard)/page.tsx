@@ -10,6 +10,7 @@ import {
   CalendarIcon,
   VoteIcon,
   UserPlusIcon,
+  FolderIcon,
   CheckIcon,
 } from "@/components/icons";
 
@@ -22,6 +23,7 @@ const TILE_ICON: Record<string, Icon> = {
   "/inventario": BoxIcon,
   "/calendario": CalendarIcon,
   "/votaciones": VoteIcon,
+  "/documentos": FolderIcon,
   "/usuarios": UserPlusIcon,
 };
 
@@ -32,6 +34,7 @@ const TILE_SUBTITLE: Record<string, string> = {
   "/inventario": "Stock de bodega",
   "/calendario": "Eventos y reservas",
   "/votaciones": "Vota y consulta resultados",
+  "/documentos": "Estatutos, actas y normativa",
   "/usuarios": "Crear y gestionar cuentas",
 };
 

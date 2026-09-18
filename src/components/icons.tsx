@@ -114,6 +114,33 @@ export function CheckIcon({ className }: IconProps) {
   );
 }
 
+export function FolderIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill={base} stroke="currentColor" strokeWidth={1.8} className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M3.5 7.5a1.5 1.5 0 0 1 1.5-1.5h4l2 2.5h8a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5v-10.5Z" />
+    </svg>
+  );
+}
+
+export function ExternalLinkIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill={base} stroke="currentColor" strokeWidth={1.8} className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H6.5a2 2 0 0 0-2 2v10.5a2 2 0 0 0 2 2H17a2 2 0 0 0 2-2V15" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5h6v6" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19 5l-8.5 8.5" />
+    </svg>
+  );
+}
+
+export function PhoneIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill={base} stroke="currentColor" strokeWidth={1.8} className={className}>
+      <rect x="6.5" y="2.5" width="11" height="19" rx="2.2" />
+      <path strokeLinecap="round" d="M11 18.3h2" />
+    </svg>
+  );
+}
+
 export function DownloadIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill={base} stroke="currentColor" strokeWidth={1.8} className={className}>

@@ -67,6 +67,9 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
    acceso de alguien que ha perdido su contraseña: genera una nueva
    provisional (que también habrá que entregarle en mano) y le vuelve a
    exigir cambiarla al entrar.
+9. **Documentación** (`/documentos`, admin/presidencia/secretaría):
+   estatutos, actas y normativa del club, cada una con un enlace opcional
+   (pensado para vincular más adelante al Drive del club).
 
 Admin, presidencia y tesorero pueden exportar a CSV (se abre directamente
 en Excel) los movimientos de tesorería, el saldo por socio, el listado de
@@ -74,8 +77,9 @@ socios, el historial de consumiciones y las reposiciones de inventario — botó
 "Exportar" en cada pantalla.
 
 Fuera de alcance por ahora: cobros reales (pasarela de pago),
-documentación tipo drive, notificaciones push, límites de visitas de
-invitados, branding final (logo/colores propios del club).
+almacenamiento propio de ficheros (la documentación enlaza a Drive, no
+sube archivos), notificaciones push, límites de visitas de invitados,
+branding final (logo/colores propios del club).
 
 ## Configuración inicial
 

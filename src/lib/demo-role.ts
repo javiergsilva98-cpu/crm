@@ -31,6 +31,7 @@ export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = 
     { href: "/inventario", label: "Inventario" },
     { href: "/calendario", label: "Calendario" },
     { href: "/votaciones", label: "Votaciones" },
+    { href: "/documentos", label: "Documentación" },
     { href: "/usuarios", label: "Usuarios" },
   ],
   presidente: [
@@ -40,12 +41,14 @@ export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = 
     { href: "/inventario", label: "Inventario" },
     { href: "/calendario", label: "Calendario" },
     { href: "/votaciones", label: "Votaciones" },
+    { href: "/documentos", label: "Documentación" },
     { href: "/usuarios", label: "Usuarios" },
   ],
   secretario: [
     { href: "/socios", label: "Socios" },
     { href: "/calendario", label: "Calendario" },
     { href: "/votaciones", label: "Votaciones" },
+    { href: "/documentos", label: "Documentación" },
   ],
   tesorero: [
     { href: "/socios", label: "Socios" },

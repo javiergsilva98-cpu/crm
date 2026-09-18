@@ -10,6 +10,7 @@ import {
   BoxIcon,
   CalendarIcon,
   VoteIcon,
+  FolderIcon,
   UserPlusIcon,
 } from "@/components/icons";
 
@@ -21,6 +22,7 @@ const ICON_BY_HREF: Record<string, (props: { className?: string }) => React.JSX.
   "/inventario": BoxIcon,
   "/calendario": CalendarIcon,
   "/votaciones": VoteIcon,
+  "/documentos": FolderIcon,
   "/usuarios": UserPlusIcon,
 };
 

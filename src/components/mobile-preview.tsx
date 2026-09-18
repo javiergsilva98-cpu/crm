@@ -71,8 +71,8 @@ export function MobilePreviewButton() {
             onClick={(e) => e.stopPropagation()}
             className="relative my-6 flex flex-shrink-0 flex-col rounded-[3rem] border-[10px] border-neutral-900 bg-neutral-900 shadow-2xl"
             style={{
-              height: "min(844px, 85dvh)",
-              width: "min(390px, calc(min(844px, 85dvh) * 390 / 844), 88vw)",
+              width: "min(390px, 42vh, 88vw)",
+              aspectRatio: "390 / 844",
             }}
           >
             <div className="pointer-events-none absolute left-1/2 top-0 z-10 h-6 w-32 -translate-x-1/2 rounded-b-2xl bg-neutral-900" />

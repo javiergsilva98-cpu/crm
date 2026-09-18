@@ -38,22 +38,26 @@ export async function toggleMenuItemActive(formData: FormData): Promise<ActionRe
   revalidatePath("/consumos");
 }
 
-export async function markConsumption(formData: FormData) {
+export async function markConsumption(formData: FormData): Promise<ActionResult> {
   const memberId = formData.get("member_id") as string;
   const menuItemId = formData.get("menu_item_id") as string;
   const unitPrice = Number(formData.get("unit_price"));
 
   if (!memberId || !menuItemId) {
-    return;
+    return { error: "Falta indicar el socio o el artículo." };
   }
 
   const supabase = await createClient();
-  await supabase.from("consumptions").insert({
+  const { error } = await supabase.from("consumptions").insert({
     member_id: memberId,
     menu_item_id: menuItemId,
     quantity: 1,
     unit_price: unitPrice,
   });
+
+  if (error) {
+    return { error: error.message };
+  }
 
   revalidatePath("/consumos");
 }

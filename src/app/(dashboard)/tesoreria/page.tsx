@@ -35,7 +35,7 @@ export default async function TesoreriaPage() {
     );
   }
 
-  const [{ data: movementsData }, { data: consumptionsData }, { data: membersData }] =
+  const [{ data: movementsData }, { data: consumptionsData }, { data: membersData }, { data: clubBalanceData }] =
     await Promise.all([
       supabase
         .from("treasury_movements")
@@ -43,16 +43,16 @@ export default async function TesoreriaPage() {
         .order("movement_date", { ascending: false }),
       supabase.from("consumptions").select("member_id, quantity, unit_price"),
       supabase.from("members").select("id, full_name").eq("status", "activo").order("full_name"),
+      supabase.rpc("club_balance"),
     ]);
 
   const movements = (movementsData ?? []) as Movement[];
   const consumptions = (consumptionsData ?? []) as Consumption[];
   const members = (membersData ?? []) as Member[];
-
-  const clubBalance = movements.reduce(
-    (acc, m) => acc + (INGRESO_TYPES.includes(m.movement_type) ? m.amount : -m.amount),
-    0,
-  );
+  // Calculado con una función de base de datos aparte (no sumando localmente
+  // "movements") porque un socio real, por RLS, solo ve sus propios
+  // movimientos: sumar solo lo que él ve daría un "saldo del club" erróneo.
+  const clubBalance = (clubBalanceData as number | null) ?? 0;
 
   const sum = (predicate: (m: Movement) => boolean) =>
     movements.filter(predicate).reduce((acc, m) => acc + m.amount, 0);

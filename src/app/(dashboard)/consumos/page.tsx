@@ -1,8 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
-import { CupIcon, PlusIcon } from "@/components/icons";
-import { markConsumption, toggleMenuItemActive } from "./actions";
+import { toggleMenuItemActive } from "./actions";
 import { MenuItemForm } from "./menu-item-form";
+import { MarkConsumptionForm } from "./mark-consumption-form";
 
 const MENU_MANAGE_ROLES = ["admin", "presidente", "tesorero", "bodeguero"];
 
@@ -27,6 +27,7 @@ export default async function ConsumosPage() {
       .from("members")
       .select("id, full_name")
       .eq("club_role", "socio")
+      .eq("status", "activo")
       .order("full_name");
     const list = socios ?? [];
     const cookieId = await getDemoMemberIdCookie();
@@ -159,27 +160,13 @@ function MenuSection({
       <p className="mb-2.5 text-xs font-bold uppercase tracking-wide text-muted">{title}</p>
       <div className="grid grid-cols-2 gap-2.5">
         {items.map((item) => (
-          <form
+          <MarkConsumptionForm
             key={item.id}
-            action={markConsumption}
-            className="relative rounded-[18px] border border-border bg-card p-3.5"
-          >
-            <input type="hidden" name="member_id" value={memberId} />
-            <input type="hidden" name="menu_item_id" value={item.id} />
-            <input type="hidden" name="unit_price" value={item.price} />
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-soft">
-              <CupIcon className="h-[17px] w-[17px] text-accent" />
-            </div>
-            <p className="mt-2.5 text-sm font-bold text-foreground">{item.name}</p>
-            <p className="mt-0.5 text-xs text-muted">{item.price.toFixed(2)} €</p>
-            <button
-              type="submit"
-              aria-label={`Marcar ${item.name}`}
-              className="absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-xl bg-accent text-accent-foreground shadow-[0_6px_14px_-6px_var(--color-accent)] transition-transform active:scale-95"
-            >
-              <PlusIcon className="h-4 w-4" />
-            </button>
-          </form>
+            memberId={memberId}
+            menuItemId={item.id}
+            name={item.name}
+            price={item.price}
+          />
         ))}
         {items.length === 0 && <p className="text-sm text-muted">Sin artículos.</p>}
       </div>

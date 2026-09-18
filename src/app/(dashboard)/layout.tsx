@@ -35,6 +35,7 @@ export default async function DashboardLayout({
       .from("members")
       .select("id, full_name")
       .eq("club_role", "socio")
+      .eq("status", "activo")
       .order("full_name");
     socios = data ?? [];
     const cookieId = await getDemoMemberIdCookie();

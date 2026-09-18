@@ -63,10 +63,11 @@ export default async function DashboardHome() {
     const cookieId = await getDemoMemberIdCookie();
     const currentId = members.find((m) => m.id === cookieId)?.id ?? members[0]?.id ?? "";
 
+    const currentYearStart = `${new Date().getFullYear()}-01-01`;
     const [{ data: cuotaData }, { data: consumptionsData }, { data: historyData }] = await Promise.all([
       supabase
         .from("treasury_movements")
-        .select("amount")
+        .select("amount, movement_date")
         .eq("member_id", currentId)
         .eq("movement_type", "cuota"),
       supabase.from("consumptions").select("quantity, unit_price").eq("member_id", currentId),
@@ -79,12 +80,13 @@ export default async function DashboardHome() {
     ]);
 
     const paid = (cuotaData ?? []).reduce((acc, m) => acc + m.amount, 0);
+    const paidThisYear = (cuotaData ?? []).some((m) => m.movement_date >= currentYearStart);
     const consumed = (consumptionsData ?? []).reduce((acc, c) => acc + c.quantity * c.unit_price, 0);
     const balance = paid - consumed;
 
     heroLabel = "Tu saldo";
     heroValue = eur(balance);
-    heroBadge = paid > 0 ? "Cuota al día" : "Cuota pendiente";
+    heroBadge = paidThisYear ? "Cuota al día" : "Cuota pendiente";
     secondaryLabel = "";
     secondaryValue = "";
     activityTitle = "Tu historial reciente";

@@ -22,7 +22,7 @@ export default async function InventarioPage() {
   ]);
 
   const rows = items ?? [];
-  const canRestock = demoRole === "presidente" || demoRole === "bodeguero";
+  const canRestock = demoRole === "admin" || demoRole === "presidente" || demoRole === "bodeguero";
 
   return (
     <div>

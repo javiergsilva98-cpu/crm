@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CRM",
-  description: "CRM construido con Next.js, Supabase y Vercel",
+  title: "CLUB 26",
+  description: "App interna de CLUB 26, construida con Next.js, Supabase y Vercel",
 };
 
 export default function RootLayout({

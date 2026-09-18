@@ -79,6 +79,15 @@ export function XIcon({ className }: IconProps) {
   );
 }
 
+export function VoteIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill={base} stroke="currentColor" strokeWidth={1.8} className={className}>
+      <rect x="3.5" y="4.5" width="17" height="15" rx="2.2" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="m7.5 12.5 2.5 2.5 6-6" />
+    </svg>
+  );
+}
+
 export function PlusIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill={base} stroke="currentColor" strokeWidth={2.4} className={className}>

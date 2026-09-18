@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { HomeIcon, UsersIcon, CupIcon, WalletIcon, BoxIcon, CalendarIcon } from "@/components/icons";
+import { HomeIcon, UsersIcon, CupIcon, WalletIcon, BoxIcon, CalendarIcon, VoteIcon } from "@/components/icons";
 
 const ICON_BY_HREF: Record<string, (props: { className?: string }) => React.JSX.Element> = {
   "/": HomeIcon,
@@ -11,6 +11,7 @@ const ICON_BY_HREF: Record<string, (props: { className?: string }) => React.JSX.
   "/tesoreria": WalletIcon,
   "/inventario": BoxIcon,
   "/calendario": CalendarIcon,
+  "/votaciones": VoteIcon,
 };
 
 export function BottomNav({ items }: { items: { href: string; label: string }[] }) {
@@ -18,7 +19,7 @@ export function BottomNav({ items }: { items: { href: string; label: string }[] 
 
   return (
     <nav
-      className="fixed inset-x-4 bottom-[calc(env(safe-area-inset-bottom)+16px)] z-40 flex items-center gap-1 rounded-[22px] border border-border bg-card p-2 shadow-[0_12px_28px_-10px_rgba(28,27,31,0.22)] sm:hidden"
+      className="fixed inset-x-4 bottom-[calc(env(safe-area-inset-bottom)+16px)] z-40 flex items-center gap-1 overflow-x-auto rounded-[22px] border border-border bg-card p-2 shadow-[0_12px_28px_-10px_rgba(28,27,31,0.22)] sm:hidden"
       aria-label="Navegación principal"
     >
       {items.map((item) => {
@@ -29,7 +30,7 @@ export function BottomNav({ items }: { items: { href: string; label: string }[] 
             key={item.href}
             href={item.href}
             aria-label={item.label}
-            className={`flex flex-1 flex-col items-center gap-1 rounded-2xl py-2.5 text-[10px] font-bold transition-colors ${
+            className={`flex w-14 flex-shrink-0 flex-col items-center gap-1 rounded-2xl py-2.5 text-[10px] font-bold transition-colors ${
               active ? "bg-accent text-accent-foreground" : "text-muted"
             }`}
           >

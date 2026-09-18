@@ -30,6 +30,7 @@ export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = 
     { href: "/tesoreria", label: "Tesorería" },
     { href: "/inventario", label: "Inventario" },
     { href: "/calendario", label: "Calendario" },
+    { href: "/votaciones", label: "Votaciones" },
   ],
   presidente: [
     { href: "/socios", label: "Socios" },
@@ -37,23 +38,28 @@ export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = 
     { href: "/tesoreria", label: "Tesorería" },
     { href: "/inventario", label: "Inventario" },
     { href: "/calendario", label: "Calendario" },
+    { href: "/votaciones", label: "Votaciones" },
   ],
   secretario: [
     { href: "/socios", label: "Socios" },
     { href: "/calendario", label: "Calendario" },
+    { href: "/votaciones", label: "Votaciones" },
   ],
   tesorero: [
     { href: "/socios", label: "Socios" },
     { href: "/tesoreria", label: "Tesorería" },
     { href: "/calendario", label: "Calendario" },
+    { href: "/votaciones", label: "Votaciones" },
   ],
   bodeguero: [
     { href: "/inventario", label: "Inventario" },
     { href: "/calendario", label: "Calendario" },
+    { href: "/votaciones", label: "Votaciones" },
   ],
   socio: [
     { href: "/consumos", label: "Consumos" },
     { href: "/tesoreria", label: "Tesorería" },
     { href: "/calendario", label: "Calendario" },
+    { href: "/votaciones", label: "Votaciones" },
   ],
 };

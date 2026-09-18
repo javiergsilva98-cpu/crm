@@ -2,7 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
 import { NAV_BY_ROLE } from "@/lib/demo-role";
-import { UsersIcon, CupIcon, WalletIcon, BoxIcon, CalendarIcon, CheckIcon } from "@/components/icons";
+import { UsersIcon, CupIcon, WalletIcon, BoxIcon, CalendarIcon, VoteIcon, CheckIcon } from "@/components/icons";
 
 type Icon = (props: { className?: string }) => React.JSX.Element;
 
@@ -12,6 +12,7 @@ const TILE_ICON: Record<string, Icon> = {
   "/tesoreria": WalletIcon,
   "/inventario": BoxIcon,
   "/calendario": CalendarIcon,
+  "/votaciones": VoteIcon,
 };
 
 const TILE_SUBTITLE: Record<string, string> = {
@@ -20,6 +21,7 @@ const TILE_SUBTITLE: Record<string, string> = {
   "/tesoreria": "Balance del club",
   "/inventario": "Stock de bodega",
   "/calendario": "Eventos y reservas",
+  "/votaciones": "Vota y consulta resultados",
 };
 
 type ActivityRow = {

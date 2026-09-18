@@ -1,10 +1,12 @@
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
 import { CLUB_ROLE_LABELS, type ClubRole } from "@/lib/demo-role";
+import { ExportLink } from "@/components/export-link";
 import { MemberForm } from "./member-form";
 import { toggleMemberStatus } from "./actions";
 
 const MEMBER_MANAGE_ROLES = ["admin", "presidente", "secretario"];
+const EXPORT_ROLES = ["admin", "presidente", "tesorero"];
 
 function initials(name: string) {
   return name
@@ -86,7 +88,10 @@ export default async function SociosPage() {
 
   return (
     <div>
-      <h1 className="mb-5 text-xl font-extrabold tracking-tight text-foreground">Socios</h1>
+      <div className="mb-5 flex items-center justify-between">
+        <h1 className="text-xl font-extrabold tracking-tight text-foreground">Socios</h1>
+        {EXPORT_ROLES.includes(demoRole) && <ExportLink href="/api/export/socios" label="Exportar" />}
+      </div>
       <div className="mb-7 overflow-hidden rounded-[18px] border border-border bg-card">
         {rows.map((m, idx) => (
           <div

@@ -56,10 +56,14 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
 8. **Usuarios** (`/usuarios`, solo admin/presidencia): crear cuentas,
    asignar rol y vincularlas a un socio.
 
+Admin, presidencia y tesorero pueden exportar a CSV (se abre directamente
+en Excel) los movimientos de tesorería, el saldo por socio, el listado de
+socios, el historial de consumos y las reposiciones de inventario — botón
+"Exportar" en cada pantalla.
+
 Fuera de alcance por ahora: cobros reales (pasarela de pago),
 documentación tipo drive, notificaciones push, límites de visitas de
-invitados, exportación a Excel, branding final (logo/colores propios del
-club).
+invitados, branding final (logo/colores propios del club).
 
 ## Configuración inicial
 

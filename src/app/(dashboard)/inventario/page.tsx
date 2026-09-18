@@ -1,7 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole } from "@/lib/demo-context";
 import { BoxIcon } from "@/components/icons";
+import { ExportLink } from "@/components/export-link";
 import { RestockForm } from "./restock-form";
+
+const EXPORT_ROLES = ["admin", "presidente", "tesorero"];
 
 export default async function InventarioPage() {
   const supabase = await createClient();
@@ -26,7 +29,10 @@ export default async function InventarioPage() {
 
   return (
     <div>
-      <h1 className="mb-5 text-xl font-extrabold tracking-tight text-foreground">Inventario</h1>
+      <div className="mb-5 flex items-center justify-between">
+        <h1 className="text-xl font-extrabold tracking-tight text-foreground">Inventario</h1>
+        {EXPORT_ROLES.includes(demoRole) && <ExportLink href="/api/export/inventario" label="Reposiciones" />}
+      </div>
 
       <div className="mb-7 overflow-hidden rounded-[18px] border border-border bg-card">
         {rows.map((item, idx) => (

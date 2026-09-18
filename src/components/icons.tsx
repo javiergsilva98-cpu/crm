@@ -114,6 +114,15 @@ export function CheckIcon({ className }: IconProps) {
   );
 }
 
+export function DownloadIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill={base} stroke="currentColor" strokeWidth={1.8} className={className}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3.5v11.5M8 11.5l4 4 4-4" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 16.5v2a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-2" />
+    </svg>
+  );
+}
+
 export function LogOutIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill={base} stroke="currentColor" strokeWidth={1.8} className={className}>

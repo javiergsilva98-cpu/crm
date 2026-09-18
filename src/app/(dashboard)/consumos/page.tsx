@@ -1,10 +1,12 @@
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
 import { toggleMenuItemActive } from "./actions";
+import { ExportLink } from "@/components/export-link";
 import { MenuItemForm } from "./menu-item-form";
 import { MarkConsumptionForm } from "./mark-consumption-form";
 
 const MENU_MANAGE_ROLES = ["admin", "presidente", "tesorero", "bodeguero"];
+const EXPORT_ROLES = ["admin", "presidente", "tesorero"];
 
 type MenuItem = { id: string; name: string; category: string; price: number };
 
@@ -91,7 +93,10 @@ export default async function ConsumosPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-extrabold tracking-tight text-foreground">Consumos recientes</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-extrabold tracking-tight text-foreground">Consumos recientes</h1>
+        {EXPORT_ROLES.includes(demoRole) && <ExportLink href="/api/export/consumos" label="Exportar" />}
+      </div>
       <p className="mb-5 mt-1 text-sm text-muted">
         Vista de gestión: toda la barra. Cambia a &quot;Socio&quot; para ver el flujo de marcar un consumo.
       </p>

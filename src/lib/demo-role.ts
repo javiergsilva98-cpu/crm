@@ -29,21 +29,31 @@ export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = 
     { href: "/consumos", label: "Consumos" },
     { href: "/tesoreria", label: "Tesorería" },
     { href: "/inventario", label: "Inventario" },
+    { href: "/calendario", label: "Calendario" },
   ],
   presidente: [
     { href: "/socios", label: "Socios" },
     { href: "/consumos", label: "Consumos" },
     { href: "/tesoreria", label: "Tesorería" },
     { href: "/inventario", label: "Inventario" },
+    { href: "/calendario", label: "Calendario" },
   ],
-  secretario: [{ href: "/socios", label: "Socios" }],
+  secretario: [
+    { href: "/socios", label: "Socios" },
+    { href: "/calendario", label: "Calendario" },
+  ],
   tesorero: [
     { href: "/socios", label: "Socios" },
     { href: "/tesoreria", label: "Tesorería" },
+    { href: "/calendario", label: "Calendario" },
   ],
-  bodeguero: [{ href: "/inventario", label: "Inventario" }],
+  bodeguero: [
+    { href: "/inventario", label: "Inventario" },
+    { href: "/calendario", label: "Calendario" },
+  ],
   socio: [
     { href: "/consumos", label: "Consumos" },
     { href: "/tesoreria", label: "Tesorería" },
+    { href: "/calendario", label: "Calendario" },
   ],
 };

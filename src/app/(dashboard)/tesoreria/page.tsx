@@ -1,8 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
 import { WalletIcon } from "@/components/icons";
+import { MovementForm } from "./movement-form";
 
 const INGRESO_TYPES = ["cuota", "ingreso"];
+const TREASURY_MANAGE_ROLES = ["admin", "presidente", "tesorero"];
 
 type Movement = {
   id: string;
@@ -179,6 +181,13 @@ export default async function TesoreriaPage() {
           <p className="px-3.5 py-6 text-center text-sm text-muted">No hay movimientos de ejemplo todavía.</p>
         )}
       </div>
+
+      {TREASURY_MANAGE_ROLES.includes(demoRole) && (
+        <>
+          <p className="mb-2.5 mt-7 text-xs font-bold uppercase tracking-wide text-muted">Registrar movimiento</p>
+          <MovementForm members={members} />
+        </>
+      )}
     </div>
   );
 }

@@ -52,6 +52,33 @@ export function BoxIcon({ className }: IconProps) {
   );
 }
 
+export function CalendarIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill={base} stroke="currentColor" strokeWidth={1.8} className={className}>
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2.2" />
+      <path strokeLinecap="round" d="M3.5 9.5h17" />
+      <path strokeLinecap="round" d="M8 3v4M16 3v4" />
+    </svg>
+  );
+}
+
+export function KeyIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill={base} stroke="currentColor" strokeWidth={1.8} className={className}>
+      <circle cx="8" cy="15" r="3.5" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 12.5 18 5m0 0h-3.5M18 5v3.5" />
+    </svg>
+  );
+}
+
+export function XIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill={base} stroke="currentColor" strokeWidth={2.2} className={className}>
+      <path strokeLinecap="round" d="M6 6l12 12M18 6 6 18" />
+    </svg>
+  );
+}
+
 export function PlusIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill={base} stroke="currentColor" strokeWidth={2.4} className={className}>

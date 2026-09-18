@@ -1,7 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
 import { CupIcon, PlusIcon } from "@/components/icons";
-import { markConsumption } from "./actions";
+import { markConsumption, toggleMenuItemActive } from "./actions";
+import { MenuItemForm } from "./menu-item-form";
+
+const MENU_MANAGE_ROLES = ["admin", "presidente", "tesorero", "bodeguero"];
 
 type MenuItem = { id: string; name: string; category: string; price: number };
 
@@ -66,11 +69,14 @@ export default async function ConsumosPage() {
     );
   }
 
-  const { data: recentData } = await supabase
-    .from("consumptions")
-    .select("id, quantity, unit_price, consumed_at, members(full_name), menu_items(name)")
-    .order("consumed_at", { ascending: false })
-    .limit(30);
+  const [{ data: recentData }, { data: allMenuData }] = await Promise.all([
+    supabase
+      .from("consumptions")
+      .select("id, quantity, unit_price, consumed_at, members(full_name), menu_items(name)")
+      .order("consumed_at", { ascending: false })
+      .limit(30),
+    supabase.from("menu_items").select("id, name, category, price, active").order("category").order("name"),
+  ]);
   const recent = (recentData ?? []) as unknown as Array<{
     id: string;
     quantity: number;
@@ -79,6 +85,8 @@ export default async function ConsumosPage() {
     members: { full_name: string } | null;
     menu_items: { name: string } | null;
   }>;
+  const allMenu = allMenuData ?? [];
+  const canManageMenu = MENU_MANAGE_ROLES.includes(demoRole);
 
   return (
     <div>
@@ -95,6 +103,44 @@ export default async function ConsumosPage() {
           total: h.quantity * h.unit_price,
         }))}
       />
+
+      {canManageMenu && (
+        <>
+          <p className="mb-2.5 mt-7 text-xs font-bold uppercase tracking-wide text-muted">Carta</p>
+          <div className="mb-3 overflow-hidden rounded-[18px] border border-border bg-card">
+            {allMenu.map((item, idx) => (
+              <div
+                key={item.id}
+                className={`flex items-center gap-3 px-3.5 py-3 ${idx !== allMenu.length - 1 ? "border-b border-border" : ""}`}
+              >
+                <p className={`flex-1 text-sm font-semibold ${item.active ? "text-foreground" : "text-muted line-through"}`}>
+                  {item.name}
+                </p>
+                <p className="text-sm text-muted">{item.price.toFixed(2)} €</p>
+                <form
+                  action={async (fd) => {
+                    "use server";
+                    await toggleMenuItemActive(fd);
+                  }}
+                >
+                  <input type="hidden" name="id" value={item.id} />
+                  <input type="hidden" name="next_active" value={(!item.active).toString()} />
+                  <button
+                    type="submit"
+                    className="rounded-full border border-border px-2.5 py-1 text-[11px] font-semibold text-muted transition-colors hover:text-foreground"
+                  >
+                    {item.active ? "Desactivar" : "Activar"}
+                  </button>
+                </form>
+              </div>
+            ))}
+            {allMenu.length === 0 && (
+              <p className="px-3.5 py-6 text-center text-sm text-muted">Todavía no hay artículos en la carta.</p>
+            )}
+          </div>
+          <MenuItemForm />
+        </>
+      )}
     </div>
   );
 }

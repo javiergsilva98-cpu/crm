@@ -1,6 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
 import { CLUB_ROLE_LABELS, type ClubRole } from "@/lib/demo-role";
+import { MemberForm } from "./member-form";
+import { toggleMemberStatus } from "./actions";
+
+const MEMBER_MANAGE_ROLES = ["admin", "presidente", "secretario"];
 
 function initials(name: string) {
   return name
@@ -72,10 +76,12 @@ export default async function SociosPage() {
     );
   }
 
+  const canManage = MEMBER_MANAGE_ROLES.includes(demoRole);
+
   return (
     <div>
       <h1 className="mb-5 text-xl font-extrabold tracking-tight text-foreground">Socios</h1>
-      <div className="overflow-hidden rounded-[18px] border border-border bg-card">
+      <div className="mb-7 overflow-hidden rounded-[18px] border border-border bg-card">
         {rows.map((m, idx) => (
           <div
             key={m.id}
@@ -98,12 +104,36 @@ export default async function SociosPage() {
             >
               {m.cuotaAlDia ? "Al día" : "Pendiente"}
             </span>
+            {canManage && (
+              <form
+                action={async (fd) => {
+                  "use server";
+                  await toggleMemberStatus(fd);
+                }}
+              >
+                <input type="hidden" name="id" value={m.id} />
+                <input type="hidden" name="next_status" value={m.status === "activo" ? "baja" : "activo"} />
+                <button
+                  type="submit"
+                  className="rounded-full border border-border px-2.5 py-1 text-[11px] font-semibold text-muted transition-colors hover:text-foreground"
+                >
+                  {m.status === "activo" ? "Dar de baja" : "Reactivar"}
+                </button>
+              </form>
+            )}
           </div>
         ))}
         {rows.length === 0 && (
           <p className="px-3.5 py-6 text-center text-sm text-muted">No hay socios de ejemplo todavía.</p>
         )}
       </div>
+
+      {canManage && (
+        <>
+          <p className="mb-2.5 text-xs font-bold uppercase tracking-wide text-muted">Dar de alta un socio</p>
+          <MemberForm />
+        </>
+      )}
     </div>
   );
 }

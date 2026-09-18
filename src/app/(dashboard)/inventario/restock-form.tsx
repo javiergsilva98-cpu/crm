@@ -17,7 +17,7 @@ export function RestockForm({
   return (
     <form
       ref={formRef}
-      className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-4 sm:flex-row sm:flex-wrap sm:items-end"
+      className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-4 sm:flex-row sm:flex-wrap sm:items-end"
       action={async (formData) => {
         setPending(true);
         setError(null);
@@ -31,11 +31,11 @@ export function RestockForm({
       }}
     >
       <div>
-        <label className="mb-1 block text-xs text-gray-500">Artículo</label>
+        <label className="mb-1 block text-xs text-muted">Artículo</label>
         <select
           name="inventory_item_id"
           required
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-border px-3 py-2 text-sm"
         >
           {items.map((item) => (
             <option key={item.id} value={item.id}>
@@ -45,31 +45,31 @@ export function RestockForm({
         </select>
       </div>
       <div>
-        <label className="mb-1 block text-xs text-gray-500">Cantidad</label>
+        <label className="mb-1 block text-xs text-muted">Cantidad</label>
         <input
           name="quantity"
           type="number"
           step="0.01"
           min="0.01"
           required
-          className="w-28 rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="w-28 rounded-md border border-border px-3 py-2 text-sm"
         />
       </div>
       <div>
-        <label className="mb-1 block text-xs text-gray-500">Coste (€)</label>
+        <label className="mb-1 block text-xs text-muted">Coste (€)</label>
         <input
           name="cost"
           type="number"
           step="0.01"
           min="0"
-          className="w-28 rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="w-28 rounded-md border border-border px-3 py-2 text-sm"
         />
       </div>
       <div>
-        <label className="mb-1 block text-xs text-gray-500">Responsable</label>
+        <label className="mb-1 block text-xs text-muted">Responsable</label>
         <select
           name="responsible_member_id"
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-border px-3 py-2 text-sm"
         >
           <option value="">Sin especificar</option>
           {members.map((m) => (
@@ -82,7 +82,7 @@ export function RestockForm({
       <button
         type="submit"
         disabled={pending}
-        className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+        className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
       >
         {pending ? "Guardando..." : "Registrar reposición"}
       </button>

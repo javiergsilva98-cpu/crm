@@ -8,7 +8,7 @@ export default async function InventarioPage() {
 
   if (demoRole === "secretario" || demoRole === "socio") {
     return (
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-muted">
         El inventario no forma parte de tu rol en esta demo. Cambia a Presidente, Tesorero o
         Bodeguero arriba a la derecha para verlo.
       </p>
@@ -27,10 +27,10 @@ export default async function InventarioPage() {
     <div>
       <h1 className="mb-6 text-2xl font-semibold">Inventario</h1>
 
-      <div className="mb-8 overflow-x-auto rounded-lg border border-gray-200 bg-white">
+      <div className="mb-8 overflow-x-auto rounded-2xl border border-border bg-card">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-200 text-left text-xs uppercase tracking-wide text-gray-400">
+            <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted/70">
               <th className="px-4 py-3">Artículo</th>
               <th className="px-4 py-3">Stock actual</th>
               <th className="px-4 py-3">Unidad</th>
@@ -38,15 +38,15 @@ export default async function InventarioPage() {
           </thead>
           <tbody>
             {rows.map((item) => (
-              <tr key={item.id} className="border-b border-gray-100 last:border-0">
-                <td className="px-4 py-3 font-medium text-gray-900">{item.name}</td>
-                <td className="px-4 py-3 text-gray-600">{item.current_stock}</td>
-                <td className="px-4 py-3 text-gray-600">{item.unit}</td>
+              <tr key={item.id} className="border-b border-border/60 last:border-0">
+                <td className="px-4 py-3 font-medium text-foreground">{item.name}</td>
+                <td className="px-4 py-3 text-muted">{item.current_stock}</td>
+                <td className="px-4 py-3 text-muted">{item.unit}</td>
               </tr>
             ))}
             {rows.length === 0 && (
               <tr>
-                <td colSpan={3} className="px-4 py-6 text-center text-gray-400">
+                <td colSpan={3} className="px-4 py-6 text-center text-muted/70">
                   No hay artículos de ejemplo todavía.
                 </td>
               </tr>
@@ -61,7 +61,7 @@ export default async function InventarioPage() {
           <RestockForm items={rows} members={members ?? []} />
         </>
       ) : (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-muted">
           Como tesorero puedes consultar el inventario, pero registrar reposiciones es cosa del
           bodeguero.
         </p>

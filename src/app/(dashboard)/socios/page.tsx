@@ -9,7 +9,7 @@ export default async function SociosPage() {
 
   if (demoRole === "bodeguero") {
     return (
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-muted">
         La ficha de socios no forma parte del rol de bodeguero en esta demo. Cambia a Presidente,
         Secretario o Tesorero arriba a la derecha para verla.
       </p>
@@ -37,32 +37,32 @@ export default async function SociosPage() {
           <MemberSwitcher members={socios} current={currentId ?? ""} />
         </div>
         {me ? (
-          <dl className="max-w-sm space-y-3 rounded-lg border border-gray-200 bg-white p-6">
+          <dl className="max-w-sm space-y-3 rounded-2xl border border-border bg-card p-6">
             <div>
-              <dt className="text-xs uppercase tracking-wide text-gray-400">Nombre</dt>
-              <dd className="text-sm text-gray-900">{me.full_name}</dd>
+              <dt className="text-xs uppercase tracking-wide text-muted/70">Nombre</dt>
+              <dd className="text-sm text-foreground">{me.full_name}</dd>
             </div>
             <div>
-              <dt className="text-xs uppercase tracking-wide text-gray-400">Rol</dt>
-              <dd className="text-sm text-gray-900">{CLUB_ROLE_LABELS[me.club_role as ClubRole]}</dd>
+              <dt className="text-xs uppercase tracking-wide text-muted/70">Rol</dt>
+              <dd className="text-sm text-foreground">{CLUB_ROLE_LABELS[me.club_role as ClubRole]}</dd>
             </div>
             <div>
-              <dt className="text-xs uppercase tracking-wide text-gray-400">Estado</dt>
-              <dd className="text-sm text-gray-900 capitalize">{me.status}</dd>
+              <dt className="text-xs uppercase tracking-wide text-muted/70">Estado</dt>
+              <dd className="text-sm text-foreground capitalize">{me.status}</dd>
             </div>
             <div>
-              <dt className="text-xs uppercase tracking-wide text-gray-400">Nº de llave</dt>
-              <dd className="text-sm text-gray-900">{me.key_number ?? "—"}</dd>
+              <dt className="text-xs uppercase tracking-wide text-muted/70">Nº de llave</dt>
+              <dd className="text-sm text-foreground">{me.key_number ?? "—"}</dd>
             </div>
             <div>
-              <dt className="text-xs uppercase tracking-wide text-gray-400">Cuota</dt>
+              <dt className="text-xs uppercase tracking-wide text-muted/70">Cuota</dt>
               <dd className={`text-sm font-medium ${me.cuotaAlDia ? "text-green-700" : "text-amber-700"}`}>
                 {me.cuotaAlDia ? "Al día" : "Pendiente"}
               </dd>
             </div>
           </dl>
         ) : (
-          <p className="text-sm text-gray-500">No hay socios de ejemplo todavía.</p>
+          <p className="text-sm text-muted">No hay socios de ejemplo todavía.</p>
         )}
       </div>
     );
@@ -71,10 +71,10 @@ export default async function SociosPage() {
   return (
     <div>
       <h1 className="mb-6 text-2xl font-semibold">Socios</h1>
-      <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+      <div className="overflow-x-auto rounded-2xl border border-border bg-card">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-200 text-left text-xs uppercase tracking-wide text-gray-400">
+            <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted/70">
               <th className="px-4 py-3">Nombre</th>
               <th className="px-4 py-3">Rol</th>
               <th className="px-4 py-3">Estado</th>
@@ -85,12 +85,12 @@ export default async function SociosPage() {
           </thead>
           <tbody>
             {rows.map((m) => (
-              <tr key={m.id} className="border-b border-gray-100 last:border-0">
-                <td className="px-4 py-3 font-medium text-gray-900">{m.full_name}</td>
-                <td className="px-4 py-3 text-gray-600">{CLUB_ROLE_LABELS[m.club_role as ClubRole]}</td>
-                <td className="px-4 py-3 capitalize text-gray-600">{m.status}</td>
-                <td className="px-4 py-3 text-gray-600">{m.key_number ?? "—"}</td>
-                <td className="px-4 py-3 text-gray-600">{m.joined_at}</td>
+              <tr key={m.id} className="border-b border-border/60 last:border-0">
+                <td className="px-4 py-3 font-medium text-foreground">{m.full_name}</td>
+                <td className="px-4 py-3 text-muted">{CLUB_ROLE_LABELS[m.club_role as ClubRole]}</td>
+                <td className="px-4 py-3 capitalize text-muted">{m.status}</td>
+                <td className="px-4 py-3 text-muted">{m.key_number ?? "—"}</td>
+                <td className="px-4 py-3 text-muted">{m.joined_at}</td>
                 <td className={`px-4 py-3 font-medium ${m.cuotaAlDia ? "text-green-700" : "text-amber-700"}`}>
                   {m.cuotaAlDia ? "Al día" : "Pendiente"}
                 </td>
@@ -98,7 +98,7 @@ export default async function SociosPage() {
             ))}
             {rows.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-6 text-center text-gray-400">
+                <td colSpan={6} className="px-4 py-6 text-center text-muted/70">
                   No hay socios de ejemplo todavía.
                 </td>
               </tr>

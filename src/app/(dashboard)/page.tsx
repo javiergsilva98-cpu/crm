@@ -15,32 +15,32 @@ export default async function DashboardHome() {
 
   return (
     <div>
-      <h1 className="mb-1 text-2xl font-semibold">Panel de CLUB 26</h1>
-      <p className="mb-6 text-sm text-gray-500">
-        Viendo la demo como <strong>{CLUB_ROLE_LABELS[demoRole]}</strong>. Cambia de rol arriba a la
-        derecha para ver qué ve cada uno.
+      <h1 className="mb-1 text-2xl font-semibold tracking-tight text-foreground">Panel de CLUB 26</h1>
+      <p className="mb-6 text-sm text-muted">
+        Viendo la demo como <strong className="text-foreground">{CLUB_ROLE_LABELS[demoRole]}</strong>.
+        Cambia de rol arriba a la derecha para ver qué ve cada uno.
       </p>
 
-      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="rounded-lg border border-gray-200 bg-white p-6">
-          <p className="text-sm text-gray-500">Socios activos</p>
-          <p className="mt-2 text-3xl font-semibold">{members ?? 0}</p>
+      <div className="mb-8 grid grid-cols-2 gap-3 sm:gap-4">
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+          <p className="text-sm text-muted">Socios activos</p>
+          <p className="mt-2 text-3xl font-semibold text-foreground">{members ?? 0}</p>
         </div>
-        <div className="rounded-lg border border-gray-200 bg-white p-6">
-          <p className="text-sm text-gray-500">Eventos sin cobrar del todo</p>
-          <p className="mt-2 text-3xl font-semibold">{pendingEvents ?? 0}</p>
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+          <p className="text-sm text-muted">Eventos sin cobrar del todo</p>
+          <p className="mt-2 text-3xl font-semibold text-foreground">{pendingEvents ?? 0}</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
         {navItems.map((item) => (
           <Link
             key={item.href}
             href={item.href}
-            className="rounded-lg border border-gray-200 bg-white p-6 transition-colors hover:border-gray-400"
+            className="rounded-2xl border border-border bg-card p-5 shadow-sm transition-colors hover:border-accent sm:p-6"
           >
-            <p className="text-base font-medium text-gray-900">{item.label}</p>
-            <p className="mt-1 text-sm text-gray-500">Ir a {item.label.toLowerCase()} →</p>
+            <p className="text-base font-medium text-foreground">{item.label}</p>
+            <p className="mt-1 text-sm text-accent">Ir a {item.label.toLowerCase()} →</p>
           </Link>
         ))}
       </div>

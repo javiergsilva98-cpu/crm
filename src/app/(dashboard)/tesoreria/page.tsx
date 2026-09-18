@@ -26,7 +26,7 @@ export default async function TesoreriaPage() {
 
   if (demoRole === "secretario" || demoRole === "bodeguero") {
     return (
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-muted">
         La tesorería no forma parte de tu rol en esta demo. Cambia a Presidente, Tesorero o Socio
         arriba a la derecha para verla.
       </p>
@@ -87,16 +87,16 @@ export default async function TesoreriaPage() {
           <MemberSwitcher members={members} current={currentId} />
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="rounded-lg border border-gray-200 bg-white p-6">
-            <p className="text-sm text-gray-500">Saldo del club</p>
+          <div className="rounded-2xl border border-border bg-card p-6">
+            <p className="text-sm text-muted">Saldo del club</p>
             <p className="mt-2 text-3xl font-semibold">{eur(clubBalance)}</p>
           </div>
-          <div className="rounded-lg border border-gray-200 bg-white p-6">
-            <p className="text-sm text-gray-500">Tu saldo</p>
+          <div className="rounded-2xl border border-border bg-card p-6">
+            <p className="text-sm text-muted">Tu saldo</p>
             <p className={`mt-2 text-3xl font-semibold ${balance < 0 ? "text-amber-700" : "text-green-700"}`}>
               {eur(balance)}
             </p>
-            <p className="mt-1 text-xs text-gray-400">
+            <p className="mt-1 text-xs text-muted/70">
               {balance < 0 ? "Debes al club" : "A tu favor"}
             </p>
           </div>
@@ -109,8 +109,8 @@ export default async function TesoreriaPage() {
     <div>
       <h1 className="mb-6 text-2xl font-semibold">Tesorería</h1>
 
-      <div className="mb-6 rounded-lg border border-gray-200 bg-white p-6">
-        <p className="text-sm text-gray-500">Saldo del club</p>
+      <div className="mb-6 rounded-2xl border border-border bg-card p-6">
+        <p className="text-sm text-muted">Saldo del club</p>
         <p className="mt-2 text-3xl font-semibold">{eur(clubBalance)}</p>
       </div>
 
@@ -126,10 +126,10 @@ export default async function TesoreriaPage() {
       </div>
 
       <h2 className="mb-3 text-lg font-semibold">Saldo por socio</h2>
-      <div className="mb-8 overflow-x-auto rounded-lg border border-gray-200 bg-white">
+      <div className="mb-8 overflow-x-auto rounded-2xl border border-border bg-card">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-200 text-left text-xs uppercase tracking-wide text-gray-400">
+            <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted/70">
               <th className="px-4 py-3">Socio</th>
               <th className="px-4 py-3">Saldo</th>
             </tr>
@@ -138,8 +138,8 @@ export default async function TesoreriaPage() {
             {members.map((m) => {
               const balance = memberBalance(m.id);
               return (
-                <tr key={m.id} className="border-b border-gray-100 last:border-0">
-                  <td className="px-4 py-3 font-medium text-gray-900">{m.full_name}</td>
+                <tr key={m.id} className="border-b border-border/60 last:border-0">
+                  <td className="px-4 py-3 font-medium text-foreground">{m.full_name}</td>
                   <td className={`px-4 py-3 font-medium ${balance < 0 ? "text-amber-700" : "text-green-700"}`}>
                     {eur(balance)}
                   </td>
@@ -148,7 +148,7 @@ export default async function TesoreriaPage() {
             })}
             {members.length === 0 && (
               <tr>
-                <td colSpan={2} className="px-4 py-6 text-center text-gray-400">
+                <td colSpan={2} className="px-4 py-6 text-center text-muted/70">
                   No hay socios de ejemplo todavía.
                 </td>
               </tr>
@@ -158,10 +158,10 @@ export default async function TesoreriaPage() {
       </div>
 
       <h2 className="mb-3 text-lg font-semibold">Movimientos recientes</h2>
-      <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+      <div className="overflow-x-auto rounded-2xl border border-border bg-card">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-200 text-left text-xs uppercase tracking-wide text-gray-400">
+            <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted/70">
               <th className="px-4 py-3">Fecha</th>
               <th className="px-4 py-3">Tipo</th>
               <th className="px-4 py-3">Descripción</th>
@@ -170,10 +170,10 @@ export default async function TesoreriaPage() {
           </thead>
           <tbody>
             {movements.slice(0, 20).map((m) => (
-              <tr key={m.id} className="border-b border-gray-100 last:border-0">
-                <td className="px-4 py-3 text-gray-600">{m.movement_date}</td>
-                <td className="px-4 py-3 capitalize text-gray-600">{m.movement_type.replace("_", " ")}</td>
-                <td className="px-4 py-3 text-gray-900">{m.description ?? "—"}</td>
+              <tr key={m.id} className="border-b border-border/60 last:border-0">
+                <td className="px-4 py-3 text-muted">{m.movement_date}</td>
+                <td className="px-4 py-3 capitalize text-muted">{m.movement_type.replace("_", " ")}</td>
+                <td className="px-4 py-3 text-foreground">{m.description ?? "—"}</td>
                 <td
                   className={`px-4 py-3 font-medium ${
                     INGRESO_TYPES.includes(m.movement_type) ? "text-green-700" : "text-amber-700"
@@ -186,7 +186,7 @@ export default async function TesoreriaPage() {
             ))}
             {movements.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-4 py-6 text-center text-gray-400">
+                <td colSpan={4} className="px-4 py-6 text-center text-muted/70">
                   No hay movimientos de ejemplo todavía.
                 </td>
               </tr>
@@ -200,9 +200,9 @@ export default async function TesoreriaPage() {
 
 function BreakdownCard({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4">
-      <p className="text-xs text-gray-500">{label}</p>
-      <p className={`mt-1 text-lg font-semibold ${value < 0 ? "text-amber-700" : "text-gray-900"}`}>
+    <div className="rounded-2xl border border-border bg-card p-4">
+      <p className="text-xs text-muted">{label}</p>
+      <p className={`mt-1 text-lg font-semibold ${value < 0 ? "text-amber-700" : "text-foreground"}`}>
         {eur(value)}
       </p>
     </div>

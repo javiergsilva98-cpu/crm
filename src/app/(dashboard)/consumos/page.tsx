@@ -83,7 +83,7 @@ export default async function ConsumosPage() {
   return (
     <div>
       <h1 className="mb-6 text-2xl font-semibold">Consumos recientes</h1>
-      <p className="mb-4 text-sm text-gray-500">
+      <p className="mb-4 text-sm text-muted">
         Vista de gestión: toda la barra. Cambia a &quot;Socio&quot; para ver el flujo de marcar un
         consumo.
       </p>
@@ -117,24 +117,24 @@ function MenuSection({
           <form
             key={item.id}
             action={markConsumption}
-            className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-3"
+            className="flex items-center justify-between rounded-2xl border border-border bg-card px-4 py-3"
           >
             <input type="hidden" name="member_id" value={memberId} />
             <input type="hidden" name="menu_item_id" value={item.id} />
             <input type="hidden" name="unit_price" value={item.price} />
             <div>
-              <p className="text-sm font-medium text-gray-900">{item.name}</p>
-              <p className="text-xs text-gray-500">{item.price.toFixed(2)} €</p>
+              <p className="text-sm font-medium text-foreground">{item.name}</p>
+              <p className="text-xs text-muted">{item.price.toFixed(2)} €</p>
             </div>
             <button
               type="submit"
-              className="rounded-md bg-gray-900 px-3 py-1.5 text-sm font-medium text-white"
+              className="rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-white"
             >
               Marcar
             </button>
           </form>
         ))}
-        {items.length === 0 && <p className="text-sm text-gray-400">Sin artículos.</p>}
+        {items.length === 0 && <p className="text-sm text-muted/70">Sin artículos.</p>}
       </div>
     </div>
   );
@@ -147,10 +147,10 @@ function HistoryTable({
 }) {
   const showMember = rows.some((r) => r.member !== undefined);
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+    <div className="overflow-x-auto rounded-2xl border border-border bg-card">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-gray-200 text-left text-xs uppercase tracking-wide text-gray-400">
+          <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted/70">
             <th className="px-4 py-3">Fecha</th>
             {showMember && <th className="px-4 py-3">Socio</th>}
             <th className="px-4 py-3">Consumo</th>
@@ -160,19 +160,19 @@ function HistoryTable({
         </thead>
         <tbody>
           {rows.map((r, idx) => (
-            <tr key={idx} className="border-b border-gray-100 last:border-0">
-              <td className="px-4 py-3 text-gray-600">
+            <tr key={idx} className="border-b border-border/60 last:border-0">
+              <td className="px-4 py-3 text-muted">
                 {new Date(r.date).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" })}
               </td>
-              {showMember && <td className="px-4 py-3 text-gray-900">{r.member}</td>}
-              <td className="px-4 py-3 text-gray-900">{r.item}</td>
-              <td className="px-4 py-3 text-gray-600">{r.quantity}</td>
-              <td className="px-4 py-3 text-gray-600">{r.total.toFixed(2)} €</td>
+              {showMember && <td className="px-4 py-3 text-foreground">{r.member}</td>}
+              <td className="px-4 py-3 text-foreground">{r.item}</td>
+              <td className="px-4 py-3 text-muted">{r.quantity}</td>
+              <td className="px-4 py-3 text-muted">{r.total.toFixed(2)} €</td>
             </tr>
           ))}
           {rows.length === 0 && (
             <tr>
-              <td colSpan={showMember ? 5 : 4} className="px-4 py-6 text-center text-gray-400">
+              <td colSpan={showMember ? 5 : 4} className="px-4 py-6 text-center text-muted/70">
                 Todavía no hay consumos.
               </td>
             </tr>

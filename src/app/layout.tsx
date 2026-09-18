@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
@@ -11,6 +11,10 @@ const jakarta = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "CLUB 26",
   description: "App interna de CLUB 26, construida con Next.js, Supabase y Vercel",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#f7f5fa",
 };
 
 export default function RootLayout({

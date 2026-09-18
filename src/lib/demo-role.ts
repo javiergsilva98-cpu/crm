@@ -3,10 +3,11 @@
 // tiene el rol 'presidente' en la base de datos, así que el RLS deja
 // pasar cualquier lectura sin importar el rol elegido aquí.
 
-export const CLUB_ROLES = ["presidente", "secretario", "tesorero", "bodeguero", "socio"] as const;
+export const CLUB_ROLES = ["admin", "presidente", "secretario", "tesorero", "bodeguero", "socio"] as const;
 export type ClubRole = (typeof CLUB_ROLES)[number];
 
 export const CLUB_ROLE_LABELS: Record<ClubRole, string> = {
+  admin: "Admin",
   presidente: "Presidente",
   secretario: "Secretario",
   tesorero: "Tesorero",
@@ -23,6 +24,12 @@ export function isClubRole(value: string | undefined): value is ClubRole {
 }
 
 export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = {
+  admin: [
+    { href: "/socios", label: "Socios" },
+    { href: "/consumos", label: "Consumos" },
+    { href: "/tesoreria", label: "Tesorería" },
+    { href: "/inventario", label: "Inventario" },
+  ],
   presidente: [
     { href: "/socios", label: "Socios" },
     { href: "/consumos", label: "Consumos" },

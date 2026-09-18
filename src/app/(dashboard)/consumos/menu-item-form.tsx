@@ -3,7 +3,9 @@
 import { useRef, useState } from "react";
 import { createMenuItem } from "./actions";
 
-export function MenuItemForm() {
+type InventoryItem = { id: string; name: string };
+
+export function MenuItemForm({ inventoryItems }: { inventoryItems: InventoryItem[] }) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
@@ -53,6 +55,33 @@ export function MenuItemForm() {
           required
           className="w-24 rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-accent"
         />
+      </div>
+      <div>
+        <label className="mb-1 block text-xs text-muted">Bodega (opcional)</label>
+        <select
+          name="inventory_item_id"
+          defaultValue=""
+          className="rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-accent"
+        >
+          <option value="">Sin vincular</option>
+          {inventoryItems.map((i) => (
+            <option key={i.id} value={i.id}>
+              {i.name}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label className="mb-1 block text-xs text-muted">Modo</label>
+        <select
+          name="stock_mode"
+          defaultValue="unit"
+          title="Individual: 1 consumo = 1 unidad. Compartido: se reparte entre varios socios y se descuenta 1 unidad en total."
+          className="rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-accent"
+        >
+          <option value="unit">Individual</option>
+          <option value="shared">Compartido</option>
+        </select>
       </div>
       <button
         type="submit"

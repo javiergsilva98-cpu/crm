@@ -3,9 +3,26 @@
 import { useState } from "react";
 import { updateMenuItem, deleteMenuItem, toggleMenuItemActive } from "./actions";
 
-type MenuItem = { id: string; name: string; category: string; price: number; active: boolean };
+type MenuItem = {
+  id: string;
+  name: string;
+  category: string;
+  price: number;
+  active: boolean;
+  inventory_item_id: string | null;
+  stock_mode: string;
+};
+type InventoryItem = { id: string; name: string };
 
-export function MenuItemRow({ item, isLast }: { item: MenuItem; isLast: boolean }) {
+export function MenuItemRow({
+  item,
+  isLast,
+  inventoryItems,
+}: {
+  item: MenuItem;
+  isLast: boolean;
+  inventoryItems: InventoryItem[];
+}) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -50,6 +67,27 @@ export function MenuItemRow({ item, isLast }: { item: MenuItem; isLast: boolean 
         required
         className="w-20 rounded-xl border border-border bg-background px-2.5 py-1.5 text-sm text-foreground outline-none focus:border-accent"
       />
+      <select
+        name="inventory_item_id"
+        defaultValue={item.inventory_item_id ?? ""}
+        className="rounded-xl border border-border bg-background px-2.5 py-1.5 text-xs text-foreground outline-none focus:border-accent"
+      >
+        <option value="">Sin vincular a bodega</option>
+        {inventoryItems.map((i) => (
+          <option key={i.id} value={i.id}>
+            {i.name}
+          </option>
+        ))}
+      </select>
+      <select
+        name="stock_mode"
+        defaultValue={item.stock_mode}
+        title="Individual: 1 consumo = 1 unidad. Compartido: se reparte entre varios socios y se descuenta 1 unidad en total."
+        className="rounded-xl border border-border bg-background px-2.5 py-1.5 text-xs text-foreground outline-none focus:border-accent"
+      >
+        <option value="unit">Individual</option>
+        <option value="shared">Compartido</option>
+      </select>
       <button
         type="submit"
         disabled={pending}

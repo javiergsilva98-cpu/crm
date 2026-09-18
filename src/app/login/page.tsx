@@ -28,7 +28,7 @@ export default function LoginPage() {
       if (error) {
         setMessage(error.message);
       } else {
-        setMessage("Cuenta creada. Revisá tu correo para confirmar el registro.");
+        window.location.href = "/";
       }
     }
     setLoading(false);

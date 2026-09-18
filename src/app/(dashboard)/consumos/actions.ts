@@ -24,6 +24,39 @@ export async function createMenuItem(formData: FormData): Promise<ActionResult> 
   revalidatePath("/consumos");
 }
 
+export async function updateMenuItem(formData: FormData): Promise<ActionResult> {
+  const id = formData.get("id") as string;
+  const name = (formData.get("name") as string)?.trim();
+  const category = formData.get("category") as string;
+  const price = Number(formData.get("price"));
+
+  if (!id || !name || !category || !price || price <= 0) {
+    return { error: "Indica nombre, categoría y un precio válido." };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("menu_items").update({ name, category, price }).eq("id", id);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/consumos");
+}
+
+export async function deleteMenuItem(formData: FormData): Promise<ActionResult> {
+  const id = formData.get("id") as string;
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("menu_items").delete().eq("id", id);
+
+  if (error) {
+    return { error: "No se puede eliminar: ya tiene consumiciones registradas. Desactívalo en su lugar." };
+  }
+
+  revalidatePath("/consumos");
+}
+
 export async function toggleMenuItemActive(formData: FormData): Promise<ActionResult> {
   const id = formData.get("id") as string;
   const nextActive = formData.get("next_active") === "true";

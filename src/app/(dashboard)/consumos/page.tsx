@@ -1,8 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
-import { toggleMenuItemActive } from "./actions";
 import { ExportLink } from "@/components/export-link";
 import { MenuItemForm } from "./menu-item-form";
+import { MenuItemRow } from "./menu-item-row";
 import { MarkConsumptionForm } from "./mark-consumption-form";
 
 const MENU_MANAGE_ROLES = ["admin", "presidente", "tesorero", "bodeguero"];
@@ -52,7 +52,7 @@ export default async function ConsumosPage() {
     return (
       <div>
         <div className="mb-5">
-          <h1 className="text-xl font-extrabold tracking-tight text-foreground">Consumos</h1>
+          <h1 className="text-xl font-extrabold tracking-tight text-foreground">Consumiciones</h1>
           <p className="text-sm text-muted">Toca para marcar lo que tomes</p>
         </div>
 
@@ -94,11 +94,11 @@ export default async function ConsumosPage() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-extrabold tracking-tight text-foreground">Consumos recientes</h1>
+        <h1 className="text-xl font-extrabold tracking-tight text-foreground">Consumiciones recientes</h1>
         {EXPORT_ROLES.includes(demoRole) && <ExportLink href="/api/export/consumos" label="Exportar" />}
       </div>
       <p className="mb-5 mt-1 text-sm text-muted">
-        Vista de gestión: toda la barra. Cambia a &quot;Socio&quot; para ver el flujo de marcar un consumo.
+        Vista de gestión: toda la barra. Cambia a &quot;Socio&quot; para ver el flujo de marcar una consumición.
       </p>
       <HistoryTable
         rows={recent.map((h) => ({
@@ -115,30 +115,7 @@ export default async function ConsumosPage() {
           <p className="mb-2.5 mt-7 text-xs font-bold uppercase tracking-wide text-muted">Carta</p>
           <div className="mb-3 overflow-hidden rounded-[18px] border border-border bg-card">
             {allMenu.map((item, idx) => (
-              <div
-                key={item.id}
-                className={`flex items-center gap-3 px-3.5 py-3 ${idx !== allMenu.length - 1 ? "border-b border-border" : ""}`}
-              >
-                <p className={`flex-1 text-sm font-semibold ${item.active ? "text-foreground" : "text-muted line-through"}`}>
-                  {item.name}
-                </p>
-                <p className="text-sm text-muted">{item.price.toFixed(2)} €</p>
-                <form
-                  action={async (fd) => {
-                    "use server";
-                    await toggleMenuItemActive(fd);
-                  }}
-                >
-                  <input type="hidden" name="id" value={item.id} />
-                  <input type="hidden" name="next_active" value={(!item.active).toString()} />
-                  <button
-                    type="submit"
-                    className="rounded-full border border-border px-2.5 py-1 text-[11px] font-semibold text-muted transition-colors hover:text-foreground"
-                  >
-                    {item.active ? "Desactivar" : "Activar"}
-                  </button>
-                </form>
-              </div>
+              <MenuItemRow key={item.id} item={item} isLast={idx === allMenu.length - 1} />
             ))}
             {allMenu.length === 0 && (
               <p className="px-3.5 py-6 text-center text-sm text-muted">Todavía no hay artículos en la carta.</p>
@@ -208,7 +185,7 @@ function HistoryTable({
         </div>
       ))}
       {rows.length === 0 && (
-        <p className="px-3.5 py-6 text-center text-sm text-muted">Todavía no hay consumos.</p>
+        <p className="px-3.5 py-6 text-center text-sm text-muted">Todavía no hay consumiciones.</p>
       )}
     </div>
   );

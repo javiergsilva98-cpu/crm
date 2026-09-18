@@ -27,7 +27,7 @@ const TILE_ICON: Record<string, Icon> = {
 
 const TILE_SUBTITLE: Record<string, string> = {
   "/socios": "Ficha de socios",
-  "/consumos": "Marcar ronda",
+  "/consumos": "Marcar consumición",
   "/tesoreria": "Balance del club",
   "/inventario": "Stock de bodega",
   "/calendario": "Eventos y reservas",
@@ -110,7 +110,7 @@ export default async function DashboardHome() {
       menu_items: { name: string } | null;
     }>).map((h) => ({
       icon: CupIcon,
-      title: h.menu_items?.name ?? "Consumo",
+      title: h.menu_items?.name ?? "Consumición",
       subtitle: formatDate(h.consumed_at),
       trailing: `-${eur(h.quantity * h.unit_price)}`,
       tone: "negative",

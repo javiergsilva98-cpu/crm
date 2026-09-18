@@ -19,7 +19,7 @@ App interna de **CLUB 26**, asociación gastronómica y cultural en Maello
 | Secretario | Pablo | Ficha de socios, actas, documentación |
 | Tesorero | Marlon | Cuenta bancaria, cobros, precios, balances |
 | Bodeguero | Charly (apoyo Chervo) | Compras, reposición de inventario |
-| Socio | — | Consumo propio, balance, calendario, votar |
+| Socio | — | Consumiciones propias, balance, calendario, votar |
 
 Esta primera fase incluye una **demo con datos de ejemplo**: las cuentas
 de admin/presidencia pueden cambiar de vista desde la interfaz (arriba a
@@ -39,9 +39,10 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
 2. **Socios** (`/socios`): ficha de socios (nombre, rol, estado, cuota
    del mes, nº de llave), alta y baja. Como "Socio" solo se ve la ficha
    propia.
-3. **Consumos** (`/consumos`): carta de bebidas/aperitivos, marcar un
-   consumo e historial personal. Gestión ve el registro completo de la
-   barra y administra la carta.
+3. **Consumiciones** (`/consumos`): carta de bebidas/aperitivos, marcar
+   una consumición e historial personal. Gestión ve el registro completo
+   de la barra y administra la carta (crear, editar y activar/desactivar
+   artículos).
 4. **Tesorería** (`/tesoreria`): saldo del club en tiempo real, desglose
    cuota fija vs. cargos de evento, saldo por socio y alta manual de
    movimientos.
@@ -58,7 +59,7 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
 
 Admin, presidencia y tesorero pueden exportar a CSV (se abre directamente
 en Excel) los movimientos de tesorería, el saldo por socio, el listado de
-socios, el historial de consumos y las reposiciones de inventario — botón
+socios, el historial de consumiciones y las reposiciones de inventario — botón
 "Exportar" en cada pantalla.
 
 Fuera de alcance por ahora: cobros reales (pasarela de pago),

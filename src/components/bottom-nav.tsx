@@ -40,12 +40,11 @@ export function BottomNav({ items }: { items: { href: string; label: string }[] 
             key={item.href}
             href={item.href}
             aria-label={item.label}
-            className={`flex w-14 flex-shrink-0 flex-col items-center gap-1 rounded-2xl py-2.5 text-[10px] font-bold transition-colors ${
+            className={`flex w-14 flex-shrink-0 items-center justify-center rounded-2xl py-2.5 transition-colors ${
               active ? "bg-accent text-accent-foreground" : "text-muted"
             }`}
           >
             <Icon className="h-5 w-5" />
-            {active && item.label}
           </Link>
         );
       })}

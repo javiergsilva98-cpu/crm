@@ -26,7 +26,7 @@ export function isClubRole(value: string | undefined): value is ClubRole {
 export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = {
   admin: [
     { href: "/socios", label: "Socios" },
-    { href: "/consumos", label: "Consumos" },
+    { href: "/consumos", label: "Consumiciones" },
     { href: "/tesoreria", label: "Tesorería" },
     { href: "/inventario", label: "Inventario" },
     { href: "/calendario", label: "Calendario" },
@@ -35,7 +35,7 @@ export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = 
   ],
   presidente: [
     { href: "/socios", label: "Socios" },
-    { href: "/consumos", label: "Consumos" },
+    { href: "/consumos", label: "Consumiciones" },
     { href: "/tesoreria", label: "Tesorería" },
     { href: "/inventario", label: "Inventario" },
     { href: "/calendario", label: "Calendario" },
@@ -59,7 +59,7 @@ export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = 
     { href: "/votaciones", label: "Votaciones" },
   ],
   socio: [
-    { href: "/consumos", label: "Consumos" },
+    { href: "/consumos", label: "Consumiciones" },
     { href: "/tesoreria", label: "Tesorería" },
     { href: "/calendario", label: "Calendario" },
     { href: "/votaciones", label: "Votaciones" },

@@ -23,10 +23,18 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
-  const { data: profile } = await supabase.from("profiles").select("must_change_password").eq("id", user.id).single();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("must_change_password, member_id")
+    .eq("id", user.id)
+    .single();
   if (profile?.must_change_password) {
     redirect("/cambiar-password");
   }
+
+  const { data: ownMember } = profile?.member_id
+    ? await supabase.from("members").select("avatar_url").eq("id", profile.member_id).single()
+    : { data: null };
 
   const demoRole = await getDemoRole();
   const navItems = NAV_BY_ROLE[demoRole];
@@ -60,7 +68,9 @@ export default async function DashboardLayout({
               26
             </Link>
             <div>
-              <p className="text-xs font-medium text-muted">Hola, {displayName}</p>
+              <Link href="/perfil" className="text-xs font-medium text-muted hover:text-foreground">
+                Hola, {displayName}
+              </Link>
               <p className="text-base font-bold tracking-tight text-foreground">CLUB 26</p>
             </div>
           </div>
@@ -80,6 +90,12 @@ export default async function DashboardLayout({
           <div className="flex items-center gap-2">
             {demoRole === "socio" && socios.length > 0 && (
               <MemberSwitcher members={socios} current={currentMemberId} />
+            )}
+            {ownMember?.avatar_url && (
+              <Link href="/perfil" className="hidden sm:block" aria-label="Mi perfil">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={ownMember.avatar_url} alt="" className="h-9 w-9 rounded-full object-cover" />
+              </Link>
             )}
             <MobilePreviewButton />
             <RoleSwitcher current={demoRole} />

@@ -70,16 +70,25 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
 9. **Documentación** (`/documentos`, admin/presidencia/secretaría):
    estatutos, actas y normativa del club, cada una con un enlace opcional
    (pensado para vincular más adelante al Drive del club).
+10. **Auditoría** (`/auditoria`, admin/presidencia/tesorería): histórico
+    de altas, bajas, movimientos de tesorería, inventario y consumiciones
+    — todo lo que cambia en la app queda registrado con quién y cuándo,
+    vía triggers a nivel de base de datos. Exportable a CSV.
+11. **Mi perfil** (`/perfil`, cualquier cuenta): cada usuario edita su
+    propio nombre visible y puede subir una foto de perfil (se guarda en
+    Supabase Storage, bucket `avatars`, cada cuenta solo puede escribir
+    dentro de su propia carpeta).
 
 Admin, presidencia y tesorero pueden exportar a CSV (se abre directamente
 en Excel) los movimientos de tesorería, el saldo por socio, el listado de
 socios, el historial de consumiciones y las reposiciones de inventario — botón
 "Exportar" en cada pantalla.
 
-Fuera de alcance por ahora: cobros reales (pasarela de pago),
-almacenamiento propio de ficheros (la documentación enlaza a Drive, no
-sube archivos), notificaciones push, límites de visitas de invitados,
-branding final (logo/colores propios del club).
+Fuera de alcance por ahora: cobros reales (pasarela de pago), gráficas de
+tesorería, notificaciones push, límites de visitas de invitados, branding
+final (logo/colores propios del club). La documentación del club sigue
+enlazando a Drive en lugar de subir los archivos — el único uso de
+Supabase Storage por ahora son las fotos de perfil.
 
 ## Configuración inicial
 

@@ -51,7 +51,14 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
    compartido (una botella que se abre y se reparte entre varios socios,
    con el coste dividido y una sola unidad descontada de bodega). No hay
    artículos "por ración" ni "por copa" sueltos, porque no encajan en ese
-   descuento 1:1.
+   descuento 1:1. Pedir algo pide confirmación explícita (nombre, precio
+   y reparto si es compartido) antes de registrarse, para evitar toques
+   accidentales; una vez confirmado no se puede editar ni borrar — ni
+   siquiera el propio socio —, solo "reportar incidencia" para que la
+   directiva lo revise. Cualquier socio ve, como capa de transparencia,
+   las últimas 20 consumiciones de todo el club (no solo las propias); el
+   historial completo sin ese límite es cosa de admin, presidencia y
+   tesorería.
 4. **Tesorería** (`/tesoreria`): saldo del club en tiempo real, desglose
    cuota fija vs. cargos de evento, saldo por socio y alta manual de
    movimientos.

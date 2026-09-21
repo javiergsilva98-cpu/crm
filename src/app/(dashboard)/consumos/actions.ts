@@ -104,6 +104,30 @@ export async function markConsumption(formData: FormData): Promise<ActionResult>
   revalidatePath("/consumos");
 }
 
+// Reporta un pedido ya confirmado como incorrecto (p.ej. no reconoce el
+// consumo). No modifica ni borra la consumición — esta queda inmutable
+// una vez registrada — solo deja constancia para que la directiva lo
+// revise (la gestión del estado llega con la Fase 6 de incidencias).
+export async function reportIncident(formData: FormData): Promise<ActionResult> {
+  const consumptionId = formData.get("consumption_id") as string;
+  const memberId = formData.get("member_id") as string;
+
+  if (!consumptionId || !memberId) {
+    return { error: "Falta información para reportar la incidencia." };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("incidencias").insert({
+    tipo: "consumicion_incorrecta",
+    referencia_id: consumptionId,
+    reportado_por_member_id: memberId,
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+}
+
 // Reparte un artículo "compartido" (una botella) entre varios socios: el
 // coste se divide a partes iguales y se descuenta un solo artículo de
 // bodega, todo dentro de una función de base de datos para que quede

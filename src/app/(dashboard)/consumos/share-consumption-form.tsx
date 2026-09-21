@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CupIcon, UsersIcon } from "@/components/icons";
+import { CupIcon, UsersIcon, CheckIcon } from "@/components/icons";
 import { markSharedConsumption } from "./actions";
 
 type Member = { id: string; full_name: string };
@@ -20,6 +20,7 @@ export function ShareConsumptionForm({
   members: Member[];
 }) {
   const [open, setOpen] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [selected, setSelected] = useState<string[]>([currentMemberId]);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -47,10 +48,12 @@ export function ShareConsumptionForm({
     }
     setOpen(false);
     setSelected([currentMemberId]);
+    setShowSuccess(true);
+    setTimeout(() => setShowSuccess(false), 1100);
   }
 
   return (
-    <div className="relative rounded-[18px] border border-border bg-card p-3.5">
+    <div className="relative overflow-hidden rounded-[18px] border border-border bg-card p-3.5">
       <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-soft">
         <CupIcon className="h-[17px] w-[17px] text-accent" />
       </div>
@@ -65,6 +68,14 @@ export function ShareConsumptionForm({
         <UsersIcon className="h-4 w-4" />
       </button>
 
+      {showSuccess && (
+        <div className="absolute inset-0 z-[1] flex items-center justify-center bg-card/95">
+          <div className="flex h-10 w-10 animate-pop-in items-center justify-center rounded-full bg-success text-white">
+            <CheckIcon className="h-5 w-5" />
+          </div>
+        </div>
+      )}
+
       {open && (
         <div
           className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center"
@@ -75,10 +86,11 @@ export function ShareConsumptionForm({
             onClick={(e) => e.stopPropagation()}
             className="max-h-[80vh] w-full max-w-sm overflow-y-auto rounded-t-[26px] bg-card p-5 sm:rounded-[26px]"
           >
-            <p className="text-sm font-bold text-foreground">Repartir {name}</p>
+            <p className="text-sm font-bold text-foreground">Confirmar reparto de {name}</p>
             <p className="mt-0.5 text-xs text-muted">
               {price.toFixed(2)} € entre {selected.length || 1} socio{selected.length === 1 ? "" : "s"} ={" "}
-              {(price / Math.max(selected.length, 1)).toFixed(2)} € cada uno
+              {(price / Math.max(selected.length, 1)).toFixed(2)} € cada uno · se apunta al momento y no se
+              puede deshacer
             </p>
             <div className="mt-3 flex flex-col gap-1.5">
               {members.map((m) => (
@@ -111,7 +123,7 @@ export function ShareConsumptionForm({
                 disabled={pending}
                 className="flex-1 rounded-xl bg-accent px-3 py-2.5 text-sm font-semibold text-accent-foreground disabled:opacity-50"
               >
-                {pending ? "Repartiendo..." : "Confirmar"}
+                {pending ? "Confirmando..." : "Confirmar pedido"}
               </button>
             </div>
           </form>

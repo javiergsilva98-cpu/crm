@@ -87,14 +87,27 @@ export default async function TesoreriaPage() {
     urgencias: sum((m) => m.movement_type === "urgencia"),
   };
 
+  // Igual que en la vista del propio socio: el saldo de consumiciones
+  // solo cuenta ingresos explícitos de tipo "ingreso" (no la cuota, que
+  // es un cajón aparte con su propio sello pagada/pendiente) menos lo
+  // consumido. Antes esta función sumaba también las cuotas, lo que
+  // hacía que el saldo que veía presidencia/tesorero de un socio no
+  // coincidiera con el que el propio socio veía de sí mismo.
   function memberBalance(memberId: string) {
     const paid = movements
-      .filter((m) => m.member_id === memberId && INGRESO_TYPES.includes(m.movement_type))
+      .filter((m) => m.member_id === memberId && m.movement_type === "ingreso")
       .reduce((acc, m) => acc + m.amount, 0);
     const consumed = consumptions
       .filter((c) => c.member_id === memberId)
       .reduce((acc, c) => acc + c.quantity * c.unit_price, 0);
     return paid - consumed;
+  }
+
+  function memberCuotaThisMonth(memberId: string) {
+    const monthStart = currentMonthStart();
+    return movements.some(
+      (m) => m.member_id === memberId && m.movement_type === "cuota" && m.movement_date >= monthStart,
+    );
   }
 
   if (demoRole === "socio") {
@@ -252,9 +265,14 @@ export default async function TesoreriaPage() {
       </div>
 
       <p className="mb-2.5 text-xs font-bold uppercase tracking-wide text-muted">Saldo por socio</p>
+      <p className="mb-3 text-xs text-muted">
+        Saldo de consumiciones (ingresos aparte de la cuota, menos lo consumido) y estado de la cuota
+        de este mes, por separado — igual que ve cada socio de sí mismo.
+      </p>
       <div className="mb-7 overflow-hidden rounded-[18px] border border-border bg-card">
         {members.map((m, idx) => {
           const balance = memberBalance(m.id);
+          const cuotaPaid = memberCuotaThisMonth(m.id);
           return (
             <div
               key={m.id}
@@ -262,7 +280,16 @@ export default async function TesoreriaPage() {
                 idx !== members.length - 1 ? "border-b border-border" : ""
               }`}
             >
-              <span className="text-sm font-semibold text-foreground">{m.full_name}</span>
+              <div>
+                <span className="text-sm font-semibold text-foreground">{m.full_name}</span>
+                <span
+                  className={`ml-2 rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                    cuotaPaid ? "bg-success-soft text-success" : "bg-warning-soft text-warning"
+                  }`}
+                >
+                  {cuotaPaid ? "Cuota al día" : "Cuota pendiente"}
+                </span>
+              </div>
               <span className={`text-sm font-bold ${balance < 0 ? "text-warning" : "text-success"}`}>
                 {eur(balance)}
               </span>

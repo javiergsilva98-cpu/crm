@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
 import { ExportLink } from "@/components/export-link";
@@ -5,6 +6,7 @@ import { MenuItemForm } from "./menu-item-form";
 import { MenuItemRow } from "./menu-item-row";
 import { GuestModeBoard } from "./guest-mode-board";
 import { IncidentButton } from "./incident-button";
+import { KeyIcon } from "@/components/icons";
 import { MENU_MANAGE_ROLES, EXPORT_ROLES, FULL_HISTORY_ROLES } from "@/lib/permissions";
 
 // El historial completo (todas las consumiciones, sin límite bajo) solo
@@ -48,7 +50,7 @@ export default async function ConsumosPage() {
     const cookieId = await getDemoMemberIdCookie();
     const currentId = list.find((m) => m.id === cookieId)?.id ?? list[0]?.id ?? "";
 
-    const [{ data: historyData }, { data: clubHistoryData }] = await Promise.all([
+    const [{ data: historyData }, { data: clubHistoryData }, { data: activePresence }] = await Promise.all([
       supabase
         .from("consumptions")
         .select("id, quantity, unit_price, is_guest, consumed_at, menu_items(name)")
@@ -60,7 +62,13 @@ export default async function ConsumosPage() {
         .select("id, quantity, unit_price, is_guest, consumed_at, members(full_name), menu_items(name)")
         .order("consumed_at", { ascending: false })
         .limit(TRANSPARENCY_LIMIT),
+      supabase.from("presence").select("id").eq("member_id", currentId).is("checked_out_at", null).maybeSingle(),
     ]);
+    // No se puede pedir sin estar fichado en el local (mismo fichaje de
+    // "Estoy en el local" de /fichaje) — se aplica también en el servidor
+    // (markConsumption) y en la política RLS, esto es solo para no
+    // mostrar siquiera el botón de pedir si ya sabemos que va a fallar.
+    const isCheckedIn = !!activePresence;
     const history = (historyData ?? []) as unknown as Array<{
       id: string;
       quantity: number;
@@ -86,7 +94,24 @@ export default async function ConsumosPage() {
           <p className="text-sm text-muted">Toca para pedir lo que tomes</p>
         </div>
 
-        <GuestModeBoard bebidas={bebidas} aperitivos={aperitivos} memberId={currentId} members={list} />
+        {isCheckedIn ? (
+          <GuestModeBoard bebidas={bebidas} aperitivos={aperitivos} memberId={currentId} members={list} />
+        ) : (
+          <Link
+            href="/fichaje"
+            className="mb-5 flex items-center gap-3 rounded-[18px] border border-warning/30 bg-warning-soft p-3.5"
+          >
+            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-warning/15">
+              <KeyIcon className="h-[18px] w-[18px] text-warning" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-bold text-warning">No estás fichado en el local</p>
+              <p className="text-xs text-warning/80">
+                Marca &quot;Estoy en el local&quot; en Fichaje para poder pedir.
+              </p>
+            </div>
+          </Link>
+        )}
 
         <p className="mb-2.5 mt-7 text-xs font-bold uppercase tracking-wide text-muted">Tu historial reciente</p>
         <HistoryTable

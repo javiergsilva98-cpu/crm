@@ -115,6 +115,20 @@ export async function markConsumption(formData: FormData): Promise<ActionResult>
     return { error: "Artículo no disponible." };
   }
 
+  // Si no estás fichado en el local ahora mismo, no puedes pedir — mismo
+  // fichaje de "Estoy en el local" de /fichaje. Esto también lo aplica
+  // la política RLS de "consumptions_insert"; se repite aquí para dar un
+  // mensaje claro en vez de un error genérico de base de datos.
+  const { data: activePresence } = await supabase
+    .from("presence")
+    .select("id")
+    .eq("member_id", memberId)
+    .is("checked_out_at", null)
+    .maybeSingle();
+  if (!activePresence) {
+    return { error: "No puedes pedir sin estar fichado en el local. Marca \"Estoy en el local\" en Fichaje primero." };
+  }
+
   const { error } = await supabase.from("consumptions").insert({
     member_id: memberId,
     menu_item_id: menuItemId,

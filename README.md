@@ -61,7 +61,16 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
    tesorería.
 4. **Tesorería** (`/tesoreria`): saldo del club en tiempo real, desglose
    cuota fija vs. cargos de evento, saldo por socio y alta manual de
-   movimientos.
+   movimientos. Como "Socio" la pantalla es propia: saldo de
+   consumiciones (lo que debe por lo que ha tomado, sin contar la cuota)
+   y el historial completo de todos sus cargos y pagos; la cuota mensual
+   se muestra aparte, en su propio bloque, como pagada o pendiente —
+   si está pendiente también aparece un aviso destacado en el Panel.
+   Cualquier socio ve además, como capa de transparencia, la caja
+   disponible del club (el saldo real, descontando fondos ya reservados
+   o comprometidos, p. ej. el seguro de los próximos meses) y las
+   últimas compras grandes. Tesorería gestiona ese importe reservado
+   desde la propia pantalla.
 5. **Inventario** (`/inventario`): stock de la bodega y registro de
    reposiciones (actualiza el stock automáticamente). Cada artículo
    tiene su propio umbral de aviso (editable por admin, presidencia y

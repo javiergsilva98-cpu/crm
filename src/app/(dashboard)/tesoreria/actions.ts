@@ -31,3 +31,25 @@ export async function createTreasuryMovement(formData: FormData): Promise<Action
 
   revalidatePath("/tesoreria");
 }
+
+export async function updateClubSettings(formData: FormData): Promise<ActionResult> {
+  const reservedFunds = Number(formData.get("reserved_funds"));
+  const reservedNote = (formData.get("reserved_note") as string) || null;
+
+  if (Number.isNaN(reservedFunds) || reservedFunds < 0) {
+    return { error: "Indica un importe reservado válido." };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("club_settings")
+    .update({ reserved_funds: reservedFunds, reserved_note: reservedNote })
+    .eq("id", true);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/tesoreria");
+  revalidatePath("/");
+}

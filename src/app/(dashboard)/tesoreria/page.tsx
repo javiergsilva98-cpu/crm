@@ -1,8 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
-import { WalletIcon } from "@/components/icons";
+import { WalletIcon, AlertIcon, CheckIcon } from "@/components/icons";
 import { ExportLink } from "@/components/export-link";
 import { MovementForm } from "./movement-form";
+import { ClubSettingsForm } from "./club-settings-form";
 
 const INGRESO_TYPES = ["cuota", "ingreso"];
 const TREASURY_MANAGE_ROLES = ["admin", "presidente", "tesorero"];
@@ -16,7 +17,7 @@ type Movement = {
   member_id: string | null;
   event_id: string | null;
 };
-type Consumption = { member_id: string; quantity: number; unit_price: number };
+type Consumption = { id: string; member_id: string; quantity: number; unit_price: number; consumed_at: string; menu_items: { name: string } | null };
 type Member = { id: string; full_name: string };
 
 function eur(n: number) {
@@ -25,6 +26,11 @@ function eur(n: number) {
 
 function formatDate(value: string) {
   return new Date(`${value}T00:00:00`).toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" });
+}
+
+function currentMonthStart() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
 }
 
 export default async function TesoreriaPage() {
@@ -40,24 +46,33 @@ export default async function TesoreriaPage() {
     );
   }
 
-  const [{ data: movementsData }, { data: consumptionsData }, { data: membersData }, { data: clubBalanceData }] =
+  const [{ data: movementsData }, { data: consumptionsData }, { data: membersData }, { data: clubBalanceData }, { data: availableBalanceData }, { data: settingsData }] =
     await Promise.all([
       supabase
         .from("treasury_movements")
         .select("id, movement_type, amount, movement_date, description, member_id, event_id")
         .order("movement_date", { ascending: false }),
-      supabase.from("consumptions").select("member_id, quantity, unit_price"),
+      supabase.from("consumptions").select("id, member_id, quantity, unit_price, consumed_at, menu_items(name)"),
       supabase.from("members").select("id, full_name").eq("status", "activo").order("full_name"),
       supabase.rpc("club_balance"),
+      supabase.rpc("club_available_balance"),
+      supabase.from("club_settings").select("reserved_funds, reserved_note").eq("id", true).maybeSingle(),
     ]);
 
   const movements = (movementsData ?? []) as Movement[];
-  const consumptions = (consumptionsData ?? []) as Consumption[];
+  const consumptions = (consumptionsData ?? []) as unknown as Consumption[];
   const members = (membersData ?? []) as Member[];
-  // Calculado con una función de base de datos aparte (no sumando localmente
+  // Calculado con funciones de base de datos aparte (no sumando localmente
   // "movements") porque un socio real, por RLS, solo ve sus propios
   // movimientos: sumar solo lo que él ve daría un "saldo del club" erróneo.
   const clubBalance = (clubBalanceData as number | null) ?? 0;
+  const availableBalance = (availableBalanceData as number | null) ?? clubBalance;
+  const reservedFunds = settingsData?.reserved_funds ?? 0;
+  const reservedNote = settingsData?.reserved_note ?? "";
+
+  const gastosImportantes = movements
+    .filter((m) => m.movement_type === "compra_grande")
+    .slice(0, 5);
 
   const sum = (predicate: (m: Movement) => boolean) =>
     movements.filter(predicate).reduce((acc, m) => acc + m.amount, 0);
@@ -85,22 +100,120 @@ export default async function TesoreriaPage() {
   if (demoRole === "socio") {
     const cookieId = await getDemoMemberIdCookie();
     const currentId = members.find((m) => m.id === cookieId)?.id ?? members[0]?.id ?? "";
-    const balance = currentId ? memberBalance(currentId) : 0;
+
+    const myMovements = movements.filter((m) => m.member_id === currentId);
+    const myConsumptions = consumptions.filter((c) => c.member_id === currentId);
+
+    // Saldo de consumiciones: solo lo que se ha consumido menos lo que se
+    // ha ingresado para pagarlo. La cuota mensual queda fuera a propósito
+    // (es un concepto distinto, ver bloque de cuota más abajo) para que el
+    // socio no vea un único número que mezcle ambas cosas.
+    const consumedTotal = myConsumptions.reduce((acc, c) => acc + c.quantity * c.unit_price, 0);
+    const paidTowardsConsumption = myMovements
+      .filter((m) => m.movement_type === "ingreso")
+      .reduce((acc, m) => acc + m.amount, 0);
+    const consumptionBalance = paidTowardsConsumption - consumedTotal;
+
+    const monthStart = currentMonthStart();
+    const cuotaThisMonth = myMovements.some((m) => m.movement_type === "cuota" && m.movement_date >= monthStart);
+
+    const ledger = [
+      ...myConsumptions.map((c) => ({
+        id: `c-${c.id}`,
+        date: c.consumed_at,
+        concept: c.menu_items?.name ?? "Consumición",
+        amount: -(c.quantity * c.unit_price),
+      })),
+      ...myMovements.map((m) => ({
+        id: `m-${m.id}`,
+        date: m.movement_date,
+        concept: m.description ?? (m.movement_type === "cuota" ? "Cuota mensual" : m.movement_type.replace("_", " ")),
+        amount: INGRESO_TYPES.includes(m.movement_type) ? m.amount : -m.amount,
+      })),
+    ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     return (
       <div>
         <h1 className="mb-5 text-xl font-extrabold tracking-tight text-foreground">Tesorería</h1>
 
-        <div className="rounded-[26px] bg-accent p-6 text-accent-foreground shadow-[0_16px_30px_-14px_var(--color-accent)]">
-          <span className="text-sm font-semibold text-white/80">Tu saldo</span>
-          <div className="mt-2 text-4xl font-extrabold tracking-tight">{eur(balance)}</div>
-          <p className="mt-1 text-sm text-white/85">{balance < 0 ? "Debes al club" : "A tu favor"}</p>
+        <div className="rounded-[18px] border border-border bg-card p-4">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wide text-muted">Cuota mensual</span>
+            <span
+              className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold ${
+                cuotaThisMonth ? "bg-success-soft text-success" : "bg-warning-soft text-warning"
+              }`}
+            >
+              {cuotaThisMonth ? <CheckIcon className="h-3 w-3" /> : <AlertIcon className="h-3 w-3" />}
+              {cuotaThisMonth ? "Pagada" : "Pendiente"}
+            </span>
+          </div>
+          <p className="mt-1 text-xs text-muted">
+            {cuotaThisMonth
+              ? "Ya está al día este mes."
+              : "Todavía no consta el pago de la cuota de este mes."}
+          </p>
         </div>
 
-        <div className="mt-3 rounded-[18px] border border-border bg-card p-4">
-          <p className="text-xs font-bold uppercase tracking-wide text-muted">Saldo del club</p>
-          <p className="mt-1.5 text-2xl font-extrabold text-foreground">{eur(clubBalance)}</p>
+        <div className="mt-3 rounded-[26px] bg-accent p-6 text-accent-foreground shadow-[0_16px_30px_-14px_var(--color-accent)]">
+          <span className="text-sm font-semibold text-white/80">Mi saldo de consumiciones</span>
+          <div className="mt-2 text-4xl font-extrabold tracking-tight">{eur(consumptionBalance)}</div>
+          <p className="mt-1 text-sm text-white/85">
+            {consumptionBalance < 0 ? "Debes al club" : "A tu favor"} · no incluye la cuota
+          </p>
         </div>
+
+        <p className="mb-2.5 mt-7 text-xs font-bold uppercase tracking-wide text-muted">Mis movimientos</p>
+        <div className="max-h-[420px] overflow-y-auto overflow-x-hidden rounded-[18px] border border-border bg-card">
+          {ledger.map((row, idx) => (
+            <div
+              key={row.id}
+              className={`flex items-center gap-3 px-3.5 py-3 ${idx !== ledger.length - 1 ? "border-b border-border" : ""}`}
+            >
+              <div className="flex-1">
+                <p className="text-sm font-semibold capitalize text-foreground">{row.concept}</p>
+                <p className="text-xs text-muted">{formatDate(row.date.slice(0, 10))}</p>
+              </div>
+              <p className={`text-sm font-bold ${row.amount < 0 ? "text-foreground" : "text-success"}`}>
+                {row.amount < 0 ? "-" : "+"}
+                {eur(Math.abs(row.amount))}
+              </p>
+            </div>
+          ))}
+          {ledger.length === 0 && (
+            <p className="px-3.5 py-6 text-center text-sm text-muted">Todavía no hay movimientos.</p>
+          )}
+        </div>
+
+        <p className="mb-2.5 mt-7 text-xs font-bold uppercase tracking-wide text-muted">Saldo del club</p>
+        <div className="rounded-[18px] border border-border bg-card p-4">
+          <p className="text-xs text-muted">Caja disponible (sin fondos reservados)</p>
+          <p className="mt-1.5 text-2xl font-extrabold text-foreground">{eur(availableBalance)}</p>
+        </div>
+
+        {gastosImportantes.length > 0 && (
+          <>
+            <p className="mb-2.5 mt-5 text-xs font-bold uppercase tracking-wide text-muted">
+              Últimos gastos importantes
+            </p>
+            <div className="overflow-hidden rounded-[18px] border border-border bg-card">
+              {gastosImportantes.map((m, idx) => (
+                <div
+                  key={m.id}
+                  className={`flex items-center justify-between px-3.5 py-3 ${
+                    idx !== gastosImportantes.length - 1 ? "border-b border-border" : ""
+                  }`}
+                >
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">{m.description ?? "Compra grande"}</p>
+                    <p className="text-xs text-muted">{formatDate(m.movement_date)}</p>
+                  </div>
+                  <p className="text-sm font-bold text-foreground">-{eur(m.amount)}</p>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     );
   }
@@ -120,6 +233,9 @@ export default async function TesoreriaPage() {
       <div className="rounded-[26px] bg-accent p-6 text-accent-foreground shadow-[0_16px_30px_-14px_var(--color-accent)]">
         <span className="text-sm font-semibold text-white/80">Saldo del club</span>
         <div className="mt-2 text-4xl font-extrabold tracking-tight">{eur(clubBalance)}</div>
+        <p className="mt-2 text-sm text-white/85">
+          Caja disponible (sin {eur(reservedFunds)} reservados): <strong>{eur(availableBalance)}</strong>
+        </p>
       </div>
 
       <p className="mb-2.5 mt-7 text-xs font-bold uppercase tracking-wide text-muted">
@@ -199,6 +315,15 @@ export default async function TesoreriaPage() {
         <>
           <p className="mb-2.5 mt-7 text-xs font-bold uppercase tracking-wide text-muted">Registrar movimiento</p>
           <MovementForm members={members} />
+
+          <p className="mb-2.5 mt-7 text-xs font-bold uppercase tracking-wide text-muted">
+            Fondos reservados/comprometidos
+          </p>
+          <p className="mb-3 text-xs text-muted">
+            Se restan del &quot;Saldo del club&quot; para calcular la caja realmente disponible (ej.
+            dinero ya apartado para el seguro de los próximos meses). No afectan al saldo por socio.
+          </p>
+          <ClubSettingsForm reservedFunds={reservedFunds} reservedNote={reservedNote} />
         </>
       )}
     </div>

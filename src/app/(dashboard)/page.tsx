@@ -13,6 +13,7 @@ import {
   FolderIcon,
   ShieldIcon,
   CheckIcon,
+  AlertIcon,
 } from "@/components/icons";
 
 type Icon = (props: { className?: string }) => React.JSX.Element;
@@ -77,6 +78,7 @@ export default async function DashboardHome() {
   let secondaryValue = "0";
   let activityTitle = "Actividad reciente";
   let activity: ActivityRow[] = [];
+  let cuotaPending = false;
 
   if (demoRole === "socio") {
     const { data: membersData } = await supabase
@@ -106,13 +108,14 @@ export default async function DashboardHome() {
     ]);
 
     const paid = (cuotaData ?? []).reduce((acc, m) => acc + m.amount, 0);
-    const paidThisYear = (cuotaData ?? []).some((m) => m.movement_date >= currentMonthStart);
+    const paidThisMonth = (cuotaData ?? []).some((m) => m.movement_date >= currentMonthStart);
     const consumed = (consumptionsData ?? []).reduce((acc, c) => acc + c.quantity * c.unit_price, 0);
     const balance = paid - consumed;
 
+    cuotaPending = !paidThisMonth;
     heroLabel = "Tu saldo";
     heroValue = eur(balance);
-    heroBadge = paidThisYear ? "Cuota al día" : "Cuota pendiente";
+    heroBadge = paidThisMonth ? "Cuota al día" : "Cuota pendiente";
     secondaryLabel = "";
     secondaryValue = "";
     activityTitle = "Tu historial reciente";
@@ -208,6 +211,21 @@ export default async function DashboardHome() {
 
   return (
     <div>
+      {cuotaPending && (
+        <Link
+          href="/tesoreria"
+          className="mb-4 flex items-center gap-3 rounded-[18px] border border-warning/30 bg-warning-soft p-3.5"
+        >
+          <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-warning/15">
+            <AlertIcon className="h-[18px] w-[18px] text-warning" />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-bold text-warning">Cuota de este mes pendiente</p>
+            <p className="text-xs text-warning/80">Toca para ver el detalle en Tesorería.</p>
+          </div>
+        </Link>
+      )}
+
       {/* Hero card */}
       <div className="rounded-[26px] bg-accent p-6 text-accent-foreground shadow-[0_16px_30px_-14px_var(--color-accent)]">
         <div className="flex items-center justify-between">

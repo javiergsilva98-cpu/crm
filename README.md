@@ -105,8 +105,18 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
    por días solicitadas por cualquier socio (quedan pendientes hasta que
    gestión las aprueba o rechaza), con quién abre y quién cierra cada
    jornada.
-7. **Votaciones** (`/votaciones`): la directiva crea votaciones públicas
-   o anónimas; cada socio vota una vez; resultados en vivo.
+7. **Votaciones** (`/votaciones`): solo presidencia y secretaría crean
+   votaciones nuevas (título, descripción, opciones, pública o anónima,
+   tipo normal o **express** — para decisiones urgentes, con su propia
+   etiqueta en el listado — y una fecha límite opcional); cada socio vota
+   una vez; resultados en vivo. Con fecha límite, la votación se cierra
+   sola al llegar esa fecha (no hay cron: se comprueba al entrar en el
+   Panel o en Votaciones, así que puede tardar hasta la siguiente visita
+   de alguien) y el resultado aparece destacado en el Panel de cualquier
+   socio. Cerrar una votación a mano sigue abierto a toda la directiva.
+   El resultado agregado de cualquier votación, sea o no anónima, es
+   siempre visible para todos; en una anónima nunca se muestra quién
+   votó qué.
 8. **Usuarios** (`/usuarios`, solo admin/presidencia): crear cuentas,
    asignar rol y vincularlas a un socio. También permite recuperar el
    acceso de alguien que ha perdido su contraseña: genera una nueva

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
 import { NAV_BY_ROLE } from "@/lib/demo-role";
+import { closeExpiredVotes } from "./votaciones/actions";
 import {
   UsersIcon,
   CupIcon,
@@ -62,6 +63,27 @@ export default async function DashboardHome() {
   const supabase = await createClient();
   const demoRole = await getDemoRole();
   const navItems = NAV_BY_ROLE[demoRole];
+
+  // Sin cron: cierra por sistema cualquier votación con fecha límite
+  // vencida antes de mirar si hay resultados recientes que anunciar.
+  await closeExpiredVotes();
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const { data: recentAutoClosed } = await supabase
+    .from("votes")
+    .select("id, question, deadline")
+    .eq("auto_closed", true)
+    .gte("deadline", sevenDaysAgo.toISOString())
+    .order("deadline", { ascending: false })
+    .limit(2);
+  const closedVotes = await Promise.all(
+    (recentAutoClosed ?? []).map(async (v) => {
+      const { data: results } = await supabase.rpc("vote_results", { p_vote_id: v.id });
+      const rows = (results ?? []) as { option_id: string; label: string; votes: number }[];
+      const winner = rows.reduce((best, r) => (best === null || r.votes > best.votes ? r : best), null as (typeof rows)[number] | null);
+      return { id: v.id, question: v.question, winnerLabel: winner?.label ?? null };
+    }),
+  );
 
   let lowStockCount = 0;
   if (["admin", "presidente", "vicepresidente", "tesorero", "bodeguero"].includes(demoRole)) {
@@ -224,6 +246,28 @@ export default async function DashboardHome() {
             <p className="text-xs text-warning/80">Toca para ver el detalle en Tesorería.</p>
           </div>
         </Link>
+      )}
+
+      {closedVotes.length > 0 && (
+        <div className="mb-4 flex flex-col gap-2">
+          {closedVotes.map((v) => (
+            <Link
+              key={v.id}
+              href="/votaciones"
+              className="flex items-center gap-3 rounded-[18px] border border-accent/30 bg-accent-soft p-3.5"
+            >
+              <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-accent/15">
+                <VoteIcon className="h-[18px] w-[18px] text-accent" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-bold text-accent">Votación cerrada: {v.question}</p>
+                <p className="text-xs text-accent/80">
+                  {v.winnerLabel ? `Resultado: ${v.winnerLabel}` : "Toca para ver el resultado."}
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
       )}
 
       {/* Hero card */}

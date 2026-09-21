@@ -4,9 +4,17 @@ import { VoteIcon } from "@/components/icons";
 import { SubmitButton } from "@/components/submit-button";
 import { VoteForm } from "./vote-form";
 import { CastForm } from "./cast-form";
-import { closeVote } from "./actions";
+import { closeVote, closeExpiredVotes } from "./actions";
 
 const BOARD_ROLES = ["admin", "presidente", "vicepresidente", "secretario", "tesorero", "bodeguero"];
+// Crear una votación nueva es solo cosa de presidencia y secretaría
+// (más admin, que siempre tiene acceso total) — cerrarla sigue abierto
+// a toda la directiva, ver BOARD_ROLES arriba.
+const CREATE_VOTE_ROLES = ["admin", "presidente", "secretario"];
+
+function formatDateTime(value: string) {
+  return new Date(value).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" });
+}
 
 type VoteOption = { id: string; label: string; position: number };
 type VoteRow = {
@@ -15,6 +23,9 @@ type VoteRow = {
   description: string | null;
   is_anonymous: boolean;
   status: "abierta" | "cerrada";
+  category: "normal" | "express";
+  deadline: string | null;
+  auto_closed: boolean;
   created_at: string;
   vote_options: VoteOption[];
 };
@@ -25,12 +36,19 @@ export default async function VotacionesPage() {
   const supabase = await createClient();
   const demoRole = await getDemoRole();
   const canManage = BOARD_ROLES.includes(demoRole);
+  const canCreate = CREATE_VOTE_ROLES.includes(demoRole);
+
+  // Sin cron: al entrar aquí, cierra por sistema cualquier votación cuya
+  // fecha límite ya haya pasado, para que el listado se vea al día.
+  await closeExpiredVotes();
 
   const [{ data: membersData }, { data: votesData }] = await Promise.all([
     supabase.from("members").select("id, full_name").eq("status", "activo").order("full_name"),
     supabase
       .from("votes")
-      .select("id, question, description, is_anonymous, status, created_at, vote_options(id, label, position)")
+      .select(
+        "id, question, description, is_anonymous, status, category, deadline, auto_closed, created_at, vote_options(id, label, position)",
+      )
       .order("created_at", { ascending: false })
       .order("position", { referencedTable: "vote_options" }),
   ]);
@@ -81,8 +99,24 @@ export default async function VotacionesPage() {
                     <VoteIcon className="h-4 w-4 text-accent" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-foreground">{v.question}</p>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <p className="text-sm font-bold text-foreground">{v.question}</p>
+                      {v.category === "express" && (
+                        <span className="rounded-full bg-warning-soft px-2 py-0.5 text-[10px] font-bold text-warning">
+                          Express
+                        </span>
+                      )}
+                    </div>
                     {v.description && <p className="mt-0.5 text-xs text-muted">{v.description}</p>}
+                    {v.deadline && (
+                      <p className="mt-0.5 text-[11px] text-muted">
+                        {v.status === "abierta"
+                          ? `Cierra el ${formatDateTime(v.deadline)}`
+                          : v.auto_closed
+                            ? `Cerrada automáticamente el ${formatDateTime(v.deadline)}`
+                            : `Fecha límite: ${formatDateTime(v.deadline)}`}
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div className="flex flex-shrink-0 flex-col items-end gap-1">
@@ -169,7 +203,7 @@ export default async function VotacionesPage() {
         )}
       </div>
 
-      {canManage && (
+      {canCreate && (
         <>
           <p className="mb-2.5 mt-7 text-xs font-bold uppercase tracking-wide text-muted">Nueva votación</p>
           <VoteForm />

@@ -52,6 +52,31 @@ export function VoteForm() {
           />
         ))}
       </div>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div>
+          <label className="mb-1 block text-xs text-muted">Fecha límite (opcional)</label>
+          <input
+            name="deadline"
+            type="datetime-local"
+            className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-accent"
+          />
+          <p className="mt-1 text-[11px] text-muted">
+            Sin fecha, la votación queda abierta hasta que alguien la cierre a mano.
+          </p>
+        </div>
+        <div>
+          <label className="mb-1 block text-xs text-muted">Tipo</label>
+          <select
+            name="category"
+            defaultValue="normal"
+            title="Express: para decisiones urgentes que se quieren resolver en poco tiempo. Es el mismo sistema, solo cambia la etiqueta."
+            className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-accent"
+          >
+            <option value="normal">Normal</option>
+            <option value="express">Express (urgente)</option>
+          </select>
+        </div>
+      </div>
       <label className="flex items-center gap-2 text-sm text-foreground">
         <input name="is_anonymous" type="checkbox" className="h-4 w-4 accent-accent" />
         Votación anónima (no se mostrará quién votó qué)

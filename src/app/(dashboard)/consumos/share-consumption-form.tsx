@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CupIcon, UsersIcon, CheckIcon } from "@/components/icons";
 import { markSharedConsumption } from "./actions";
+import { ProductInfoButton } from "./product-info-button";
 
 type Member = { id: string; full_name: string };
 
@@ -10,12 +11,16 @@ export function ShareConsumptionForm({
   menuItemId,
   name,
   price,
+  cost,
+  needsPriceReview,
   currentMemberId,
   members,
 }: {
   menuItemId: string;
   name: string;
   price: number;
+  cost: number;
+  needsPriceReview: boolean;
   currentMemberId: string;
   members: Member[];
 }) {
@@ -54,6 +59,7 @@ export function ShareConsumptionForm({
 
   return (
     <div className="relative overflow-hidden rounded-[18px] border border-border bg-card p-3.5">
+      <ProductInfoButton menuItemId={menuItemId} name={name} price={price} cost={cost} needsReview={needsPriceReview} />
       <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-soft">
         <CupIcon className="h-[17px] w-[17px] text-accent" />
       </div>

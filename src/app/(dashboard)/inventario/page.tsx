@@ -4,6 +4,7 @@ import { getDemoRole } from "@/lib/demo-context";
 import { ExportLink } from "@/components/export-link";
 import { RestockForm } from "./restock-form";
 import { InventoryItemRow } from "./inventory-item-row";
+import { MarginSettingsForm } from "./margin-settings-form";
 
 const EXPORT_ROLES = ["admin", "presidente", "vicepresidente", "tesorero"];
 // Vista completa (stock + coste + precio de venta): solo gestión, el
@@ -20,7 +21,7 @@ type RawItem = {
   current_stock: number;
   low_stock_threshold: number;
   current_cost: number;
-  menu_items: { price: number }[] | null;
+  menu_items: { name: string; price: number; needs_price_review: boolean }[] | null;
 };
 
 export default async function InventarioPage() {
@@ -36,12 +37,14 @@ export default async function InventarioPage() {
     );
   }
 
-  const [{ data: itemsData }, { data: members }] = await Promise.all([
+  const [{ data: itemsData }, { data: members }, { data: settingsData }, { data: reviewData }] = await Promise.all([
     supabase
       .from("inventory_items")
-      .select("id, name, unit, current_stock, low_stock_threshold, current_cost, menu_items(price)")
+      .select("id, name, unit, current_stock, low_stock_threshold, current_cost, menu_items(name, price, needs_price_review)")
       .order("name"),
     supabase.from("members").select("id, full_name").eq("status", "activo").order("full_name"),
+    supabase.from("club_settings").select("sale_margin_pct, min_margin_pct").eq("id", true).maybeSingle(),
+    supabase.from("menu_items").select("id, name, price, current_cost").eq("needs_price_review", true).eq("active", true),
   ]);
 
   const raw = (itemsData ?? []) as unknown as RawItem[];
@@ -53,12 +56,16 @@ export default async function InventarioPage() {
     low_stock_threshold: item.low_stock_threshold,
     current_cost: item.current_cost,
     sale_price: item.menu_items && item.menu_items.length > 0 ? item.menu_items[0].price : null,
+    needsPriceReview: item.menu_items?.some((mi) => mi.needs_price_review) ?? false,
   }));
 
   const canRestock = RESTOCK_ROLES.includes(demoRole);
   const canCreateNew = CREATE_NEW_ROLES.includes(demoRole);
   const canSeeFullView = INVENTORY_VIEW_ROLES.includes(demoRole);
   const lowStock = rows.filter((item) => item.current_stock <= item.low_stock_threshold);
+  const saleMarginPct = settingsData?.sale_margin_pct ?? 30;
+  const minMarginPct = settingsData?.min_margin_pct ?? 15;
+  const needsReview = reviewData ?? [];
 
   return (
     <div>
@@ -88,19 +95,42 @@ export default async function InventarioPage() {
       )}
 
       {canSeeFullView ? (
-        <div className="mb-7 overflow-hidden rounded-[18px] border border-border bg-card">
-          {rows.map((item, idx) => (
-            <InventoryItemRow
-              key={item.id}
-              item={item}
-              isLast={idx === rows.length - 1}
-              canEditThreshold={demoRole === "admin" || demoRole === "presidente" || demoRole === "vicepresidente" || demoRole === "bodeguero"}
-            />
-          ))}
-          {rows.length === 0 && (
-            <p className="px-3.5 py-6 text-center text-sm text-muted">No hay artículos de ejemplo todavía.</p>
+        <>
+          {needsReview.length > 0 && (
+            <div className="mb-5 rounded-[18px] border border-warning-soft bg-warning-soft/40 p-4">
+              <p className="text-sm font-bold text-warning">
+                {needsReview.length} artículo{needsReview.length === 1 ? "" : "s"} pendiente
+                {needsReview.length === 1 ? "" : "s"} de revisión de precio
+              </p>
+              <p className="mt-0.5 text-xs text-muted">
+                El margen configurado no llega al mínimo de seguridad para el coste actual de{" "}
+                {needsReview.map((i) => i.name).join(", ")}. El precio no se ha tocado solo; resolverlo
+                puede pasar por una votación express (Fase 5) o ajustar el margen.
+              </p>
+            </div>
           )}
-        </div>
+
+          <div className="mb-7 overflow-hidden rounded-[18px] border border-border bg-card">
+            {rows.map((item, idx) => (
+              <InventoryItemRow
+                key={item.id}
+                item={item}
+                isLast={idx === rows.length - 1}
+                canEditThreshold={demoRole === "admin" || demoRole === "presidente" || demoRole === "vicepresidente" || demoRole === "bodeguero"}
+              />
+            ))}
+            {rows.length === 0 && (
+              <p className="px-3.5 py-6 text-center text-sm text-muted">No hay artículos de ejemplo todavía.</p>
+            )}
+          </div>
+
+          <p className="mb-2.5 text-xs font-bold uppercase tracking-wide text-muted">
+            Margen de venta (calcula el precio de la carta a partir del coste)
+          </p>
+          <div className="mb-7">
+            <MarginSettingsForm saleMarginPct={saleMarginPct} minMarginPct={minMarginPct} />
+          </div>
+        </>
       ) : (
         <p className="mb-5 text-sm text-muted">
           Como bodeguero registras reposiciones y el conteo físico. El detalle de coste y precio de

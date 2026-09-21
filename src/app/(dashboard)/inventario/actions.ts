@@ -37,12 +37,11 @@ export async function createInventoryItem(formData: FormData): Promise<ActionRes
   const stockMode = (formData.get("stock_mode") as string) || "unit";
   const quantity = Number(formData.get("quantity"));
   const cost = Number(formData.get("cost") || 0);
-  const salePrice = Number(formData.get("sale_price"));
   const lowStockThreshold = Number(formData.get("low_stock_threshold") || 5);
   const responsibleMemberId = (formData.get("responsible_member_id") as string) || null;
 
-  if (!name || !category || !quantity || quantity <= 0 || !salePrice || salePrice <= 0) {
-    return { error: "Indica nombre, categoría, cantidad inicial y precio de venta válidos." };
+  if (!name || !category || !quantity || quantity <= 0 || !cost || cost <= 0) {
+    return { error: "Indica nombre, categoría, cantidad inicial y coste del pedido válidos." };
   }
 
   const supabase = await createClient();
@@ -53,10 +52,31 @@ export async function createInventoryItem(formData: FormData): Promise<ActionRes
     p_stock_mode: stockMode,
     p_quantity: quantity,
     p_cost: cost,
-    p_sale_price: salePrice,
     p_low_stock_threshold: lowStockThreshold,
     p_responsible_member_id: responsibleMemberId,
   });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/inventario");
+  revalidatePath("/consumos");
+}
+
+export async function updateMarginSettings(formData: FormData): Promise<ActionResult> {
+  const saleMargin = Number(formData.get("sale_margin_pct"));
+  const minMargin = Number(formData.get("min_margin_pct"));
+
+  if (Number.isNaN(saleMargin) || saleMargin < 0 || Number.isNaN(minMargin) || minMargin < 0) {
+    return { error: "Indica un margen de venta y un margen mínimo válidos." };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("club_settings")
+    .update({ sale_margin_pct: saleMargin, min_margin_pct: minMargin })
+    .eq("id", true);
 
   if (error) {
     return { error: error.message };

@@ -46,24 +46,17 @@ export function MenuItemForm({ inventoryItems }: { inventoryItems: InventoryItem
         </select>
       </div>
       <div>
-        <label className="mb-1 block text-xs text-muted">Precio (€)</label>
-        <input
-          name="price"
-          type="number"
-          step="0.01"
-          min="0.01"
-          required
-          className="w-24 rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-accent"
-        />
-      </div>
-      <div>
-        <label className="mb-1 block text-xs text-muted">Bodega (opcional)</label>
+        <label className="mb-1 block text-xs text-muted">Bodega</label>
         <select
           name="inventory_item_id"
+          required
           defaultValue=""
+          title="El precio de venta se calcula solo a partir del coste de este artículo de bodega y el margen configurado."
           className="rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-accent"
         >
-          <option value="">Sin vincular</option>
+          <option value="" disabled>
+            Elige un artículo de bodega
+          </option>
           {inventoryItems.map((i) => (
             <option key={i.id} value={i.id}>
               {i.name}

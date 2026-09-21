@@ -8,6 +8,8 @@ type MenuItem = {
   name: string;
   category: string;
   price: number;
+  current_cost: number;
+  needs_price_review: boolean;
   active: boolean;
   inventory_item_id: string | null;
   stock_mode: string;
@@ -58,21 +60,25 @@ export function MenuItemRow({
         <option value="bebida">Bebida</option>
         <option value="aperitivo">Aperitivo</option>
       </select>
-      <input
-        name="price"
-        type="number"
-        step="0.01"
-        min="0.01"
-        defaultValue={item.price}
-        required
-        className="w-20 rounded-xl border border-border bg-background px-2.5 py-1.5 text-sm text-foreground outline-none focus:border-accent"
-      />
+      <div className="flex flex-col items-end text-xs leading-tight">
+        <span className="font-bold text-foreground">{item.price.toFixed(2)} €</span>
+        <span className="text-muted">coste {item.current_cost.toFixed(2)} €</span>
+        {item.needs_price_review && (
+          <span className="rounded-full bg-warning-soft px-1.5 py-0.5 text-[9px] font-bold text-warning">
+            Revisar precio
+          </span>
+        )}
+      </div>
       <select
         name="inventory_item_id"
+        required
         defaultValue={item.inventory_item_id ?? ""}
+        title="El precio se calcula solo a partir del coste de este artículo y el margen configurado."
         className="rounded-xl border border-border bg-background px-2.5 py-1.5 text-xs text-foreground outline-none focus:border-accent"
       >
-        <option value="">Sin vincular a bodega</option>
+        <option value="" disabled>
+          Elige bodega
+        </option>
         {inventoryItems.map((i) => (
           <option key={i.id} value={i.id}>
             {i.name}

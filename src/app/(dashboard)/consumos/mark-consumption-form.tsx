@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CupIcon, PlusIcon, CheckIcon } from "@/components/icons";
 import { markConsumption } from "./actions";
+import { ProductInfoButton } from "./product-info-button";
 
 type Step = "idle" | "confirm" | "success";
 
@@ -11,11 +12,15 @@ export function MarkConsumptionForm({
   menuItemId,
   name,
   price,
+  cost,
+  needsPriceReview,
 }: {
   memberId: string;
   menuItemId: string;
   name: string;
   price: number;
+  cost: number;
+  needsPriceReview: boolean;
 }) {
   const [step, setStep] = useState<Step>("idle");
   const [pending, setPending] = useState(false);
@@ -41,6 +46,7 @@ export function MarkConsumptionForm({
 
   return (
     <div className="relative overflow-hidden rounded-[18px] border border-border bg-card p-3.5">
+      <ProductInfoButton menuItemId={menuItemId} name={name} price={price} cost={cost} needsReview={needsPriceReview} />
       <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-soft">
         <CupIcon className="h-[17px] w-[17px] text-accent" />
       </div>

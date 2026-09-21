@@ -15,7 +15,15 @@ const EXPORT_ROLES = ["admin", "presidente", "vicepresidente", "tesorero"];
 const FULL_HISTORY_ROLES = ["admin", "presidente", "vicepresidente", "tesorero"];
 const TRANSPARENCY_LIMIT = 20;
 
-type MenuItem = { id: string; name: string; category: string; price: number; stock_mode: string };
+type MenuItem = {
+  id: string;
+  name: string;
+  category: string;
+  price: number;
+  current_cost: number;
+  needs_price_review: boolean;
+  stock_mode: string;
+};
 
 export default async function ConsumosPage() {
   const supabase = await createClient();
@@ -23,7 +31,7 @@ export default async function ConsumosPage() {
 
   const { data: menuItemsData } = await supabase
     .from("menu_items")
-    .select("id, name, category, price, stock_mode")
+    .select("id, name, category, price, current_cost, needs_price_review, stock_mode")
     .eq("active", true)
     .order("category")
     .order("name");
@@ -122,7 +130,7 @@ export default async function ConsumosPage() {
         .limit(isFullHistory ? 30 : TRANSPARENCY_LIMIT),
       supabase
         .from("menu_items")
-        .select("id, name, category, price, active, inventory_item_id, stock_mode")
+        .select("id, name, category, price, current_cost, needs_price_review, active, inventory_item_id, stock_mode")
         .order("category")
         .order("name"),
       supabase.from("inventory_items").select("id, name").order("name"),
@@ -213,6 +221,8 @@ function MenuSection({
               menuItemId={item.id}
               name={item.name}
               price={item.price}
+              cost={item.current_cost}
+              needsPriceReview={item.needs_price_review}
               currentMemberId={memberId}
               members={members}
             />
@@ -223,6 +233,8 @@ function MenuSection({
               menuItemId={item.id}
               name={item.name}
               price={item.price}
+              cost={item.current_cost}
+              needsPriceReview={item.needs_price_review}
             />
           ),
         )}

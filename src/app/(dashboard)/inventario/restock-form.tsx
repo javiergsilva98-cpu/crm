@@ -117,17 +117,6 @@ export function RestockForm({
                 <option value="shared">A repartir</option>
               </select>
             </div>
-            <div>
-              <label className="mb-1 block text-xs text-muted">Precio de venta (€)</label>
-              <input
-                name="sale_price"
-                type="number"
-                step="0.01"
-                min="0.01"
-                required
-                className="w-28 rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-accent"
-              />
-            </div>
           </>
         )}
 
@@ -148,9 +137,13 @@ export function RestockForm({
             name="cost"
             type="number"
             step="0.01"
-            min="0"
+            min={mode === "new" ? "0.01" : "0"}
+            required={mode === "new"}
             className="w-28 rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-accent"
           />
+          {mode === "new" && (
+            <p className="mt-1 text-[11px] text-muted">El precio de venta se calcula solo con el margen configurado.</p>
+          )}
         </div>
         <div>
           <label className="mb-1 block text-xs text-muted">Responsable</label>

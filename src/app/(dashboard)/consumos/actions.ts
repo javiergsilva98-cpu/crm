@@ -8,49 +8,61 @@ type ActionResult = { error?: string } | void;
 export async function createMenuItem(formData: FormData): Promise<ActionResult> {
   const name = (formData.get("name") as string)?.trim();
   const category = formData.get("category") as string;
-  const price = Number(formData.get("price"));
-  const inventoryItemId = (formData.get("inventory_item_id") as string) || null;
+  const inventoryItemId = formData.get("inventory_item_id") as string;
   const stockMode = (formData.get("stock_mode") as string) || "unit";
 
-  if (!name || !category || !price || price <= 0) {
-    return { error: "Indica nombre, categoría y un precio válido." };
+  if (!name || !category || !inventoryItemId) {
+    return { error: "Indica nombre, categoría y el artículo de bodega vinculado (el precio se calcula solo)." };
   }
 
   const supabase = await createClient();
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("menu_items")
-    .insert({ name, category, price, inventory_item_id: inventoryItemId, stock_mode: stockMode });
+    .insert({ name, category, price: 0, inventory_item_id: inventoryItemId, stock_mode: stockMode })
+    .select("id")
+    .single();
 
-  if (error) {
-    return { error: error.message };
+  if (error || !data) {
+    return { error: error?.message ?? "No se pudo crear el artículo." };
+  }
+
+  const { error: priceError } = await supabase.rpc("set_menu_item_price_from_cost", { p_menu_item_id: data.id });
+  if (priceError) {
+    return { error: priceError.message };
   }
 
   revalidatePath("/consumos");
+  revalidatePath("/inventario");
 }
 
 export async function updateMenuItem(formData: FormData): Promise<ActionResult> {
   const id = formData.get("id") as string;
   const name = (formData.get("name") as string)?.trim();
   const category = formData.get("category") as string;
-  const price = Number(formData.get("price"));
-  const inventoryItemId = (formData.get("inventory_item_id") as string) || null;
+  const inventoryItemId = formData.get("inventory_item_id") as string;
   const stockMode = (formData.get("stock_mode") as string) || "unit";
 
-  if (!id || !name || !category || !price || price <= 0) {
-    return { error: "Indica nombre, categoría y un precio válido." };
+  if (!id || !name || !category || !inventoryItemId) {
+    return { error: "Indica nombre, categoría y el artículo de bodega vinculado (el precio se calcula solo)." };
   }
 
   const supabase = await createClient();
   const { error } = await supabase
     .from("menu_items")
-    .update({ name, category, price, inventory_item_id: inventoryItemId, stock_mode: stockMode })
+    .update({ name, category, inventory_item_id: inventoryItemId, stock_mode: stockMode })
     .eq("id", id);
 
   if (error) {
     return { error: error.message };
   }
 
+  const { error: priceError } = await supabase.rpc("set_menu_item_price_from_cost", { p_menu_item_id: id });
+  if (priceError) {
+    return { error: priceError.message };
+  }
+
   revalidatePath("/consumos");
+  revalidatePath("/inventario");
 }
 
 export async function deleteMenuItem(formData: FormData): Promise<ActionResult> {

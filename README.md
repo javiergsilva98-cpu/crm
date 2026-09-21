@@ -59,7 +59,15 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
    directiva lo revise. Cualquier socio ve, como capa de transparencia,
    las últimas 20 consumiciones de todo el club (no solo las propias); el
    historial completo sin ese límite es cosa de admin, presidencia y
-   tesorería.
+   tesorería. El precio de venta de cada artículo se calcula solo, a
+   partir de su coste actual y un margen de venta global (editable en
+   Inventario) — no se puede fijar a mano. Cualquier socio puede pulsar
+   el icono de información de cada artículo para ver su coste, precio y
+   margen actuales, y el historial de cambios de precio (para que se
+   entienda por qué sube algo, ej. "subió porque el último pedido costó
+   más"). Si con el coste nuevo el margen configurado no llegara al
+   mínimo de seguridad, el artículo queda "pendiente de revisión" en vez
+   de aplicar el precio automáticamente.
 4. **Tesorería** (`/tesoreria`): saldo del club en tiempo real, desglose
    cuota fija vs. cargos de evento, saldo por socio y alta manual de
    movimientos. Como "Socio" la pantalla es propia: saldo de
@@ -78,10 +86,17 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
    ese detalle, solo el formulario de reposición. Reponer (admin,
    presidencia, vicepresidencia, tesorería y bodeguero) permite vincular
    a un artículo existente o dar de alta uno nuevo (nombre, unidad,
-   categoría, individual o a repartir y precio de venta inicial — crea a
-   la vez el artículo de bodega y el de carta). Cada artículo tiene su
-   propio umbral de aviso; cuando el stock baja de ahí salta un aviso en
-   la propia pantalla y una insignia en el Panel. **Conteo físico**
+   categoría, individual o a repartir y coste del primer pedido — crea a
+   la vez el artículo de bodega y el de carta; el precio de venta se
+   calcula solo, no se introduce a mano). Cada artículo tiene su propio
+   umbral de aviso; cuando el stock baja de ahí salta un aviso en la
+   propia pantalla y una insignia en el Panel. **Margen de venta**: un
+   % global (30% por defecto) que fija el precio de cada artículo como
+   coste × (1 + margen), editable por admin, presidencia, vicepresidencia
+   y tesorería; tiene un margen mínimo de seguridad (15% por defecto) y,
+   si el margen configurado no llega a ese mínimo, el artículo afectado
+   queda "pendiente de revisión" en vez de aplicar el precio solo.
+   **Conteo físico**
    (`/inventario/conteo`, admin, presidencia, vicepresidencia y
    bodeguero): se introduce la cantidad real de cada artículo y se
    compara con el stock teórico (para detectar mermas o consumos no

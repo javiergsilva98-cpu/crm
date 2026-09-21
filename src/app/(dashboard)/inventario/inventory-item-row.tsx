@@ -12,6 +12,7 @@ type InventoryItem = {
   low_stock_threshold: number;
   current_cost: number;
   sale_price: number | null;
+  needsPriceReview: boolean;
 };
 
 function eur(n: number) {
@@ -47,6 +48,11 @@ export function InventoryItemRow({
           {low && (
             <span className="flex-shrink-0 rounded-full bg-warning-soft px-2 py-0.5 text-[10px] font-bold text-warning">
               Pocas unidades
+            </span>
+          )}
+          {item.needsPriceReview && (
+            <span className="flex-shrink-0 rounded-full bg-warning-soft px-2 py-0.5 text-[10px] font-bold text-warning">
+              Revisar precio
             </span>
           )}
         </div>

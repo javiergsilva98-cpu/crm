@@ -23,6 +23,7 @@ export function RoleSwitcher({ current }: { current: ClubRole }) {
         {CLUB_ROLES.map((role) => (
           <option key={role} value={role}>
             {CLUB_ROLE_LABELS[role]}
+            {role === "secretario" ? " (rol pendiente de definir)" : ""}
           </option>
         ))}
       </select>

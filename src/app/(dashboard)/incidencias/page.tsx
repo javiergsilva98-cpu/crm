@@ -4,14 +4,16 @@ import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
 import { AlertIcon } from "@/components/icons";
 import { ReportForm } from "./report-form";
 import { IncidenciaRow, type IncidenciaRowData } from "./incidencia-row";
+import { INCIDENCIAS_RESOLVE_ROLES as RESOLVE_ROLES } from "@/lib/permissions";
 
 // Cambiar el estado de una incidencia es cosa de presidencia, tesorería
 // y bodeguero (más admin) — el bodeguero entra porque buena parte de
 // las incidencias serán de bodega/inventario. No incluye
 // vicepresidente: el reparto de "quién resuelve qué" no quedó cerrado
-// para esta pantalla, así que de momento se deja tal cual pide la
-// Fase 7 en vez de mirar el patrón habitual de admin+presidente+vice.
-const RESOLVE_ROLES = ["admin", "presidente", "tesorero", "bodeguero"];
+// para esta pantalla (Fase 10 lo deja pendiente igual que otras áreas
+// de edición de vicepresidencia), así que de momento se mantiene tal
+// cual pedía la Fase 7 en vez de mirar el patrón habitual de
+// admin+presidente+vice.
 
 const CATEGORY_LABELS: Record<string, string> = {
   rotura: "Algo roto",

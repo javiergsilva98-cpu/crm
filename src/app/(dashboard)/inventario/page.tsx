@@ -5,14 +5,19 @@ import { ExportLink } from "@/components/export-link";
 import { RestockForm } from "./restock-form";
 import { InventoryItemRow } from "./inventory-item-row";
 import { MarginSettingsForm } from "./margin-settings-form";
+import {
+  EXPORT_ROLES,
+  INVENTORY_VIEW_ROLES,
+  RESTOCK_ROLES,
+  INVENTORY_EDIT_ROLES as CREATE_NEW_ROLES,
+  INVENTORY_COUNT_ROLES as COUNT_ROLES,
+} from "@/lib/permissions";
 
-const EXPORT_ROLES = ["admin", "presidente", "vicepresidente", "tesorero"];
 // Vista completa (stock + coste + precio de venta): solo gestión, el
 // bodeguero no la necesita, usa el formulario de reposición de abajo.
-const INVENTORY_VIEW_ROLES = ["admin", "presidente", "vicepresidente", "tesorero"];
-const RESTOCK_ROLES = ["admin", "presidente", "vicepresidente", "tesorero", "bodeguero"];
-const CREATE_NEW_ROLES = ["admin", "presidente", "vicepresidente", "bodeguero"];
-const COUNT_ROLES = ["admin", "presidente", "vicepresidente", "bodeguero"];
+// Dar de alta un artículo nuevo, hacer conteo físico y editar el
+// umbral de aviso son las mismas manos que pueden tocar inventario a
+// fondo (Fase 10: tesorero se suma a bodeguero aquí).
 
 type RawItem = {
   id: string;
@@ -117,7 +122,7 @@ export default async function InventarioPage() {
                 key={item.id}
                 item={item}
                 isLast={idx === rows.length - 1}
-                canEditThreshold={demoRole === "admin" || demoRole === "presidente" || demoRole === "vicepresidente" || demoRole === "bodeguero"}
+                canEditThreshold={CREATE_NEW_ROLES.includes(demoRole)}
               />
             ))}
             {rows.length === 0 && (

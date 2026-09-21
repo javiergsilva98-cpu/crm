@@ -2,8 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
 import { CountForm } from "./count-form";
-
-const COUNT_ROLES = ["admin", "presidente", "vicepresidente", "bodeguero"];
+import { INVENTORY_COUNT_ROLES as COUNT_ROLES } from "@/lib/permissions";
 
 export default async function InventoryCountPage() {
   const supabase = await createClient();

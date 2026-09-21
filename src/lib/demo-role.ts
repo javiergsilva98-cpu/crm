@@ -72,8 +72,14 @@ export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = 
     { href: "/usuarios", label: "Usuarios" },
     { href: "/auditoria", label: "Auditoría" },
   ],
+  // Secretario: rol pendiente de definir del todo (Fase 10). De momento
+  // tiene el mismo nivel que un socio normal — mismo menú que "socio" —
+  // más la posibilidad de lanzar votaciones (gestionado dentro de la
+  // propia pantalla de /votaciones, ver VOTE_CREATE_ROLES en
+  // src/lib/permissions.ts). Revisar cuando quede cerrado en asamblea.
   secretario: [
-    { href: "/socios", label: "Socios" },
+    { href: "/consumos", label: "Consumiciones" },
+    { href: "/tesoreria", label: "Tesorería" },
     { href: "/calendario", label: "Calendario" },
     { href: "/votaciones", label: "Votaciones" },
     { href: "/incidencias", label: "Incidencias" },

@@ -5,8 +5,7 @@ import { ClubSwitch } from "./club-switch";
 import { PresenceButton } from "./presence-button";
 import { TransferForm } from "./transfer-form";
 import { IncomingTransferBanner } from "./incoming-transfer-banner";
-
-const HISTORY_ROLES = ["admin", "presidente", "tesorero"];
+import { FICHAJE_HISTORY_ROLES as HISTORY_ROLES } from "@/lib/permissions";
 
 function formatDateTime(value: string) {
   return new Date(value).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" });

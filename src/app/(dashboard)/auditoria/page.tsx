@@ -4,8 +4,7 @@ import { getDemoRole } from "@/lib/demo-context";
 import { ExportLink } from "@/components/export-link";
 import { AuditEntryRow } from "./audit-entry-row";
 import { BIG_MOVEMENT_TABLES, type AuditRow } from "./summarize";
-
-const AUDIT_ROLES = ["admin", "presidente", "vicepresidente", "tesorero"];
+import { AUDIT_ROLES } from "@/lib/permissions";
 
 export default async function AuditoriaPage({
   searchParams,

@@ -6,8 +6,7 @@ import { EventForm } from "./event-form";
 import { ReservationForm } from "./reservation-form";
 import { CalendarioViews } from "./calendar-views";
 import { approveReservation, rejectReservation } from "./actions";
-
-const MANAGEMENT_ROLES = ["admin", "presidente", "vicepresidente", "secretario", "tesorero"];
+import { CALENDAR_MANAGE_ROLES as MANAGEMENT_ROLES } from "@/lib/permissions";
 
 type EventRow = {
   id: string;

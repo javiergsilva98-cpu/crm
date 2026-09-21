@@ -2,12 +2,15 @@ import { createClient } from "@/lib/supabase/server";
 import { getDemoRole } from "@/lib/demo-context";
 import { DocumentForm } from "./document-form";
 import { DocumentRow } from "./document-row";
+import {
+  DOCUMENTS_GENERAL_MANAGE_ROLES as GENERAL_MANAGE_ROLES,
+  DOCUMENTS_PRIVATE_ROLES as PRIVATE_ROLES,
+} from "@/lib/permissions";
 
-// Gestión de la carpeta "general": admin, presidencia, vicepresidencia
-// y secretaría, como hasta ahora. La carpeta "privada" (Fase 9) es solo
-// de los roles con acceso a dinero.
-const GENERAL_MANAGE_ROLES = ["admin", "presidente", "vicepresidente", "secretario"];
-const PRIVATE_ROLES = ["admin", "presidente", "tesorero"];
+// Gestión de la carpeta "general": admin, presidencia y vicepresidencia
+// (secretaría ya no gestiona documentos, Fase 10 — queda a nivel de
+// socio salvo para votaciones). La carpeta "privada" es solo de los
+// roles con acceso a dinero.
 
 export default async function DocumentosPage() {
   const supabase = await createClient();

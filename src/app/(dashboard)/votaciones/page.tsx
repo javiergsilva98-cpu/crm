@@ -5,12 +5,11 @@ import { SubmitButton } from "@/components/submit-button";
 import { VoteForm } from "./vote-form";
 import { CastForm } from "./cast-form";
 import { closeVote, closeExpiredVotes } from "./actions";
-
-const BOARD_ROLES = ["admin", "presidente", "vicepresidente", "secretario", "tesorero", "bodeguero"];
+import { VOTE_MANAGE_ROLES as BOARD_ROLES, VOTE_CREATE_ROLES as CREATE_VOTE_ROLES } from "@/lib/permissions";
 // Crear una votación nueva es solo cosa de presidencia y secretaría
 // (más admin, que siempre tiene acceso total) — cerrarla sigue abierto
-// a toda la directiva, ver BOARD_ROLES arriba.
-const CREATE_VOTE_ROLES = ["admin", "presidente", "secretario"];
+// a la directiva con acceso operativo, ver VOTE_MANAGE_ROLES en
+// src/lib/permissions.ts (secretario ya NO gestiona/cierra, Fase 10).
 
 function formatDateTime(value: string) {
   return new Date(value).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" });

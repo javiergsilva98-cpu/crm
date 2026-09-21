@@ -6,10 +6,11 @@ import { ExportLink } from "@/components/export-link";
 import { SubmitButton } from "@/components/submit-button";
 import { MemberForm } from "./member-form";
 import { toggleMemberStatus } from "./actions";
-
-const MEMBER_MANAGE_ROLES = ["admin", "presidente", "vicepresidente", "secretario"];
-const ACCOUNT_CREATE_ROLES = ["admin", "presidente", "vicepresidente"];
-const EXPORT_ROLES = ["admin", "presidente", "vicepresidente", "tesorero"];
+import {
+  MEMBER_MANAGE_ROLES,
+  ACCOUNT_MANAGE_ROLES as ACCOUNT_CREATE_ROLES,
+  EXPORT_ROLES,
+} from "@/lib/permissions";
 
 function nextKeyNumber(members: { key_number: string | null }[]): string {
   const numeric = members
@@ -56,11 +57,11 @@ export default async function SociosPage() {
   const paidIds = new Set((cuotas ?? []).map((c) => c.member_id));
   const rows = (members ?? []).map((m) => ({ ...m, cuotaAlDia: paidIds.has(m.id) }));
 
-  if (demoRole === "socio") {
-    const socios = rows.filter((m) => m.club_role === "socio");
+  // Secretario (Fase 10: rol pendiente de definir del todo) se trata
+  // como un socio normal en esta pantalla — solo ve su propia ficha.
+  if (demoRole === "socio" || demoRole === "secretario") {
     const cookieId = await getDemoMemberIdCookie();
-    const currentId = socios.find((m) => m.id === cookieId)?.id ?? socios[0]?.id;
-    const me = rows.find((m) => m.id === currentId);
+    const me = rows.find((m) => m.id === cookieId) ?? rows.filter((m) => m.club_role === "socio")[0];
 
     return (
       <div>

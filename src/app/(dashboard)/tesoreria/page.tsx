@@ -4,9 +4,9 @@ import { WalletIcon, AlertIcon, CheckIcon } from "@/components/icons";
 import { ExportLink } from "@/components/export-link";
 import { MovementForm } from "./movement-form";
 import { ClubSettingsForm } from "./club-settings-form";
+import { MONEY_EDIT_ROLES as TREASURY_MANAGE_ROLES } from "@/lib/permissions";
 
 const INGRESO_TYPES = ["cuota", "ingreso"];
-const TREASURY_MANAGE_ROLES = ["admin", "presidente", "vicepresidente", "tesorero"];
 
 type Movement = {
   id: string;

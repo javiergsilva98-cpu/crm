@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 
-const EXPORT_ROLES = ["admin", "presidente", "vicepresidente", "tesorero"];
+export const EXPORT_ROLES = ["admin", "presidente", "vicepresidente", "tesorero"];
 
 // Igual que assertCanManageUsers en /usuarios: comprueba el rol real de
 // `profiles`, no el selector de vista de la demo, porque exportar datos

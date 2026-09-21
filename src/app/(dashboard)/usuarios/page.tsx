@@ -5,8 +5,7 @@ import { SubmitButton } from "@/components/submit-button";
 import { UserForm } from "./user-form";
 import { ResetPasswordButton } from "./reset-password-button";
 import { updateUserAccount, deleteUserAccount } from "./actions";
-
-const USER_MANAGE_ROLES = ["admin", "presidente", "vicepresidente"];
+import { ACCOUNT_MANAGE_ROLES as USER_MANAGE_ROLES } from "@/lib/account-auth";
 
 type ProfileRow = {
   id: string;

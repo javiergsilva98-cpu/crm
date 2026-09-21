@@ -5,13 +5,11 @@ import { MenuItemForm } from "./menu-item-form";
 import { MenuItemRow } from "./menu-item-row";
 import { GuestModeBoard } from "./guest-mode-board";
 import { IncidentButton } from "./incident-button";
+import { MENU_MANAGE_ROLES, EXPORT_ROLES, FULL_HISTORY_ROLES } from "@/lib/permissions";
 
-const MENU_MANAGE_ROLES = ["admin", "presidente", "vicepresidente", "tesorero", "bodeguero"];
-const EXPORT_ROLES = ["admin", "presidente", "vicepresidente", "tesorero"];
 // El historial completo (todas las consumiciones, sin límite bajo) solo
 // lo ve la directiva con acceso a tesorería. El resto de roles ven una
 // capa de transparencia acotada (últimas ~20), igual que el socio.
-const FULL_HISTORY_ROLES = ["admin", "presidente", "vicepresidente", "tesorero"];
 const TRANSPARENCY_LIMIT = 20;
 
 type MenuItem = {

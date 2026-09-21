@@ -14,13 +14,13 @@ App interna de **CLUB 26**, asociación gastronómica y cultural en Maello
 
 | Rol | Persona | Se encarga de |
 |---|---|---|
-| Admin | Javier | Acceso total, incluida la gestión de cuentas |
-| Presidente | Marco | Gestión general, también gestiona cuentas |
-| Vicepresidente | — | Mismo nivel de acceso que presidencia |
-| Secretario | Pablo | Ficha de socios, actas, documentación |
-| Tesorero | Marlon | Cuenta bancaria, cobros, precios, balances |
-| Bodeguero | Charly (apoyo Chervo) | Compras, reposición de inventario |
-| Socio | — | Consumiciones propias, balance, calendario, votar |
+| Admin | Javier | Acceso total a todo (consumiciones, tesorería, inventario, precios, votaciones, incidencias, fichaje, auditoría) |
+| Presidente | Marco | Acceso total a todo, igual que admin |
+| Vicepresidente | — | Misma **visibilidad** que presidencia en inventario y tesorería. Sus permisos de *edición* en el resto de áreas no quedaron cerrados del todo en la reunión: donde ya tenía acceso de escritura se ha mantenido, y no se ha ampliado por su cuenta a votaciones, documentación privada, fichaje ni incidencias — pendiente de cerrar en asamblea |
+| Secretario | Pablo | **Rol pendiente de definir.** De momento tiene el mismo nivel que un socio normal, más la posibilidad de lanzar votaciones junto a presidencia |
+| Tesorero | Marlon | Acceso total a todo lo relacionado con dinero (cuotas, precios, margen de venta) y también puede editar inventario a fondo |
+| Bodeguero | Charly (apoyo Chervo) | Precios de coste e inventario (reposiciones, conteo físico). No toca cuotas de socios ni tesorería general |
+| Socio | — | Pedir consumiciones, ver su propia tesorería y el resumen público de caja, ver el listado público de inventario/consumiciones, votar, reportar incidencias y usar el fichaje. No edita precios, cuotas ajenas ni inventario |
 
 Esta primera fase incluye una **demo con datos de ejemplo**: las cuentas
 de admin/presidencia pueden cambiar de vista desde la interfaz (arriba a
@@ -38,7 +38,9 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
 
 1. **Panel** (`/`): resumen y accesos según el rol.
 2. **Socios** (`/socios`): ficha de socios (nombre, rol, estado, cuota
-   del mes, nº de llave) y baja. Como "Socio" solo se ve la ficha propia.
+   del mes, nº de llave) y baja. Como "Socio" (y, desde la Fase 10,
+   como "Secretario") solo se ve la ficha propia — gestionar el listado
+   completo es cosa de admin, presidencia y vicepresidencia.
    Admin y presidencia dan de alta socios nuevos directamente con su
    cuenta de acceso: nombre, email, rol, número de socio (se sugiere el
    siguiente disponible) y una contraseña provisional generada ahí
@@ -90,12 +92,15 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
 5. **Inventario** (`/inventario`): por artículo, stock actual, coste
    actual (del último pedido) y precio de venta — visible solo para
    admin, presidencia, vicepresidencia y tesorería; el bodeguero no ve
-   ese detalle, solo el formulario de reposición. Reponer (admin,
-   presidencia, vicepresidencia, tesorería y bodeguero) permite vincular
-   a un artículo existente o dar de alta uno nuevo (nombre, unidad,
-   categoría, individual o a repartir y coste del primer pedido — crea a
-   la vez el artículo de bodega y el de carta; el precio de venta se
-   calcula solo, no se introduce a mano). Cada artículo tiene su propio
+   ese detalle, solo el formulario de reposición. Reponer, dar de alta
+   un artículo nuevo, ajustar el umbral de aviso y hacer el conteo
+   físico son cosa de admin, presidencia, vicepresidencia, tesorería y
+   bodeguero por igual (Fase 10: tesorería puede editar inventario a
+   fondo, no solo registrar reposiciones). Dar de alta un artículo
+   nuevo (nombre, unidad, categoría, individual o a repartir y coste
+   del primer pedido) crea a la vez el artículo de bodega y el de
+   carta; el precio de venta se calcula solo, no se introduce a mano.
+   Cada artículo tiene su propio
    umbral de aviso; cuando el stock baja de ahí salta un aviso en la
    propia pantalla y una insignia en el Panel. **Margen de venta**: un
    % global (30% por defecto) que fija el precio de cada artículo como
@@ -116,9 +121,12 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
    de precio que provoca (visible desde el icono de información de
    cada artículo en Consumiciones, con un enlace "Ver ticket").
 6. **Calendario** (`/calendario`): eventos generales creados por
-   gestión, visibles para todo el club, y reservas del local por días
-   solicitadas por cualquier socio (quedan pendientes hasta que gestión
-   las aprueba o rechaza), con quién abre y quién cierra cada jornada.
+   admin, presidencia, vicepresidencia y tesorería, visibles para todo
+   el club, y reservas del local por días solicitadas por cualquier
+   socio (quedan pendientes hasta que gestión las aprueba o rechaza),
+   con quién abre y quién cierra cada jornada. Secretario ya no
+   gestiona el calendario (Fase 10): solicita reservas como cualquier
+   socio.
    Cada reserva puede marcarse **en exclusiva** (por defecto sí):
    pensado como base para que, más adelante, "quién está dentro" del
    fichaje (Fase 8) se pueda acotar a esa reserva — de momento la
@@ -132,7 +140,9 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
    sola al llegar esa fecha (no hay cron: se comprueba al entrar en el
    Panel o en Votaciones, así que puede tardar hasta la siguiente visita
    de alguien) y el resultado aparece destacado en el Panel de cualquier
-   socio. Cerrar una votación a mano sigue abierto a toda la directiva.
+   socio. Cerrar una votación a mano es cosa de admin, presidencia,
+   vicepresidencia, tesorería y bodeguero — secretaría solo crea, no
+   gestiona ni cierra (Fase 10).
    El resultado agregado de cualquier votación, sea o no anónima, es
    siempre visible para todos; en una anónima nunca se muestra quién
    votó qué.
@@ -175,10 +185,11 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
 11. **Documentación** (`/documentos`): estatutos, actas y normativa del
    club, cada una con un enlace opcional (pensado para vincular más
    adelante al Drive del club), organizados en dos carpetas: **general**
-   (visible para todo el club, gestionada por admin, presidencia,
-   vicepresidencia y secretaría) y **privada** (solo visible y editable
-   por admin, presidencia y tesorería, para documentación con datos
-   económicos sensibles).
+   (visible para todo el club, gestionada por admin, presidencia y
+   vicepresidencia) y **privada** (solo visible y editable por admin,
+   presidencia y tesorería, para documentación con datos económicos
+   sensibles). Secretaría ya no gestiona la carpeta general (Fase 10):
+   la ve en solo lectura, como cualquier socio.
 12. **Auditoría** (`/auditoria`, admin/presidencia/tesorería): histórico
     de altas, bajas, movimientos de tesorería, inventario, consumiciones,
     incidencias y fichaje — todo lo que cambia en la app queda
@@ -200,8 +211,50 @@ socios, el historial de consumiciones y las reposiciones de inventario — botó
 Fuera de alcance por ahora: cobros reales (pasarela de pago), gráficas de
 tesorería, notificaciones push, límites de visitas de invitados, branding
 final (logo/colores propios del club). La documentación del club sigue
-enlazando a Drive en lugar de subir los archivos — el único uso de
-Supabase Storage por ahora son las fotos de perfil.
+enlazando a Drive en lugar de subir los archivos — Supabase Storage se usa
+para las fotos de perfil y, desde la Fase 9, para las fotos de ticket de
+cada reposición.
+
+## Permisos por rol
+
+La matriz de roles de la tabla de arriba vive en un solo sitio de código,
+`src/lib/permissions.ts`: cada pantalla y acción importa sus listas de roles
+desde ahí en vez de declarar su propia constante suelta, para que se pueda
+leer y ajustar la matriz completa desde un único archivo. La aplicación
+real, en cambio, siempre vive en las políticas RLS de `supabase/migrations/`
+— `permissions.ts` se ha escrito para que coincida con ellas exactamente,
+y así debe seguir si se cambia algo ahí.
+
+### Comprobación manual (como "Socio")
+
+Cambia el selector "Viendo como" (arriba a la derecha) a **Socio** y
+confirma que:
+
+- En **Consumiciones**: no aparece la sección "Carta" (crear/editar
+  artículos) ni el botón de exportar; solo se puede pedir y ver el
+  historial propio y el de transparencia.
+- En **Tesorería**: solo se ve el saldo propio y la caja pública del
+  club — no hay formulario de alta de movimientos ni ajuste de fondo
+  reservado.
+- **Inventario** no aparece en el menú (un socio no gestiona bodega).
+- En **Calendario**: se puede solicitar una reserva, pero no aparece
+  "Solicitudes pendientes" ni el formulario de eventos generales.
+- En **Votaciones**: no aparece el formulario "Nueva votación".
+- En **Incidencias**: se puede reportar, pero ninguna fila muestra el
+  botón "Gestionar".
+- En **Fichaje**: no aparece la sección de historial (aperturas,
+  cierres, cesiones).
+- En **Documentación**: solo se ve la carpeta general, en solo lectura
+  (sin formulario de "Añadir documento" ni carpeta privada).
+- **Usuarios** y **Auditoría** no aparecen en el menú.
+- En **Socios**: solo se ve la ficha propia, nunca el listado completo.
+
+### Comprobación manual (como "Secretario")
+
+Repite lo mismo con el selector en **Secretario** (marcado como "rol
+pendiente de definir" en el desplegable): debe comportarse exactamente
+igual que "Socio" en todo lo anterior, con una única diferencia — en
+**Votaciones** sí debe aparecer el formulario "Nueva votación".
 
 ## Configuración inicial
 

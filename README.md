@@ -140,19 +140,37 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
    guardado, sin borrar la consumición) y rechazarla la deja igual. El
    listado, con filtro por estado y por categoría, es visible para todo
    el club como capa de transparencia.
-9. **Usuarios** (`/usuarios`, solo admin/presidencia): crear cuentas,
+9. **Fichaje** (`/fichaje`): un indicador claro (luz verde/roja, también
+   en el Panel) de si el local está abierto o cerrado. El primer socio
+   que llega pulsa "He abierto": abre el switch, se convierte en
+   responsable de cierre y queda fichado. Cada socio que llega después
+   marca su propia presencia ("Estoy en el local" / "Me voy"),
+   independiente del switch general. Quién está dentro ahora mismo solo
+   lo ve un socio si él mismo está fichado en ese momento (el dato
+   queda igualmente registrado para que admin, presidencia y tesorería
+   puedan auditarlo después). El responsable actual puede ceder la
+   responsabilidad a otro socio presente — mientras esa persona no la
+   acepte explícitamente (aviso en su Panel, con aceptar/rechazar), la
+   responsabilidad sigue siendo de quien la cede — o cerrar el local
+   directamente aunque queden socios dentro (intencional: si alguien
+   quiere quedarse, que asuma la responsabilidad reabriendo). Mientras
+   no ceda ni cierre, le aparece un aviso persistente en el Panel.
+   Aperturas, cierres y cesiones (con fecha, quién y a quién, aceptada o
+   no) quedan en un historial permanente, consultable por admin,
+   presidencia y tesorería.
+10. **Usuarios** (`/usuarios`, solo admin/presidencia): crear cuentas,
    asignar rol y vincularlas a un socio. También permite recuperar el
    acceso de alguien que ha perdido su contraseña: genera una nueva
    provisional (que también habrá que entregarle en mano) y le vuelve a
    exigir cambiarla al entrar.
-10. **Documentación** (`/documentos`, admin/presidencia/secretaría):
+11. **Documentación** (`/documentos`, admin/presidencia/secretaría):
    estatutos, actas y normativa del club, cada una con un enlace opcional
    (pensado para vincular más adelante al Drive del club).
-11. **Auditoría** (`/auditoria`, admin/presidencia/tesorería): histórico
+12. **Auditoría** (`/auditoria`, admin/presidencia/tesorería): histórico
     de altas, bajas, movimientos de tesorería, inventario y consumiciones
     — todo lo que cambia en la app queda registrado con quién y cuándo,
     vía triggers a nivel de base de datos. Exportable a CSV.
-12. **Mi perfil** (`/perfil`, cualquier cuenta): cada usuario edita su
+13. **Mi perfil** (`/perfil`, cualquier cuenta): cada usuario edita su
     propio nombre visible y puede subir una foto de perfil (se guarda en
     Supabase Storage, bucket `avatars`, cada cuenta solo puede escribir
     dentro de su propia carpeta).

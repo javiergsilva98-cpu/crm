@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
 import { NAV_BY_ROLE } from "@/lib/demo-role";
 import { closeExpiredVotes } from "./votaciones/actions";
+import { IncomingTransferBanner } from "./fichaje/incoming-transfer-banner";
 import {
   UsersIcon,
   CupIcon,
@@ -15,6 +16,7 @@ import {
   ShieldIcon,
   CheckIcon,
   AlertIcon,
+  KeyIcon,
 } from "@/components/icons";
 
 type Icon = (props: { className?: string }) => React.JSX.Element;
@@ -26,6 +28,8 @@ const TILE_ICON: Record<string, Icon> = {
   "/inventario": BoxIcon,
   "/calendario": CalendarIcon,
   "/votaciones": VoteIcon,
+  "/incidencias": AlertIcon,
+  "/fichaje": KeyIcon,
   "/documentos": FolderIcon,
   "/usuarios": UserPlusIcon,
   "/auditoria": ShieldIcon,
@@ -38,6 +42,8 @@ const TILE_SUBTITLE: Record<string, string> = {
   "/inventario": "Stock de bodega",
   "/calendario": "Eventos y reservas",
   "/votaciones": "Vota y consulta resultados",
+  "/incidencias": "Reportar y consultar",
+  "/fichaje": "Quién abre, cierra y está dentro",
   "/documentos": "Estatutos, actas y normativa",
   "/usuarios": "Crear y gestionar cuentas",
   "/auditoria": "Historial de cambios",
@@ -92,6 +98,28 @@ export default async function DashboardHome() {
       .select("current_stock, low_stock_threshold");
     lowStockCount = (inventoryData ?? []).filter((i) => i.current_stock <= i.low_stock_threshold).length;
   }
+
+  // Fase 8: switch de club abierto/cerrado, visible para todos, y aviso
+  // persistente de responsabilidad para quien la tenga ahora mismo.
+  const { data: membersForClubStatus } = await supabase
+    .from("members")
+    .select("id")
+    .eq("status", "activo");
+  const clubStatusMembers = membersForClubStatus ?? [];
+  const clubStatusCookieId = await getDemoMemberIdCookie();
+  const currentMemberIdForClub = clubStatusMembers.find((m) => m.id === clubStatusCookieId)?.id ?? clubStatusMembers[0]?.id ?? "";
+
+  const [{ data: clubStatusData }, { data: incomingTransferData }] = await Promise.all([
+    supabase.from("club_status").select("is_open, responsible_member_id, responsible_member_name").eq("id", true).maybeSingle(),
+    supabase
+      .from("responsibility_transfers")
+      .select("id, from_member_name")
+      .eq("to_member_id", currentMemberIdForClub)
+      .eq("status", "pendiente")
+      .maybeSingle(),
+  ]);
+  const clubIsOpen = clubStatusData?.is_open ?? false;
+  const isResponsibleNow = clubIsOpen && clubStatusData?.responsible_member_id === currentMemberIdForClub;
 
   let heroLabel = "Socios activos";
   let heroValue = "0";
@@ -233,6 +261,34 @@ export default async function DashboardHome() {
 
   return (
     <div>
+      <Link
+        href="/fichaje"
+        className="mb-4 flex items-center gap-2 rounded-full border border-border bg-card px-3.5 py-2 text-xs font-semibold text-foreground"
+      >
+        <span className={`h-2.5 w-2.5 rounded-full ${clubIsOpen ? "bg-success" : "bg-warning"}`} aria-hidden />
+        {clubIsOpen ? "Club abierto" : "Club cerrado"}
+        <span className="text-muted">· ver fichaje</span>
+      </Link>
+
+      {isResponsibleNow && (
+        <Link
+          href="/fichaje"
+          className="mb-4 flex items-center gap-3 rounded-[18px] border border-accent/30 bg-accent-soft p-3.5"
+        >
+          <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-accent/15">
+            <KeyIcon className="h-[18px] w-[18px] text-accent" />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-bold text-accent">Eres responsable del local ahora mismo</p>
+            <p className="text-xs text-accent/80">Toca para ceder la responsabilidad o cerrar el local.</p>
+          </div>
+        </Link>
+      )}
+
+      {incomingTransferData && (
+        <IncomingTransferBanner transferId={incomingTransferData.id} fromName={incomingTransferData.from_member_name} />
+      )}
+
       {cuotaPending && (
         <Link
           href="/tesoreria"

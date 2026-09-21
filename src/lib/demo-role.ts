@@ -41,6 +41,7 @@ export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = 
     { href: "/calendario", label: "Calendario" },
     { href: "/votaciones", label: "Votaciones" },
     { href: "/incidencias", label: "Incidencias" },
+    { href: "/fichaje", label: "Fichaje" },
     { href: "/documentos", label: "Documentación" },
     { href: "/usuarios", label: "Usuarios" },
     { href: "/auditoria", label: "Auditoría" },
@@ -53,6 +54,7 @@ export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = 
     { href: "/calendario", label: "Calendario" },
     { href: "/votaciones", label: "Votaciones" },
     { href: "/incidencias", label: "Incidencias" },
+    { href: "/fichaje", label: "Fichaje" },
     { href: "/documentos", label: "Documentación" },
     { href: "/usuarios", label: "Usuarios" },
     { href: "/auditoria", label: "Auditoría" },
@@ -65,6 +67,7 @@ export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = 
     { href: "/calendario", label: "Calendario" },
     { href: "/votaciones", label: "Votaciones" },
     { href: "/incidencias", label: "Incidencias" },
+    { href: "/fichaje", label: "Fichaje" },
     { href: "/documentos", label: "Documentación" },
     { href: "/usuarios", label: "Usuarios" },
     { href: "/auditoria", label: "Auditoría" },
@@ -74,6 +77,7 @@ export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = 
     { href: "/calendario", label: "Calendario" },
     { href: "/votaciones", label: "Votaciones" },
     { href: "/incidencias", label: "Incidencias" },
+    { href: "/fichaje", label: "Fichaje" },
     { href: "/documentos", label: "Documentación" },
   ],
   tesorero: [
@@ -84,6 +88,7 @@ export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = 
     { href: "/calendario", label: "Calendario" },
     { href: "/votaciones", label: "Votaciones" },
     { href: "/incidencias", label: "Incidencias" },
+    { href: "/fichaje", label: "Fichaje" },
     { href: "/auditoria", label: "Auditoría" },
   ],
   bodeguero: [
@@ -91,6 +96,7 @@ export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = 
     { href: "/calendario", label: "Calendario" },
     { href: "/votaciones", label: "Votaciones" },
     { href: "/incidencias", label: "Incidencias" },
+    { href: "/fichaje", label: "Fichaje" },
   ],
   socio: [
     { href: "/consumos", label: "Consumiciones" },
@@ -98,5 +104,6 @@ export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = 
     { href: "/calendario", label: "Calendario" },
     { href: "/votaciones", label: "Votaciones" },
     { href: "/incidencias", label: "Incidencias" },
+    { href: "/fichaje", label: "Fichaje" },
   ],
 };

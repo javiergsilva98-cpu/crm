@@ -6,7 +6,7 @@ import { MovementForm } from "./movement-form";
 import { ClubSettingsForm } from "./club-settings-form";
 
 const INGRESO_TYPES = ["cuota", "ingreso"];
-const TREASURY_MANAGE_ROLES = ["admin", "presidente", "tesorero"];
+const TREASURY_MANAGE_ROLES = ["admin", "presidente", "vicepresidente", "tesorero"];
 
 type Movement = {
   id: string;

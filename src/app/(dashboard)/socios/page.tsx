@@ -7,9 +7,9 @@ import { SubmitButton } from "@/components/submit-button";
 import { MemberForm } from "./member-form";
 import { toggleMemberStatus } from "./actions";
 
-const MEMBER_MANAGE_ROLES = ["admin", "presidente", "secretario"];
-const ACCOUNT_CREATE_ROLES = ["admin", "presidente"];
-const EXPORT_ROLES = ["admin", "presidente", "tesorero"];
+const MEMBER_MANAGE_ROLES = ["admin", "presidente", "vicepresidente", "secretario"];
+const ACCOUNT_CREATE_ROLES = ["admin", "presidente", "vicepresidente"];
+const EXPORT_ROLES = ["admin", "presidente", "vicepresidente", "tesorero"];
 
 function nextKeyNumber(members: { key_number: string | null }[]): string {
   const numeric = members

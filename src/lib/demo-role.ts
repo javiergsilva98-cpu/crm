@@ -3,12 +3,21 @@
 // tiene el rol 'presidente' en la base de datos, así que el RLS deja
 // pasar cualquier lectura sin importar el rol elegido aquí.
 
-export const CLUB_ROLES = ["admin", "presidente", "secretario", "tesorero", "bodeguero", "socio"] as const;
+export const CLUB_ROLES = [
+  "admin",
+  "presidente",
+  "vicepresidente",
+  "secretario",
+  "tesorero",
+  "bodeguero",
+  "socio",
+] as const;
 export type ClubRole = (typeof CLUB_ROLES)[number];
 
 export const CLUB_ROLE_LABELS: Record<ClubRole, string> = {
   admin: "Admin",
   presidente: "Presidente",
+  vicepresidente: "Vicepresidente",
   secretario: "Secretario",
   tesorero: "Tesorero",
   bodeguero: "Bodeguero",
@@ -46,6 +55,17 @@ export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = 
     { href: "/usuarios", label: "Usuarios" },
     { href: "/auditoria", label: "Auditoría" },
   ],
+  vicepresidente: [
+    { href: "/socios", label: "Socios" },
+    { href: "/consumos", label: "Consumiciones" },
+    { href: "/tesoreria", label: "Tesorería" },
+    { href: "/inventario", label: "Inventario" },
+    { href: "/calendario", label: "Calendario" },
+    { href: "/votaciones", label: "Votaciones" },
+    { href: "/documentos", label: "Documentación" },
+    { href: "/usuarios", label: "Usuarios" },
+    { href: "/auditoria", label: "Auditoría" },
+  ],
   secretario: [
     { href: "/socios", label: "Socios" },
     { href: "/calendario", label: "Calendario" },
@@ -54,7 +74,9 @@ export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = 
   ],
   tesorero: [
     { href: "/socios", label: "Socios" },
+    { href: "/consumos", label: "Consumiciones" },
     { href: "/tesoreria", label: "Tesorería" },
+    { href: "/inventario", label: "Inventario" },
     { href: "/calendario", label: "Calendario" },
     { href: "/votaciones", label: "Votaciones" },
     { href: "/auditoria", label: "Auditoría" },

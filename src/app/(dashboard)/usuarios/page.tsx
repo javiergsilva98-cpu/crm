@@ -6,7 +6,7 @@ import { UserForm } from "./user-form";
 import { ResetPasswordButton } from "./reset-password-button";
 import { updateUserAccount, deleteUserAccount } from "./actions";
 
-const USER_MANAGE_ROLES = ["admin", "presidente"];
+const USER_MANAGE_ROLES = ["admin", "presidente", "vicepresidente"];
 
 type ProfileRow = {
   id: string;

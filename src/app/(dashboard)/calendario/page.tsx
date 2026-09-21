@@ -7,7 +7,7 @@ import { ReservationForm } from "./reservation-form";
 import { CalendarioViews } from "./calendar-views";
 import { approveReservation, rejectReservation } from "./actions";
 
-const MANAGEMENT_ROLES = ["admin", "presidente", "secretario", "tesorero"];
+const MANAGEMENT_ROLES = ["admin", "presidente", "vicepresidente", "secretario", "tesorero"];
 
 type EventRow = {
   id: string;

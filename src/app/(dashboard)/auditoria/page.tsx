@@ -4,7 +4,7 @@ import { ExportLink } from "@/components/export-link";
 import { AuditEntryRow } from "./audit-entry-row";
 import type { AuditRow } from "./summarize";
 
-const AUDIT_ROLES = ["admin", "presidente", "tesorero"];
+const AUDIT_ROLES = ["admin", "presidente", "vicepresidente", "tesorero"];
 
 export default async function AuditoriaPage() {
   const supabase = await createClient();

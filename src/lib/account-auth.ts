@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 
-export const ACCOUNT_MANAGE_ROLES = ["admin", "presidente"];
+export const ACCOUNT_MANAGE_ROLES = ["admin", "presidente", "vicepresidente"];
 
 // Comprobación real (rol de la fila `profiles` del usuario autenticado),
 // no el selector de vista de la demo: crear/gestionar cuentas de acceso

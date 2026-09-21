@@ -10,7 +10,13 @@ type InventoryItem = {
   unit: string;
   current_stock: number;
   low_stock_threshold: number;
+  current_cost: number;
+  sale_price: number | null;
 };
+
+function eur(n: number) {
+  return `${n.toFixed(2)} €`;
+}
 
 export function InventoryItemRow({
   item,
@@ -54,9 +60,15 @@ export function InventoryItemRow({
           </button>
         )}
       </div>
-      <p className={`text-sm font-bold ${low ? "text-warning" : "text-foreground"}`}>
-        {item.current_stock} <span className="font-normal text-muted">{item.unit}</span>
-      </p>
+      <div className="flex flex-shrink-0 flex-col items-end gap-0.5">
+        <p className={`text-sm font-bold ${low ? "text-warning" : "text-foreground"}`}>
+          {item.current_stock} <span className="font-normal text-muted">{item.unit}</span>
+        </p>
+        <p className="text-[11px] text-muted">
+          coste {eur(item.current_cost)}
+          {item.sale_price !== null && <> · venta {eur(item.sale_price)}</>}
+        </p>
+      </div>
 
       {editing && canEditThreshold && (
         <form

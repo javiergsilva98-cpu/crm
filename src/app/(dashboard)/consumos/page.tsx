@@ -7,12 +7,12 @@ import { MarkConsumptionForm } from "./mark-consumption-form";
 import { ShareConsumptionForm } from "./share-consumption-form";
 import { IncidentButton } from "./incident-button";
 
-const MENU_MANAGE_ROLES = ["admin", "presidente", "tesorero", "bodeguero"];
-const EXPORT_ROLES = ["admin", "presidente", "tesorero"];
+const MENU_MANAGE_ROLES = ["admin", "presidente", "vicepresidente", "tesorero", "bodeguero"];
+const EXPORT_ROLES = ["admin", "presidente", "vicepresidente", "tesorero"];
 // El historial completo (todas las consumiciones, sin límite bajo) solo
 // lo ve la directiva con acceso a tesorería. El resto de roles ven una
 // capa de transparencia acotada (últimas ~20), igual que el socio.
-const FULL_HISTORY_ROLES = ["admin", "presidente", "tesorero"];
+const FULL_HISTORY_ROLES = ["admin", "presidente", "vicepresidente", "tesorero"];
 const TRANSPARENCY_LIMIT = 20;
 
 type MenuItem = { id: string; name: string; category: string; price: number; stock_mode: string };

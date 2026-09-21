@@ -16,6 +16,7 @@ App interna de **CLUB 26**, asociación gastronómica y cultural en Maello
 |---|---|---|
 | Admin | Javier | Acceso total, incluida la gestión de cuentas |
 | Presidente | Marco | Gestión general, también gestiona cuentas |
+| Vicepresidente | — | Mismo nivel de acceso que presidencia |
 | Secretario | Pablo | Ficha de socios, actas, documentación |
 | Tesorero | Marlon | Cuenta bancaria, cobros, precios, balances |
 | Bodeguero | Charly (apoyo Chervo) | Compras, reposición de inventario |
@@ -71,12 +72,20 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
    o comprometidos, p. ej. el seguro de los próximos meses) y las
    últimas compras grandes. Tesorería gestiona ese importe reservado
    desde la propia pantalla.
-5. **Inventario** (`/inventario`): stock de la bodega y registro de
-   reposiciones (actualiza el stock automáticamente). Cada artículo
-   tiene su propio umbral de aviso (editable por admin, presidencia y
-   bodeguero); cuando el stock baja de ahí salta un aviso en la propia
-   pantalla y una insignia en el acceso rápido del Panel, visible para
-   admin, presidencia, tesorería y bodeguero.
+5. **Inventario** (`/inventario`): por artículo, stock actual, coste
+   actual (del último pedido) y precio de venta — visible solo para
+   admin, presidencia, vicepresidencia y tesorería; el bodeguero no ve
+   ese detalle, solo el formulario de reposición. Reponer (admin,
+   presidencia, vicepresidencia, tesorería y bodeguero) permite vincular
+   a un artículo existente o dar de alta uno nuevo (nombre, unidad,
+   categoría, individual o a repartir y precio de venta inicial — crea a
+   la vez el artículo de bodega y el de carta). Cada artículo tiene su
+   propio umbral de aviso; cuando el stock baja de ahí salta un aviso en
+   la propia pantalla y una insignia en el Panel. **Conteo físico**
+   (`/inventario/conteo`, admin, presidencia, vicepresidencia y
+   bodeguero): se introduce la cantidad real de cada artículo y se
+   compara con el stock teórico (para detectar mermas o consumos no
+   apuntados); al guardar, el stock queda ajustado a lo contado.
 6. **Calendario** (`/calendario`): eventos del club y reservas del local
    por días solicitadas por cualquier socio (quedan pendientes hasta que
    gestión las aprueba o rechaza), con quién abre y quién cierra cada

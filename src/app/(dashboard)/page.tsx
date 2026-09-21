@@ -64,7 +64,7 @@ export default async function DashboardHome() {
   const navItems = NAV_BY_ROLE[demoRole];
 
   let lowStockCount = 0;
-  if (["admin", "presidente", "tesorero", "bodeguero"].includes(demoRole)) {
+  if (["admin", "presidente", "vicepresidente", "tesorero", "bodeguero"].includes(demoRole)) {
     const { data: inventoryData } = await supabase
       .from("inventory_items")
       .select("current_stock, low_stock_threshold");

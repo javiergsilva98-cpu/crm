@@ -6,7 +6,7 @@ import { VoteForm } from "./vote-form";
 import { CastForm } from "./cast-form";
 import { closeVote } from "./actions";
 
-const BOARD_ROLES = ["admin", "presidente", "secretario", "tesorero", "bodeguero"];
+const BOARD_ROLES = ["admin", "presidente", "vicepresidente", "secretario", "tesorero", "bodeguero"];
 
 type VoteOption = { id: string; label: string; position: number };
 type VoteRow = {

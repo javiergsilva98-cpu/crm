@@ -3,7 +3,7 @@ import { getDemoRole } from "@/lib/demo-context";
 import { DocumentForm } from "./document-form";
 import { DocumentRow } from "./document-row";
 
-const DOCUMENT_ROLES = ["admin", "presidente", "secretario"];
+const DOCUMENT_ROLES = ["admin", "presidente", "vicepresidente", "secretario"];
 
 export default async function DocumentosPage() {
   const supabase = await createClient();

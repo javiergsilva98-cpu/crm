@@ -89,6 +89,7 @@ export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = 
     { href: "/votaciones", label: "Votaciones" },
     { href: "/incidencias", label: "Incidencias" },
     { href: "/fichaje", label: "Fichaje" },
+    { href: "/documentos", label: "Documentación" },
     { href: "/auditoria", label: "Auditoría" },
   ],
   bodeguero: [
@@ -97,6 +98,7 @@ export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = 
     { href: "/votaciones", label: "Votaciones" },
     { href: "/incidencias", label: "Incidencias" },
     { href: "/fichaje", label: "Fichaje" },
+    { href: "/documentos", label: "Documentación" },
   ],
   socio: [
     { href: "/consumos", label: "Consumiciones" },
@@ -105,5 +107,6 @@ export const NAV_BY_ROLE: Record<ClubRole, { href: string; label: string }[]> = 
     { href: "/votaciones", label: "Votaciones" },
     { href: "/incidencias", label: "Incidencias" },
     { href: "/fichaje", label: "Fichaje" },
+    { href: "/documentos", label: "Documentación" },
   ],
 };

@@ -12,6 +12,7 @@ type HistoryRow = {
   old_price: number | null;
   new_price: number;
   needs_review: boolean;
+  receipt_photo_url: string | null;
 };
 
 function eur(n: number) {
@@ -46,7 +47,7 @@ export function ProductInfoButton({
     const supabase = createClient();
     const { data } = await supabase
       .from("menu_item_price_history")
-      .select("id, changed_at, old_cost, new_cost, old_price, new_price, needs_review")
+      .select("id, changed_at, old_cost, new_cost, old_price, new_price, needs_review, receipt_photo_url")
       .eq("menu_item_id", menuItemId)
       .order("changed_at", { ascending: false })
       .limit(5);
@@ -124,6 +125,16 @@ export function ProductInfoButton({
                     </p>
                     {r.needs_review && (
                       <p className="mt-0.5 font-semibold text-warning">Quedó pendiente de revisión.</p>
+                    )}
+                    {r.receipt_photo_url && (
+                      <a
+                        href={r.receipt_photo_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-0.5 inline-block font-semibold text-accent underline"
+                      >
+                        Ver ticket
+                      </a>
                     )}
                   </div>
                 ))}

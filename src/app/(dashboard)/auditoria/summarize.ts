@@ -4,9 +4,19 @@ const TABLE_LABELS: Record<string, string> = {
   inventory_items: "Inventario",
   inventory_restocks: "Reposición",
   consumptions: "Consumo",
-  menu_items: "Carta",
+  menu_items: "Carta (precio)",
   profiles: "Cuentas",
+  incidencias: "Incidencias",
+  club_status: "Fichaje: club",
+  responsibility_transfers: "Fichaje: cesión",
+  documents: "Documentación",
+  votes: "Votaciones",
 };
+
+// Tablas que Fase 9 considera "movimientos gordos" a efectos de
+// auditoría: altas de socios, reposiciones de inventario, cambios de
+// precio y cesiones de responsabilidad del fichaje.
+export const BIG_MOVEMENT_TABLES = ["members", "inventory_restocks", "menu_items", "responsibility_transfers"];
 
 const ACTION_LABELS: Record<string, string> = {
   insert: "Alta",
@@ -23,8 +33,10 @@ const LABEL_FIELDS = [
   "name",
   "email",
   "question",
+  "descripcion",
   "description",
   "movement_type",
+  "from_member_name",
   "action",
 ];
 

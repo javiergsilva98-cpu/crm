@@ -15,6 +15,7 @@ export async function createDocument(formData: FormData): Promise<ActionResult> 
   const name = (formData.get("name") as string)?.trim();
   const docType = formData.get("doc_type") as string;
   const referenceUrl = (formData.get("reference_url") as string)?.trim();
+  const folder = formData.get("folder") === "privado" ? "privado" : "general";
 
   if (!name || !docType) {
     return { error: "Indica al menos el nombre y el tipo de documento." };
@@ -25,6 +26,7 @@ export async function createDocument(formData: FormData): Promise<ActionResult> 
     name,
     doc_type: docType,
     reference_url: referenceUrl ? normalizeUrl(referenceUrl) : null,
+    folder,
   });
 
   if (error) {
@@ -39,6 +41,7 @@ export async function updateDocument(formData: FormData): Promise<ActionResult> 
   const name = (formData.get("name") as string)?.trim();
   const docType = formData.get("doc_type") as string;
   const referenceUrl = (formData.get("reference_url") as string)?.trim();
+  const folder = formData.get("folder") === "privado" ? "privado" : "general";
 
   if (!id || !name || !docType) {
     return { error: "Indica al menos el nombre y el tipo de documento." };
@@ -47,7 +50,7 @@ export async function updateDocument(formData: FormData): Promise<ActionResult> 
   const supabase = await createClient();
   const { error } = await supabase
     .from("documents")
-    .update({ name, doc_type: docType, reference_url: referenceUrl ? normalizeUrl(referenceUrl) : null })
+    .update({ name, doc_type: docType, reference_url: referenceUrl ? normalizeUrl(referenceUrl) : null, folder })
     .eq("id", id);
 
   if (error) {

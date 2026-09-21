@@ -63,6 +63,10 @@ export function ReservationForm() {
           className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-accent"
         />
       </div>
+      <label className="flex items-center gap-2 text-sm text-foreground">
+        <input name="is_exclusive" type="checkbox" defaultChecked className="h-4 w-4 accent-accent" />
+        Reserva en exclusiva (uso exclusivo del local esa fecha)
+      </label>
       <button
         type="submit"
         disabled={pending}

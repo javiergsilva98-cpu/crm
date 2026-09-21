@@ -13,6 +13,7 @@ type EventRow = {
   notes: string | null;
   opensName: string | null;
   closesName: string | null;
+  isExclusive: boolean;
 };
 
 const WEEKDAYS = ["L", "M", "X", "J", "V", "S", "D"];
@@ -212,6 +213,11 @@ function EventListItem({ e, isLast }: { e: EventRow; isLast: boolean }) {
           {e.kind === "reserva" && (
             <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[10px] font-bold text-accent">
               Reserva
+            </span>
+          )}
+          {e.kind === "reserva" && e.isExclusive && e.status === "confirmado" && (
+            <span className="rounded-full bg-warning-soft px-2 py-0.5 text-[10px] font-bold text-warning">
+              Exclusiva
             </span>
           )}
           {e.status === "rechazado" && (

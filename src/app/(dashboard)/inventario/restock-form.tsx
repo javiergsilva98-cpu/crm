@@ -1,6 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { CameraIcon } from "@/components/icons";
 import { registerRestock, createInventoryItem } from "./actions";
 
 type Item = { id: string; name: string; unit: string };
@@ -18,7 +20,34 @@ export function RestockForm({
   const [mode, setMode] = useState<"existing" | "new">("existing");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+
+  async function handleReceiptChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setError("El ticket debe ser una imagen (foto o captura).");
+      return;
+    }
+    setUploading(true);
+    setError(null);
+    const supabase = createClient();
+    const extension = file.name.split(".").pop() || "jpg";
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${extension}`;
+    const { error: uploadError } = await supabase.storage.from("tickets").upload(path, file, {
+      cacheControl: "3600",
+      upsert: false,
+    });
+    setUploading(false);
+    if (uploadError) {
+      setError("No se pudo subir el ticket: " + uploadError.message);
+      return;
+    }
+    const { data } = supabase.storage.from("tickets").getPublicUrl(path);
+    setReceiptUrl(data.publicUrl);
+  }
 
   return (
     <div>
@@ -51,6 +80,7 @@ export function RestockForm({
         action={async (formData) => {
           setPending(true);
           setError(null);
+          formData.set("receipt_photo_url", receiptUrl ?? "");
           const result = mode === "existing" ? await registerRestock(formData) : await createInventoryItem(formData);
           setPending(false);
           if (result && "error" in result && result.error) {
@@ -58,6 +88,7 @@ export function RestockForm({
             return;
           }
           formRef.current?.reset();
+          setReceiptUrl(null);
         }}
       >
         {mode === "existing" ? (
@@ -146,6 +177,14 @@ export function RestockForm({
           )}
         </div>
         <div>
+          <label className="mb-1 block text-xs text-muted">Ticket / factura (opcional)</label>
+          <label className="flex w-fit cursor-pointer items-center gap-1.5 rounded-xl border border-border bg-background px-3 py-2 text-xs font-semibold text-muted hover:text-foreground">
+            <CameraIcon className="h-4 w-4" />
+            {uploading ? "Subiendo..." : receiptUrl ? "Ticket adjuntado" : "Adjuntar foto"}
+            <input type="file" accept="image/*" onChange={handleReceiptChange} className="hidden" />
+          </label>
+        </div>
+        <div>
           <label className="mb-1 block text-xs text-muted">Responsable</label>
           <select
             name="responsible_member_id"
@@ -161,7 +200,7 @@ export function RestockForm({
         </div>
         <button
           type="submit"
-          disabled={pending}
+          disabled={pending || uploading}
           className="rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
         >
           {pending ? "Guardando..." : mode === "existing" ? "Registrar reposición" : "Crear artículo"}

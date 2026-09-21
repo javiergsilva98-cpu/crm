@@ -17,6 +17,7 @@ type EventRow = {
   kind: "evento" | "reserva";
   status: "pendiente" | "confirmado" | "rechazado";
   notes: string | null;
+  is_exclusive: boolean;
   opens: { full_name: string } | null;
   closes: { full_name: string } | null;
   requester: { full_name: string } | null;
@@ -39,7 +40,7 @@ export default async function CalendarioPage() {
     supabase
       .from("events")
       .select(
-        "id, name, event_date, end_date, kind, status, notes, opens:members!events_opens_member_id_fkey(full_name), closes:members!events_closes_member_id_fkey(full_name), requester:members!events_requested_by_member_id_fkey(full_name)",
+        "id, name, event_date, end_date, kind, status, notes, is_exclusive, opens:members!events_opens_member_id_fkey(full_name), closes:members!events_closes_member_id_fkey(full_name), requester:members!events_requested_by_member_id_fkey(full_name)",
       )
       .order("event_date", { ascending: true }),
     supabase.from("members").select("id, full_name").eq("status", "activo").order("full_name"),
@@ -140,6 +141,7 @@ export default async function CalendarioPage() {
           kind: e.kind,
           status: e.status,
           notes: e.notes,
+          isExclusive: e.is_exclusive,
           opensName: e.opens?.full_name ?? null,
           closesName: e.closes?.full_name ?? null,
         }))}

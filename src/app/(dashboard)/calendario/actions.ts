@@ -42,6 +42,7 @@ export async function requestReservation(formData: FormData): Promise<ActionResu
   const eventDate = formData.get("event_date") as string;
   const endDate = (formData.get("end_date") as string) || null;
   const notes = (formData.get("notes") as string) || null;
+  const isExclusive = formData.get("is_exclusive") === "on";
   const memberId = (formData.get("member_id") as string) || (await getDemoMemberIdCookie());
 
   if (!name || !eventDate) {
@@ -60,6 +61,7 @@ export async function requestReservation(formData: FormData): Promise<ActionResu
     kind: "reserva",
     status: "pendiente",
     requested_by_member_id: memberId,
+    is_exclusive: isExclusive,
   });
 
   if (error) {

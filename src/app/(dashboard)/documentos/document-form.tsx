@@ -10,7 +10,7 @@ const DOC_TYPES = [
   { value: "otro", label: "Otro" },
 ];
 
-export function DocumentForm() {
+export function DocumentForm({ canUsePrivate }: { canUsePrivate: boolean }) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
@@ -54,6 +54,20 @@ export function DocumentForm() {
           ))}
         </select>
       </div>
+      {canUsePrivate && (
+        <div>
+          <label className="mb-1 block text-xs text-muted">Carpeta</label>
+          <select
+            name="folder"
+            defaultValue="general"
+            title="General: visible para todos los socios. Privada: solo admin, presidencia y tesorería."
+            className="rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-accent"
+          >
+            <option value="general">General (todo el club)</option>
+            <option value="privado">Privada (admin, presidencia, tesorería)</option>
+          </select>
+        </div>
+      )}
       <div>
         <label className="mb-1 block text-xs text-muted">Enlace (opcional)</label>
         <input

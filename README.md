@@ -110,11 +110,20 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
    apuntados); al guardar, el stock queda ajustado a lo contado.
    **Margen de invitado**: junto al margen de socio, un segundo % global
    (50% por defecto) que fija el precio de invitado de cada artículo,
-   con el mismo margen mínimo de seguridad como salvaguarda.
-6. **Calendario** (`/calendario`): eventos del club y reservas del local
-   por días solicitadas por cualquier socio (quedan pendientes hasta que
-   gestión las aprueba o rechaza), con quién abre y quién cierra cada
-   jornada.
+   con el mismo margen mínimo de seguridad como salvaguarda. Al
+   reponer se puede adjuntar una foto del ticket/factura (opcional);
+   queda enlazada tanto a la reposición como a la fila del historial
+   de precio que provoca (visible desde el icono de información de
+   cada artículo en Consumiciones, con un enlace "Ver ticket").
+6. **Calendario** (`/calendario`): eventos generales creados por
+   gestión, visibles para todo el club, y reservas del local por días
+   solicitadas por cualquier socio (quedan pendientes hasta que gestión
+   las aprueba o rechaza), con quién abre y quién cierra cada jornada.
+   Cada reserva puede marcarse **en exclusiva** (por defecto sí):
+   pensado como base para que, más adelante, "quién está dentro" del
+   fichaje (Fase 8) se pueda acotar a esa reserva — de momento la
+   marca es solo informativa en el listado, no cambia todavía quién ve
+   la lista de presentes, que sigue la regla general de la Fase 8.
 7. **Votaciones** (`/votaciones`): solo presidencia y secretaría crean
    votaciones nuevas (título, descripción, opciones, pública o anónima,
    tipo normal o **express** — para decisiones urgentes, con su propia
@@ -163,13 +172,21 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
    acceso de alguien que ha perdido su contraseña: genera una nueva
    provisional (que también habrá que entregarle en mano) y le vuelve a
    exigir cambiarla al entrar.
-11. **Documentación** (`/documentos`, admin/presidencia/secretaría):
-   estatutos, actas y normativa del club, cada una con un enlace opcional
-   (pensado para vincular más adelante al Drive del club).
+11. **Documentación** (`/documentos`): estatutos, actas y normativa del
+   club, cada una con un enlace opcional (pensado para vincular más
+   adelante al Drive del club), organizados en dos carpetas: **general**
+   (visible para todo el club, gestionada por admin, presidencia,
+   vicepresidencia y secretaría) y **privada** (solo visible y editable
+   por admin, presidencia y tesorería, para documentación con datos
+   económicos sensibles).
 12. **Auditoría** (`/auditoria`, admin/presidencia/tesorería): histórico
-    de altas, bajas, movimientos de tesorería, inventario y consumiciones
-    — todo lo que cambia en la app queda registrado con quién y cuándo,
-    vía triggers a nivel de base de datos. Exportable a CSV.
+    de altas, bajas, movimientos de tesorería, inventario, consumiciones,
+    incidencias y fichaje — todo lo que cambia en la app queda
+    registrado con quién y cuándo, vía triggers a nivel de base de
+    datos. Un filtro de "solo movimientos gordos" acota a altas de
+    socios, reposiciones de inventario, cambios de precio y cesiones de
+    responsabilidad del fichaje. Exportable a CSV (Excel lo abre
+    directamente), con o sin ese filtro aplicado.
 13. **Mi perfil** (`/perfil`, cualquier cuenta): cada usuario edita su
     propio nombre visible y puede subir una foto de perfil (se guarda en
     Supabase Storage, bucket `avatars`, cada cuenta solo puede escribir

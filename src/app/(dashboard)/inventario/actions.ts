@@ -10,6 +10,7 @@ export async function registerRestock(formData: FormData): Promise<ActionResult>
   const quantity = Number(formData.get("quantity"));
   const cost = Number(formData.get("cost") || 0);
   const responsibleMemberId = (formData.get("responsible_member_id") as string) || null;
+  const receiptPhotoUrl = (formData.get("receipt_photo_url") as string) || null;
 
   if (!inventoryItemId || !quantity || quantity <= 0) {
     return { error: "Indica un artículo y una cantidad válida." };
@@ -21,6 +22,7 @@ export async function registerRestock(formData: FormData): Promise<ActionResult>
     quantity,
     cost,
     responsible_member_id: responsibleMemberId,
+    receipt_photo_url: receiptPhotoUrl,
   });
 
   if (error) {
@@ -39,6 +41,7 @@ export async function createInventoryItem(formData: FormData): Promise<ActionRes
   const cost = Number(formData.get("cost") || 0);
   const lowStockThreshold = Number(formData.get("low_stock_threshold") || 5);
   const responsibleMemberId = (formData.get("responsible_member_id") as string) || null;
+  const receiptPhotoUrl = (formData.get("receipt_photo_url") as string) || null;
 
   if (!name || !category || !quantity || quantity <= 0 || !cost || cost <= 0) {
     return { error: "Indica nombre, categoría, cantidad inicial y coste del pedido válidos." };
@@ -54,6 +57,7 @@ export async function createInventoryItem(formData: FormData): Promise<ActionRes
     p_cost: cost,
     p_low_stock_threshold: lowStockThreshold,
     p_responsible_member_id: responsibleMemberId,
+    p_receipt_photo_url: receiptPhotoUrl,
   });
 
   if (error) {

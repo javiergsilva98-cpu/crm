@@ -16,16 +16,19 @@ type DocumentRow = {
   name: string;
   doc_type: string;
   reference_url: string | null;
+  folder: string;
 };
 
 export function DocumentRow({
   doc,
   isLast,
   canManage,
+  canUsePrivate,
 }: {
   doc: DocumentRow;
   isLast: boolean;
   canManage: boolean;
+  canUsePrivate: boolean;
 }) {
   const [editing, setEditing] = useState(false);
   const [pending, setPending] = useState(false);
@@ -67,6 +70,16 @@ export function DocumentRow({
             </option>
           ))}
         </select>
+        {canUsePrivate && (
+          <select
+            name="folder"
+            defaultValue={doc.folder}
+            className="rounded-xl border border-border bg-background px-2.5 py-1.5 text-xs text-foreground outline-none focus:border-accent"
+          >
+            <option value="general">General</option>
+            <option value="privado">Privada</option>
+          </select>
+        )}
         <input
           name="reference_url"
           type="text"
@@ -103,6 +116,11 @@ export function DocumentRow({
         <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[10px] font-bold text-accent">
           {DOC_TYPE_LABELS[doc.doc_type] ?? doc.doc_type}
         </span>
+        {doc.folder === "privado" && (
+          <span className="ml-1.5 rounded-full bg-warning-soft px-2 py-0.5 text-[10px] font-bold text-warning">
+            Privada
+          </span>
+        )}
       </div>
       {doc.reference_url && (
         <a

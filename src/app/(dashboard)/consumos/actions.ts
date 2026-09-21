@@ -144,14 +144,17 @@ export async function reportIncident(formData: FormData): Promise<ActionResult> 
 
   const supabase = await createClient();
   const { error } = await supabase.from("incidencias").insert({
-    tipo: "consumicion_incorrecta",
-    referencia_id: consumptionId,
+    categoria: "consumicion_incorrecta",
+    descripcion: "Consumición reportada como incorrecta desde el historial.",
+    referencia_consumicion_id: consumptionId,
     reportado_por_member_id: memberId,
   });
 
   if (error) {
     return { error: error.message };
   }
+
+  revalidatePath("/incidencias");
 }
 
 // Reparte un artículo "compartido" (una botella) entre varios socios: el

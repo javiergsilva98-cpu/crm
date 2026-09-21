@@ -127,19 +127,32 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
    El resultado agregado de cualquier votación, sea o no anónima, es
    siempre visible para todos; en una anónima nunca se muestra quién
    votó qué.
-8. **Usuarios** (`/usuarios`, solo admin/presidencia): crear cuentas,
+8. **Incidencias** (`/incidencias`): visible y usable por cualquier
+   socio, no solo gestión. Reportar una incidencia es libre — algo
+   roto, falta de material, convivencia, un producto de inventario,
+   el fichaje de una jornada, u "otro" — o vinculada a una consumición
+   concreta (lo que ya hacía la Fase 1 desde el botón "Reportar
+   incidencia" del historial). Cada una guarda automáticamente quién la
+   reportó y cuándo. Solo presidencia, tesorería y bodeguero pueden
+   cambiar el estado (pendiente / en revisión / resuelta); al resolver
+   una incidencia vinculada a una consumición, aprobarla corrige el
+   cargo original (queda marcado como corregido, con el precio anterior
+   guardado, sin borrar la consumición) y rechazarla la deja igual. El
+   listado, con filtro por estado y por categoría, es visible para todo
+   el club como capa de transparencia.
+9. **Usuarios** (`/usuarios`, solo admin/presidencia): crear cuentas,
    asignar rol y vincularlas a un socio. También permite recuperar el
    acceso de alguien que ha perdido su contraseña: genera una nueva
    provisional (que también habrá que entregarle en mano) y le vuelve a
    exigir cambiarla al entrar.
-9. **Documentación** (`/documentos`, admin/presidencia/secretaría):
+10. **Documentación** (`/documentos`, admin/presidencia/secretaría):
    estatutos, actas y normativa del club, cada una con un enlace opcional
    (pensado para vincular más adelante al Drive del club).
-10. **Auditoría** (`/auditoria`, admin/presidencia/tesorería): histórico
+11. **Auditoría** (`/auditoria`, admin/presidencia/tesorería): histórico
     de altas, bajas, movimientos de tesorería, inventario y consumiciones
     — todo lo que cambia en la app queda registrado con quién y cuándo,
     vía triggers a nivel de base de datos. Exportable a CSV.
-11. **Mi perfil** (`/perfil`, cualquier cuenta): cada usuario edita su
+12. **Mi perfil** (`/perfil`, cualquier cuenta): cada usuario edita su
     propio nombre visible y puede subir una foto de perfil (se guarda en
     Supabase Storage, bucket `avatars`, cada cuenta solo puede escribir
     dentro de su propia carpeta).

@@ -92,21 +92,35 @@ export async function toggleMenuItemActive(formData: FormData): Promise<ActionRe
   revalidatePath("/consumos");
 }
 
+// El precio se busca en el servidor a partir del artículo y de si el
+// consumo es para socio o invitado (Fase 6) en vez de confiar en un
+// precio que llegue del cliente, para que no se pueda manipular.
 export async function markConsumption(formData: FormData): Promise<ActionResult> {
   const memberId = formData.get("member_id") as string;
   const menuItemId = formData.get("menu_item_id") as string;
-  const unitPrice = Number(formData.get("unit_price"));
+  const isGuest = formData.get("is_guest") === "true";
 
   if (!memberId || !menuItemId) {
     return { error: "Falta indicar el socio o el artículo." };
   }
 
   const supabase = await createClient();
+  const { data: menuItem, error: menuItemError } = await supabase
+    .from("menu_items")
+    .select("price, guest_price, active")
+    .eq("id", menuItemId)
+    .single();
+
+  if (menuItemError || !menuItem || !menuItem.active) {
+    return { error: "Artículo no disponible." };
+  }
+
   const { error } = await supabase.from("consumptions").insert({
     member_id: memberId,
     menu_item_id: menuItemId,
     quantity: 1,
-    unit_price: unitPrice,
+    unit_price: isGuest ? menuItem.guest_price : menuItem.price,
+    is_guest: isGuest,
   });
 
   if (error) {
@@ -147,6 +161,7 @@ export async function reportIncident(formData: FormData): Promise<ActionResult> 
 export async function markSharedConsumption(formData: FormData): Promise<ActionResult> {
   const menuItemId = formData.get("menu_item_id") as string;
   const memberIds = formData.getAll("member_ids") as string[];
+  const isGuest = formData.get("is_guest") === "true";
 
   if (!menuItemId || memberIds.length < 2) {
     return { error: "Elige el artículo y al menos dos socios para repartir." };
@@ -156,6 +171,7 @@ export async function markSharedConsumption(formData: FormData): Promise<ActionR
   const { error } = await supabase.rpc("record_shared_consumption", {
     p_menu_item_id: menuItemId,
     p_member_ids: memberIds,
+    p_is_guest: isGuest,
   });
 
   if (error) {

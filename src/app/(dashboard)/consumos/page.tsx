@@ -3,8 +3,7 @@ import { getDemoRole, getDemoMemberIdCookie } from "@/lib/demo-context";
 import { ExportLink } from "@/components/export-link";
 import { MenuItemForm } from "./menu-item-form";
 import { MenuItemRow } from "./menu-item-row";
-import { MarkConsumptionForm } from "./mark-consumption-form";
-import { ShareConsumptionForm } from "./share-consumption-form";
+import { GuestModeBoard } from "./guest-mode-board";
 import { IncidentButton } from "./incident-button";
 
 const MENU_MANAGE_ROLES = ["admin", "presidente", "vicepresidente", "tesorero", "bodeguero"];
@@ -20,6 +19,7 @@ type MenuItem = {
   name: string;
   category: string;
   price: number;
+  guest_price: number;
   current_cost: number;
   needs_price_review: boolean;
   stock_mode: string;
@@ -31,7 +31,7 @@ export default async function ConsumosPage() {
 
   const { data: menuItemsData } = await supabase
     .from("menu_items")
-    .select("id, name, category, price, current_cost, needs_price_review, stock_mode")
+    .select("id, name, category, price, guest_price, current_cost, needs_price_review, stock_mode")
     .eq("active", true)
     .order("category")
     .order("name");
@@ -53,13 +53,13 @@ export default async function ConsumosPage() {
     const [{ data: historyData }, { data: clubHistoryData }] = await Promise.all([
       supabase
         .from("consumptions")
-        .select("id, quantity, unit_price, consumed_at, menu_items(name)")
+        .select("id, quantity, unit_price, is_guest, consumed_at, menu_items(name)")
         .eq("member_id", currentId)
         .order("consumed_at", { ascending: false })
         .limit(15),
       supabase
         .from("consumptions")
-        .select("id, quantity, unit_price, consumed_at, members(full_name), menu_items(name)")
+        .select("id, quantity, unit_price, is_guest, consumed_at, members(full_name), menu_items(name)")
         .order("consumed_at", { ascending: false })
         .limit(TRANSPARENCY_LIMIT),
     ]);
@@ -67,6 +67,7 @@ export default async function ConsumosPage() {
       id: string;
       quantity: number;
       unit_price: number;
+      is_guest: boolean;
       consumed_at: string;
       menu_items: { name: string } | null;
     }>;
@@ -74,6 +75,7 @@ export default async function ConsumosPage() {
       id: string;
       quantity: number;
       unit_price: number;
+      is_guest: boolean;
       consumed_at: string;
       members: { full_name: string } | null;
       menu_items: { name: string } | null;
@@ -86,8 +88,7 @@ export default async function ConsumosPage() {
           <p className="text-sm text-muted">Toca para pedir lo que tomes</p>
         </div>
 
-        <MenuSection title="Bebidas" items={bebidas} memberId={currentId} members={list} />
-        <MenuSection title="Aperitivos" items={aperitivos} memberId={currentId} members={list} />
+        <GuestModeBoard bebidas={bebidas} aperitivos={aperitivos} memberId={currentId} members={list} />
 
         <p className="mb-2.5 mt-7 text-xs font-bold uppercase tracking-wide text-muted">Tu historial reciente</p>
         <HistoryTable
@@ -97,6 +98,7 @@ export default async function ConsumosPage() {
             item: h.menu_items?.name ?? "—",
             quantity: h.quantity,
             total: h.quantity * h.unit_price,
+            isGuest: h.is_guest,
           }))}
           reporterMemberId={currentId}
         />
@@ -113,6 +115,7 @@ export default async function ConsumosPage() {
             item: h.menu_items?.name ?? "—",
             quantity: h.quantity,
             total: h.quantity * h.unit_price,
+            isGuest: h.is_guest,
           }))}
           reporterMemberId={currentId}
         />
@@ -125,12 +128,14 @@ export default async function ConsumosPage() {
     await Promise.all([
       supabase
         .from("consumptions")
-        .select("id, quantity, unit_price, consumed_at, members(full_name), menu_items(name)")
+        .select("id, quantity, unit_price, is_guest, consumed_at, members(full_name), menu_items(name)")
         .order("consumed_at", { ascending: false })
         .limit(isFullHistory ? 30 : TRANSPARENCY_LIMIT),
       supabase
         .from("menu_items")
-        .select("id, name, category, price, current_cost, needs_price_review, active, inventory_item_id, stock_mode")
+        .select(
+          "id, name, category, price, guest_price, current_cost, needs_price_review, active, inventory_item_id, stock_mode",
+        )
         .order("category")
         .order("name"),
       supabase.from("inventory_items").select("id, name").order("name"),
@@ -140,6 +145,7 @@ export default async function ConsumosPage() {
     id: string;
     quantity: number;
     unit_price: number;
+    is_guest: boolean;
     consumed_at: string;
     members: { full_name: string } | null;
     menu_items: { name: string } | null;
@@ -172,6 +178,7 @@ export default async function ConsumosPage() {
           item: h.menu_items?.name ?? "—",
           quantity: h.quantity,
           total: h.quantity * h.unit_price,
+          isGuest: h.is_guest,
         }))}
         reporterMemberId={reporterMemberId}
       />
@@ -199,56 +206,19 @@ export default async function ConsumosPage() {
   );
 }
 
-function MenuSection({
-  title,
-  items,
-  memberId,
-  members,
-}: {
-  title: string;
-  items: MenuItem[];
-  memberId: string;
-  members: { id: string; full_name: string }[];
-}) {
-  return (
-    <div className="mb-6">
-      <p className="mb-2.5 text-xs font-bold uppercase tracking-wide text-muted">{title}</p>
-      <div className="grid grid-cols-2 gap-2.5">
-        {items.map((item) =>
-          item.stock_mode === "shared" ? (
-            <ShareConsumptionForm
-              key={item.id}
-              menuItemId={item.id}
-              name={item.name}
-              price={item.price}
-              cost={item.current_cost}
-              needsPriceReview={item.needs_price_review}
-              currentMemberId={memberId}
-              members={members}
-            />
-          ) : (
-            <MarkConsumptionForm
-              key={item.id}
-              memberId={memberId}
-              menuItemId={item.id}
-              name={item.name}
-              price={item.price}
-              cost={item.current_cost}
-              needsPriceReview={item.needs_price_review}
-            />
-          ),
-        )}
-        {items.length === 0 && <p className="text-sm text-muted">Sin artículos.</p>}
-      </div>
-    </div>
-  );
-}
-
 function HistoryTable({
   rows,
   reporterMemberId,
 }: {
-  rows: { id: string; date: string; member?: string; item: string; quantity: number; total: number }[];
+  rows: {
+    id: string;
+    date: string;
+    member?: string;
+    item: string;
+    quantity: number;
+    total: number;
+    isGuest: boolean;
+  }[];
   reporterMemberId: string;
 }) {
   const showMember = rows.some((r) => r.member !== undefined);
@@ -266,6 +236,11 @@ function HistoryTable({
             <p className="text-sm font-semibold text-foreground">
               {r.item}
               {showMember && <span className="font-normal text-muted"> · {r.member}</span>}
+              {r.isGuest && (
+                <span className="ml-1.5 rounded-full bg-accent-soft px-1.5 py-0.5 text-[10px] font-bold text-accent">
+                  Invitado
+                </span>
+              )}
             </p>
             <p className="text-xs text-muted">
               {new Date(r.date).toLocaleString("es-ES", { dateStyle: "short", timeStyle: "short" })}

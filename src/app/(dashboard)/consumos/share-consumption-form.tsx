@@ -11,22 +11,27 @@ export function ShareConsumptionForm({
   menuItemId,
   name,
   price,
+  guestPrice,
   cost,
   needsPriceReview,
   currentMemberId,
   members,
+  guestMode,
 }: {
   menuItemId: string;
   name: string;
   price: number;
+  guestPrice: number;
   cost: number;
   needsPriceReview: boolean;
   currentMemberId: string;
   members: Member[];
+  guestMode: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [selected, setSelected] = useState<string[]>([currentMemberId]);
+  const [isGuest, setIsGuest] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -44,6 +49,7 @@ export function ShareConsumptionForm({
     setError(null);
     const fd = new FormData();
     fd.set("menu_item_id", menuItemId);
+    fd.set("is_guest", String(isGuest));
     selected.forEach((id) => fd.append("member_ids", id));
     const result = await markSharedConsumption(fd);
     setPending(false);
@@ -53,6 +59,7 @@ export function ShareConsumptionForm({
     }
     setOpen(false);
     setSelected([currentMemberId]);
+    setIsGuest(false);
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 1100);
   }
@@ -64,7 +71,13 @@ export function ShareConsumptionForm({
         <CupIcon className="h-[17px] w-[17px] text-accent" />
       </div>
       <p className="mt-2.5 text-sm font-bold text-foreground">{name}</p>
-      <p className="mt-0.5 text-xs text-muted">{price.toFixed(2)} € · a repartir</p>
+      {guestMode ? (
+        <p className="mt-0.5 text-xs text-muted">
+          Socio {price.toFixed(2)} € · Invitado {guestPrice.toFixed(2)} € · a repartir
+        </p>
+      ) : (
+        <p className="mt-0.5 text-xs text-muted">{price.toFixed(2)} € · a repartir</p>
+      )}
       <button
         type="button"
         onClick={() => setOpen(true)}
@@ -94,10 +107,22 @@ export function ShareConsumptionForm({
           >
             <p className="text-sm font-bold text-foreground">Confirmar reparto de {name}</p>
             <p className="mt-0.5 text-xs text-muted">
-              {price.toFixed(2)} € entre {selected.length || 1} socio{selected.length === 1 ? "" : "s"} ={" "}
-              {(price / Math.max(selected.length, 1)).toFixed(2)} € cada uno · se apunta al momento y no se
-              puede deshacer
+              {(isGuest ? guestPrice : price).toFixed(2)} € entre {selected.length || 1} socio
+              {selected.length === 1 ? "" : "s"} ={" "}
+              {((isGuest ? guestPrice : price) / Math.max(selected.length, 1)).toFixed(2)} € cada uno · se
+              apunta al momento y no se puede deshacer
             </p>
+            {guestMode && (
+              <label className="mt-3 flex items-center gap-2 rounded-xl border border-border px-3 py-2 text-sm text-foreground">
+                <input
+                  type="checkbox"
+                  checked={isGuest}
+                  onChange={(e) => setIsGuest(e.target.checked)}
+                  className="h-4 w-4 accent-accent"
+                />
+                Es para invitados (precio de invitado)
+              </label>
+            )}
             <div className="mt-3 flex flex-col gap-1.5">
               {members.map((m) => (
                 <label

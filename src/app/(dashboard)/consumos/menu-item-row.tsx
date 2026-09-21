@@ -8,6 +8,7 @@ type MenuItem = {
   name: string;
   category: string;
   price: number;
+  guest_price: number;
   current_cost: number;
   needs_price_review: boolean;
   active: boolean;
@@ -62,6 +63,7 @@ export function MenuItemRow({
       </select>
       <div className="flex flex-col items-end text-xs leading-tight">
         <span className="font-bold text-foreground">{item.price.toFixed(2)} €</span>
+        <span className="text-muted">invitado {item.guest_price.toFixed(2)} €</span>
         <span className="text-muted">coste {item.current_cost.toFixed(2)} €</span>
         {item.needs_price_review && (
           <span className="rounded-full bg-warning-soft px-1.5 py-0.5 text-[9px] font-bold text-warning">

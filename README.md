@@ -67,7 +67,14 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
    entienda por qué sube algo, ej. "subió porque el último pedido costó
    más"). Si con el coste nuevo el margen configurado no llegara al
    mínimo de seguridad, el artículo queda "pendiente de revisión" en vez
-   de aplicar el precio automáticamente.
+   de aplicar el precio automáticamente. **Modo invitados**: un botón
+   "Llevo invitados" en la parte de arriba (preferencia de esa pantalla
+   en ese momento, se pierde al recargar y no afecta a lo que ven otros
+   socios) muestra, con cada artículo, también el precio de invitado
+   (coste × (1 + margen de invitado), 50% por defecto, configurable en
+   Inventario junto al margen de socio) y, al pedir, obliga a elegir si
+   ese consumo es para el propio socio o para un invitado — cada línea
+   del historial queda marcada como tal.
 4. **Tesorería** (`/tesoreria`): saldo del club en tiempo real, desglose
    cuota fija vs. cargos de evento, saldo por socio y alta manual de
    movimientos. Como "Socio" la pantalla es propia: saldo de
@@ -101,6 +108,9 @@ cuenta desde `/login`: las cuentas las crea admin o presidencia desde
    bodeguero): se introduce la cantidad real de cada artículo y se
    compara con el stock teórico (para detectar mermas o consumos no
    apuntados); al guardar, el stock queda ajustado a lo contado.
+   **Margen de invitado**: junto al margen de socio, un segundo % global
+   (50% por defecto) que fija el precio de invitado de cada artículo,
+   con el mismo margen mínimo de seguridad como salvaguarda.
 6. **Calendario** (`/calendario`): eventos del club y reservas del local
    por días solicitadas por cualquier socio (quedan pendientes hasta que
    gestión las aprueba o rechaza), con quién abre y quién cierra cada

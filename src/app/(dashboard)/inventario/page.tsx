@@ -43,7 +43,7 @@ export default async function InventarioPage() {
       .select("id, name, unit, current_stock, low_stock_threshold, current_cost, menu_items(name, price, needs_price_review)")
       .order("name"),
     supabase.from("members").select("id, full_name").eq("status", "activo").order("full_name"),
-    supabase.from("club_settings").select("sale_margin_pct, min_margin_pct").eq("id", true).maybeSingle(),
+    supabase.from("club_settings").select("sale_margin_pct, guest_margin_pct, min_margin_pct").eq("id", true).maybeSingle(),
     supabase.from("menu_items").select("id, name, price, current_cost").eq("needs_price_review", true).eq("active", true),
   ]);
 
@@ -64,6 +64,7 @@ export default async function InventarioPage() {
   const canSeeFullView = INVENTORY_VIEW_ROLES.includes(demoRole);
   const lowStock = rows.filter((item) => item.current_stock <= item.low_stock_threshold);
   const saleMarginPct = settingsData?.sale_margin_pct ?? 30;
+  const guestMarginPct = settingsData?.guest_margin_pct ?? 50;
   const minMarginPct = settingsData?.min_margin_pct ?? 15;
   const needsReview = reviewData ?? [];
 
@@ -128,7 +129,7 @@ export default async function InventarioPage() {
             Margen de venta (calcula el precio de la carta a partir del coste)
           </p>
           <div className="mb-7">
-            <MarginSettingsForm saleMarginPct={saleMarginPct} minMarginPct={minMarginPct} />
+            <MarginSettingsForm saleMarginPct={saleMarginPct} guestMarginPct={guestMarginPct} minMarginPct={minMarginPct} />
           </div>
         </>
       ) : (

@@ -66,16 +66,21 @@ export async function createInventoryItem(formData: FormData): Promise<ActionRes
 
 export async function updateMarginSettings(formData: FormData): Promise<ActionResult> {
   const saleMargin = Number(formData.get("sale_margin_pct"));
+  const guestMargin = Number(formData.get("guest_margin_pct"));
   const minMargin = Number(formData.get("min_margin_pct"));
 
-  if (Number.isNaN(saleMargin) || saleMargin < 0 || Number.isNaN(minMargin) || minMargin < 0) {
-    return { error: "Indica un margen de venta y un margen mínimo válidos." };
+  if (
+    Number.isNaN(saleMargin) || saleMargin < 0 ||
+    Number.isNaN(guestMargin) || guestMargin < 0 ||
+    Number.isNaN(minMargin) || minMargin < 0
+  ) {
+    return { error: "Indica un margen de socio, un margen de invitado y un margen mínimo válidos." };
   }
 
   const supabase = await createClient();
   const { error } = await supabase
     .from("club_settings")
-    .update({ sale_margin_pct: saleMargin, min_margin_pct: minMargin })
+    .update({ sale_margin_pct: saleMargin, guest_margin_pct: guestMargin, min_margin_pct: minMargin })
     .eq("id", true);
 
   if (error) {

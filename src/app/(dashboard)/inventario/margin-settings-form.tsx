@@ -5,9 +5,11 @@ import { updateMarginSettings } from "./actions";
 
 export function MarginSettingsForm({
   saleMarginPct,
+  guestMarginPct,
   minMarginPct,
 }: {
   saleMarginPct: number;
+  guestMarginPct: number;
   minMarginPct: number;
 }) {
   const [pending, setPending] = useState(false);
@@ -39,6 +41,18 @@ export function MarginSettingsForm({
           step="0.1"
           min="0"
           defaultValue={saleMarginPct}
+          required
+          className="w-28 rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-accent"
+        />
+      </div>
+      <div>
+        <label className="mb-1 block text-xs text-muted">Margen de invitado (%)</label>
+        <input
+          name="guest_margin_pct"
+          type="number"
+          step="0.1"
+          min="0"
+          defaultValue={guestMarginPct}
           required
           className="w-28 rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-accent"
         />

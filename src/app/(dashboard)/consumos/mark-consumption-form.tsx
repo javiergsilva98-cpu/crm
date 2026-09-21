@@ -12,27 +12,31 @@ export function MarkConsumptionForm({
   menuItemId,
   name,
   price,
+  guestPrice,
   cost,
   needsPriceReview,
+  guestMode,
 }: {
   memberId: string;
   menuItemId: string;
   name: string;
   price: number;
+  guestPrice: number;
   cost: number;
   needsPriceReview: boolean;
+  guestMode: boolean;
 }) {
   const [step, setStep] = useState<Step>("idle");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleConfirm() {
+  async function handleConfirm(isGuest: boolean) {
     setPending(true);
     setError(null);
     const fd = new FormData();
     fd.set("member_id", memberId);
     fd.set("menu_item_id", menuItemId);
-    fd.set("unit_price", String(price));
+    fd.set("is_guest", String(isGuest));
     const result = await markConsumption(fd);
     setPending(false);
     if (result && "error" in result && result.error) {
@@ -51,7 +55,13 @@ export function MarkConsumptionForm({
         <CupIcon className="h-[17px] w-[17px] text-accent" />
       </div>
       <p className="mt-2.5 text-sm font-bold text-foreground">{name}</p>
-      <p className="mt-0.5 text-xs text-muted">{price.toFixed(2)} €</p>
+      {guestMode ? (
+        <p className="mt-0.5 text-xs text-muted">
+          Socio {price.toFixed(2)} € · Invitado {guestPrice.toFixed(2)} €
+        </p>
+      ) : (
+        <p className="mt-0.5 text-xs text-muted">{price.toFixed(2)} €</p>
+      )}
       {error && <p className="mt-1 pr-9 text-[10px] font-medium text-red-600">{error}</p>}
       <button
         type="button"
@@ -87,26 +97,63 @@ export function MarkConsumptionForm({
               </div>
               <div>
                 <p className="text-sm font-semibold text-foreground">{name}</p>
-                <p className="text-xs text-muted">{price.toFixed(2)} €</p>
+                {guestMode ? (
+                  <p className="text-xs text-muted">
+                    Socio {price.toFixed(2)} € · Invitado {guestPrice.toFixed(2)} €
+                  </p>
+                ) : (
+                  <p className="text-xs text-muted">{price.toFixed(2)} €</p>
+                )}
               </div>
             </div>
-            <div className="mt-4 flex gap-2">
-              <button
-                type="button"
-                onClick={() => setStep("idle")}
-                className="flex-1 rounded-xl border border-border px-3 py-2.5 text-sm font-semibold text-muted"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onClick={handleConfirm}
-                disabled={pending}
-                className="flex-1 rounded-xl bg-accent px-3 py-2.5 text-sm font-semibold text-accent-foreground disabled:opacity-50"
-              >
-                {pending ? "Confirmando..." : "Confirmar pedido"}
-              </button>
-            </div>
+            {guestMode ? (
+              <div className="mt-4 flex flex-col gap-2">
+                <p className="text-xs text-muted">¿Este consumo es para ti o para un invitado?</p>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleConfirm(false)}
+                    disabled={pending}
+                    className="flex-1 rounded-xl bg-accent px-3 py-2.5 text-sm font-semibold text-accent-foreground disabled:opacity-50"
+                  >
+                    {pending ? "..." : `Para mí (${price.toFixed(2)} €)`}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleConfirm(true)}
+                    disabled={pending}
+                    className="flex-1 rounded-xl border border-accent px-3 py-2.5 text-sm font-semibold text-accent disabled:opacity-50"
+                  >
+                    {pending ? "..." : `Invitado (${guestPrice.toFixed(2)} €)`}
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setStep("idle")}
+                  className="rounded-xl border border-border px-3 py-2.5 text-sm font-semibold text-muted"
+                >
+                  Cancelar
+                </button>
+              </div>
+            ) : (
+              <div className="mt-4 flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setStep("idle")}
+                  className="flex-1 rounded-xl border border-border px-3 py-2.5 text-sm font-semibold text-muted"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleConfirm(false)}
+                  disabled={pending}
+                  className="flex-1 rounded-xl bg-accent px-3 py-2.5 text-sm font-semibold text-accent-foreground disabled:opacity-50"
+                >
+                  {pending ? "Confirmando..." : "Confirmar pedido"}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

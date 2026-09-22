@@ -109,7 +109,7 @@ export default async function UsuariosPage() {
             >
               Eliminar
             </SubmitButton>
-            <ResetPasswordButton profileId={p.id} />
+            <ResetPasswordButton profileId={p.id} email={p.email ?? ""} />
           </form>
         ))}
         {profiles.length === 0 && (

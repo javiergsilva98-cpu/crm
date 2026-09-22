@@ -39,132 +39,60 @@ export default async function ConsumosPage() {
   const bebidas = menuItems.filter((i) => i.category === "bebida");
   const aperitivos = menuItems.filter((i) => i.category === "aperitivo");
 
-  if (demoRole === "socio") {
-    const { data: socios } = await supabase
-      .from("members")
-      .select("id, full_name")
-      .eq("club_role", "socio")
-      .eq("status", "activo")
-      .order("full_name");
-    const list = socios ?? [];
-    const cookieId = await getDemoMemberIdCookie();
-    const currentId = list.find((m) => m.id === cookieId)?.id ?? list[0]?.id ?? "";
-
-    const [{ data: historyData }, { data: clubHistoryData }, { data: activePresence }] = await Promise.all([
-      supabase
-        .from("consumptions")
-        .select("id, quantity, unit_price, is_guest, consumed_at, menu_items(name)")
-        .eq("member_id", currentId)
-        .order("consumed_at", { ascending: false })
-        .limit(15),
-      supabase
-        .from("consumptions")
-        .select("id, quantity, unit_price, is_guest, consumed_at, members(full_name), menu_items(name)")
-        .order("consumed_at", { ascending: false })
-        .limit(TRANSPARENCY_LIMIT),
-      supabase.from("presence").select("id").eq("member_id", currentId).is("checked_out_at", null).maybeSingle(),
-    ]);
-    // No se puede pedir sin estar fichado en el local (mismo fichaje de
-    // "Estoy en el local" de /fichaje) — se aplica también en el servidor
-    // (markConsumption) y en la política RLS, esto es solo para no
-    // mostrar siquiera el botón de pedir si ya sabemos que va a fallar.
-    const isCheckedIn = !!activePresence;
-    const history = (historyData ?? []) as unknown as Array<{
-      id: string;
-      quantity: number;
-      unit_price: number;
-      is_guest: boolean;
-      consumed_at: string;
-      menu_items: { name: string } | null;
-    }>;
-    const clubHistory = (clubHistoryData ?? []) as unknown as Array<{
-      id: string;
-      quantity: number;
-      unit_price: number;
-      is_guest: boolean;
-      consumed_at: string;
-      members: { full_name: string } | null;
-      menu_items: { name: string } | null;
-    }>;
-
-    return (
-      <div>
-        <div className="mb-5">
-          <h1 className="text-xl font-extrabold tracking-tight text-foreground">Consumiciones</h1>
-          <p className="text-sm text-muted">Toca para pedir lo que tomes</p>
-        </div>
-
-        {isCheckedIn ? (
-          <GuestModeBoard bebidas={bebidas} aperitivos={aperitivos} memberId={currentId} members={list} />
-        ) : (
-          <Link
-            href="/fichaje"
-            className="mb-5 flex items-center gap-3 rounded-[18px] border border-warning/30 bg-warning-soft p-3.5"
-          >
-            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-warning/15">
-              <KeyIcon className="h-[18px] w-[18px] text-warning" />
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-bold text-warning">No estás fichado en el local</p>
-              <p className="text-xs text-warning/80">
-                Marca &quot;Estoy en el local&quot; en Fichaje para poder pedir.
-              </p>
-            </div>
-          </Link>
-        )}
-
-        <p className="mb-2.5 mt-7 text-xs font-bold uppercase tracking-wide text-muted">Tu historial reciente</p>
-        <HistoryTable
-          rows={history.map((h) => ({
-            id: h.id,
-            date: h.consumed_at,
-            item: h.menu_items?.name ?? "—",
-            quantity: h.quantity,
-            total: h.quantity * h.unit_price,
-            isGuest: h.is_guest,
-          }))}
-          reporterMemberId={currentId}
-        />
-
-        <p className="mb-2.5 mt-7 text-xs font-bold uppercase tracking-wide text-muted">Actividad reciente del club</p>
-        <p className="mb-3 text-xs text-muted">
-          Últimas consumiciones de todos los socios, para que quede claro que todo se apunta.
-        </p>
-        <HistoryTable
-          rows={clubHistory.map((h) => ({
-            id: h.id,
-            date: h.consumed_at,
-            member: h.members?.full_name,
-            item: h.menu_items?.name ?? "—",
-            quantity: h.quantity,
-            total: h.quantity * h.unit_price,
-            isGuest: h.is_guest,
-          }))}
-          reporterMemberId={currentId}
-        />
-      </div>
-    );
-  }
-
+  // Consumiciones funciona igual para todos los roles — cualquiera puede
+  // pedir lo que toma, como un socio más — y quien además gestiona la
+  // carta o ve el histórico completo (tesorería, presidencia...) tiene
+  // esas secciones extra debajo, no en vez de poder pedir.
   const isFullHistory = FULL_HISTORY_ROLES.includes(demoRole);
-  const [{ data: recentData }, { data: allMenuData }, { data: inventoryItemsData }, { data: membersData }] =
-    await Promise.all([
-      supabase
-        .from("consumptions")
-        .select("id, quantity, unit_price, is_guest, consumed_at, members(full_name), menu_items(name)")
-        .order("consumed_at", { ascending: false })
-        .limit(isFullHistory ? 30 : TRANSPARENCY_LIMIT),
-      supabase
-        .from("menu_items")
-        .select(
-          "id, name, category, price, guest_price, current_cost, needs_price_review, active, inventory_item_id, stock_mode",
-        )
-        .order("category")
-        .order("name"),
-      supabase.from("inventory_items").select("id, name").order("name"),
-      supabase.from("members").select("id, full_name").eq("status", "activo").order("full_name"),
-    ]);
-  const recent = (recentData ?? []) as unknown as Array<{
+  const canManageMenu = MENU_MANAGE_ROLES.includes(demoRole);
+
+  const [{ data: activeMembersData }, { data: allMenuData }, { data: inventoryItemsData }] = await Promise.all([
+    supabase.from("members").select("id, full_name").eq("status", "activo").order("full_name"),
+    canManageMenu
+      ? supabase
+          .from("menu_items")
+          .select(
+            "id, name, category, price, guest_price, current_cost, needs_price_review, active, inventory_item_id, stock_mode",
+          )
+          .order("category")
+          .order("name")
+      : Promise.resolve({ data: null }),
+    canManageMenu ? supabase.from("inventory_items").select("id, name").order("name") : Promise.resolve({ data: null }),
+  ]);
+  const members = activeMembersData ?? [];
+  const cookieId = await getDemoMemberIdCookie();
+  const currentId = members.find((m) => m.id === cookieId)?.id ?? members[0]?.id ?? "";
+  const allMenu = allMenuData ?? [];
+  const inventoryItems = inventoryItemsData ?? [];
+
+  const [{ data: historyData }, { data: clubHistoryData }, { data: activePresence }] = await Promise.all([
+    supabase
+      .from("consumptions")
+      .select("id, quantity, unit_price, is_guest, consumed_at, menu_items(name)")
+      .eq("member_id", currentId)
+      .order("consumed_at", { ascending: false })
+      .limit(15),
+    supabase
+      .from("consumptions")
+      .select("id, quantity, unit_price, is_guest, consumed_at, members(full_name), menu_items(name)")
+      .order("consumed_at", { ascending: false })
+      .limit(isFullHistory ? 30 : TRANSPARENCY_LIMIT),
+    supabase.from("presence").select("id").eq("member_id", currentId).is("checked_out_at", null).maybeSingle(),
+  ]);
+  // No se puede pedir sin estar fichado en el local (mismo fichaje de
+  // "Estoy en el local" de /fichaje) — se aplica también en el servidor
+  // (markConsumption) y en la política RLS, esto es solo para no
+  // mostrar siquiera el botón de pedir si ya sabemos que va a fallar.
+  const isCheckedIn = !!activePresence;
+  const history = (historyData ?? []) as unknown as Array<{
+    id: string;
+    quantity: number;
+    unit_price: number;
+    is_guest: boolean;
+    consumed_at: string;
+    menu_items: { name: string } | null;
+  }>;
+  const clubHistory = (clubHistoryData ?? []) as unknown as Array<{
     id: string;
     quantity: number;
     unit_price: number;
@@ -173,28 +101,59 @@ export default async function ConsumosPage() {
     members: { full_name: string } | null;
     menu_items: { name: string } | null;
   }>;
-  const allMenu = allMenuData ?? [];
-  const inventoryItems = inventoryItemsData ?? [];
-  const canManageMenu = MENU_MANAGE_ROLES.includes(demoRole);
-  const members = membersData ?? [];
-  const cookieId = await getDemoMemberIdCookie();
-  const reporterMemberId = members.find((m) => m.id === cookieId)?.id ?? members[0]?.id ?? "";
 
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-extrabold tracking-tight text-foreground">
-          {isFullHistory ? "Consumiciones recientes" : "Actividad reciente"}
-        </h1>
+      <div className="mb-5 flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-extrabold tracking-tight text-foreground">Consumiciones</h1>
+          <p className="text-sm text-muted">Toca para pedir lo que tomes</p>
+        </div>
         {EXPORT_ROLES.includes(demoRole) && <ExportLink href="/api/export/consumos" label="Exportar" />}
       </div>
-      <p className="mb-5 mt-1 text-sm text-muted">
+
+      {isCheckedIn ? (
+        <GuestModeBoard bebidas={bebidas} aperitivos={aperitivos} memberId={currentId} members={members} />
+      ) : (
+        <Link
+          href="/fichaje"
+          className="mb-5 flex items-center gap-3 rounded-[18px] border border-warning/30 bg-warning-soft p-3.5"
+        >
+          <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-warning/15">
+            <KeyIcon className="h-[18px] w-[18px] text-warning" />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-bold text-warning">No estás fichado en el local</p>
+            <p className="text-xs text-warning/80">
+              Marca &quot;Estoy en el local&quot; en Fichaje para poder pedir.
+            </p>
+          </div>
+        </Link>
+      )}
+
+      <p className="mb-2.5 mt-7 text-xs font-bold uppercase tracking-wide text-muted">Tu historial reciente</p>
+      <HistoryTable
+        rows={history.map((h) => ({
+          id: h.id,
+          date: h.consumed_at,
+          item: h.menu_items?.name ?? "—",
+          quantity: h.quantity,
+          total: h.quantity * h.unit_price,
+          isGuest: h.is_guest,
+        }))}
+        reporterMemberId={currentId}
+      />
+
+      <p className="mb-2.5 mt-7 text-xs font-bold uppercase tracking-wide text-muted">
+        {isFullHistory ? "Consumiciones recientes (toda la barra)" : "Actividad reciente del club"}
+      </p>
+      <p className="mb-3 text-xs text-muted">
         {isFullHistory
-          ? 'Vista de gestión: toda la barra. Cambia a "Socio" para ver el flujo de pedir una consumición.'
-          : `Últimas ${TRANSPARENCY_LIMIT} consumiciones de todos los socios, como capa de transparencia.`}
+          ? `Últimas ${clubHistory.length} consumiciones de todos los socios.`
+          : "Últimas consumiciones de todos los socios, para que quede claro que todo se apunta."}
       </p>
       <HistoryTable
-        rows={recent.map((h) => ({
+        rows={clubHistory.map((h) => ({
           id: h.id,
           date: h.consumed_at,
           member: h.members?.full_name,
@@ -203,7 +162,7 @@ export default async function ConsumosPage() {
           total: h.quantity * h.unit_price,
           isGuest: h.is_guest,
         }))}
-        reporterMemberId={reporterMemberId}
+        reporterMemberId={currentId}
       />
 
       {canManageMenu && (

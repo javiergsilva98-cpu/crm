@@ -28,13 +28,22 @@ export default async function UsuariosPage() {
     );
   }
 
-  const [{ data: profilesData }, { data: membersData }] = await Promise.all([
+  const [{ data: profilesData }, { data: membersData }, { data: authData }] = await Promise.all([
     supabase.from("profiles").select("id, email, role, member_id, members(full_name)").order("email"),
     supabase.from("members").select("id, full_name").eq("status", "activo").order("full_name"),
+    supabase.auth.getUser(),
   ]);
 
   const profiles = (profilesData ?? []) as unknown as ProfileRow[];
   const members = membersData ?? [];
+  // Para poner "[Nombre del usuario que te ha invitado]" en el mensaje
+  // de invitación: la propia ficha de socio si está vinculada, si no el
+  // nombre delante del @ del email (mismo respaldo que usa el saludo
+  // "Hola, X" de la cabecera).
+  const myProfile = profiles.find((p) => p.id === authData.user?.id);
+  const inviterName =
+    myProfile?.members?.full_name ??
+    (myProfile?.email ? myProfile.email.split("@")[0].replace(/^./, (c) => c.toUpperCase()) : "Un socio del club");
 
   return (
     <div>
@@ -109,7 +118,7 @@ export default async function UsuariosPage() {
       </div>
 
       <p className="mb-2.5 text-xs font-bold uppercase tracking-wide text-muted">Crear usuario</p>
-      <UserForm members={members} />
+      <UserForm members={members} inviterName={inviterName} />
     </div>
   );
 }

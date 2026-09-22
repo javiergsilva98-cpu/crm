@@ -4,11 +4,49 @@ import { useRef, useState } from "react";
 import { createUserAccount } from "./actions";
 import { CLUB_ROLES, CLUB_ROLE_LABELS } from "@/lib/demo-role";
 
-export function UserForm({ members }: { members: { id: string; full_name: string }[] }) {
+type LastCreated = { email: string; password: string; memberName: string | null };
+
+function buildInviteMessage({
+  memberName,
+  inviterName,
+  email,
+  password,
+}: {
+  memberName: string | null;
+  inviterName: string;
+  email: string;
+  password: string;
+}) {
+  const url = typeof window !== "undefined" ? window.location.origin : "";
+  return `Bienvenido al club ${memberName ?? ""},
+
+${inviterName} te invita a acceder a la App de gestión del Club. Para acceder podrás entrar en ${url} con tu usuario: ${email} y tu contraseña: ${password}.
+
+Ten en cuenta que la contraseña es temporal y tendrás que cambiarla en tu primer inicio de sesión.
+
+Gracias y bienvenido!`;
+}
+
+export function UserForm({
+  members,
+  inviterName,
+}: {
+  members: { id: string; full_name: string }[];
+  inviterName: string;
+}) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [done, setDone] = useState(false);
+  const [lastCreated, setLastCreated] = useState<LastCreated | null>(null);
+  const [copied, setCopied] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+
+  async function handleCopyInvite() {
+    if (!lastCreated) return;
+    const message = buildInviteMessage({ ...lastCreated, inviterName });
+    await navigator.clipboard.writeText(message);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  }
 
   return (
     <form
@@ -17,7 +55,11 @@ export function UserForm({ members }: { members: { id: string; full_name: string
       action={async (formData) => {
         setPending(true);
         setError(null);
-        setDone(false);
+        setLastCreated(null);
+        const email = formData.get("email") as string;
+        const password = formData.get("password") as string;
+        const memberId = formData.get("member_id") as string;
+        const memberName = members.find((m) => m.id === memberId)?.full_name ?? null;
         const result = await createUserAccount(formData);
         setPending(false);
         if (result && "error" in result && result.error) {
@@ -25,8 +67,7 @@ export function UserForm({ members }: { members: { id: string; full_name: string
           return;
         }
         formRef.current?.reset();
-        setDone(true);
-        setTimeout(() => setDone(false), 4000);
+        setLastCreated({ email, password, memberName });
       }}
     >
       <div>
@@ -84,7 +125,23 @@ export function UserForm({ members }: { members: { id: string; full_name: string
       >
         {pending ? "Creando..." : "Crear usuario"}
       </button>
-      {done && <p className="w-full text-sm text-success">Cuenta creada. Comparte el email y la contraseña con esa persona.</p>}
+      {lastCreated && (
+        <div className="w-full rounded-xl border border-success-soft bg-success-soft/40 p-2.5 text-xs">
+          <p className="font-semibold text-foreground">
+            Cuenta creada: <span className="font-mono">{lastCreated.email}</span>
+          </p>
+          <p className="mt-0.5 text-muted">
+            Cópiale el mensaje de invitación ya redactado y pégalo donde quieras enviárselo.
+          </p>
+          <button
+            type="button"
+            onClick={handleCopyInvite}
+            className="mt-1.5 rounded-full border border-border bg-card px-2.5 py-1 text-[11px] font-semibold text-foreground transition-colors hover:border-accent hover:text-accent"
+          >
+            {copied ? "Copiado" : "Copiar invitación"}
+          </button>
+        </div>
+      )}
       {error && <p className="w-full text-sm text-red-600">{error}</p>}
     </form>
   );

@@ -61,9 +61,11 @@ export async function castVote(formData: FormData): Promise<ActionResult> {
   }
 
   const supabase = await createClient();
-  const { error } = await supabase
-    .from("vote_casts")
-    .insert({ vote_id: voteId, option_id: optionId, member_id: memberId });
+  const { error } = await supabase.rpc("cast_vote", {
+    p_vote_id: voteId,
+    p_option_id: optionId,
+    p_member_id: memberId,
+  });
 
   if (error) {
     return { error: error.message };

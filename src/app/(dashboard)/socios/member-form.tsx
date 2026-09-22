@@ -7,12 +7,48 @@ import { generatePassword } from "@/lib/generate-password";
 
 const MEMBER_ROLES = CLUB_ROLES.filter((r): r is ClubRole => r !== "admin");
 
-export function MemberForm({ suggestedKeyNumber }: { suggestedKeyNumber: string }) {
+function buildInviteMessage({
+  memberName,
+  inviterName,
+  email,
+  password,
+}: {
+  memberName: string;
+  inviterName: string;
+  email: string;
+  password: string;
+}) {
+  const url = typeof window !== "undefined" ? window.location.origin : "";
+  return `Bienvenido al club ${memberName},
+
+${inviterName} te invita a acceder a la App de gestión del Club. Para acceder podrás entrar en ${url} con tu usuario: ${email} y tu contraseña: ${password}.
+
+Ten en cuenta que la contraseña es temporal y tendrás que cambiarla en tu primer inicio de sesión.
+
+Gracias y bienvenido!`;
+}
+
+export function MemberForm({
+  suggestedKeyNumber,
+  inviterName,
+}: {
+  suggestedKeyNumber: string;
+  inviterName: string;
+}) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [created, setCreated] = useState<{ email: string; password: string } | null>(null);
+  const [created, setCreated] = useState<{ fullName: string; email: string; password: string } | null>(null);
   const [password, setPassword] = useState("");
+  const [copied, setCopied] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+
+  async function handleCopyInvite() {
+    if (!created) return;
+    const message = buildInviteMessage({ memberName: created.fullName, inviterName, email: created.email, password: created.password });
+    await navigator.clipboard.writeText(message);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  }
 
   if (created) {
     return (
@@ -28,16 +64,25 @@ export function MemberForm({ suggestedKeyNumber }: { suggestedKeyNumber: string 
           Entrégaselas ahora — no se volverán a mostrar. Al entrar, tendrá que cambiar la contraseña
           antes de poder usar el resto de la app.
         </p>
-        <button
-          type="button"
-          onClick={() => {
-            setCreated(null);
-            setPassword("");
-          }}
-          className="mt-3 rounded-xl border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent"
-        >
-          Dar de alta a otro socio
-        </button>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={handleCopyInvite}
+            className="rounded-xl border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent hover:text-accent"
+          >
+            {copied ? "Copiado" : "Copiar invitación"}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setCreated(null);
+              setPassword("");
+            }}
+            className="rounded-xl border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent"
+          >
+            Dar de alta a otro socio
+          </button>
+        </div>
       </div>
     );
   }
@@ -56,7 +101,11 @@ export function MemberForm({ suggestedKeyNumber }: { suggestedKeyNumber: string 
           return;
         }
         if (result && "password" in result) {
-          setCreated({ email: formData.get("email") as string, password: result.password });
+          setCreated({
+            fullName: formData.get("full_name") as string,
+            email: formData.get("email") as string,
+            password: result.password,
+          });
           formRef.current?.reset();
         }
       }}

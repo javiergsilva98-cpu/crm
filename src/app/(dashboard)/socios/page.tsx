@@ -45,14 +45,25 @@ export default async function SociosPage() {
 
   const now = new Date();
   const currentMonthStart = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
-  const [{ data: members }, { data: cuotas }] = await Promise.all([
+  const [{ data: members }, { data: cuotas }, { data: authData }] = await Promise.all([
     supabase.from("members").select("id, full_name, club_role, status, key_number, joined_at").order("full_name"),
     supabase
       .from("treasury_movements")
       .select("member_id")
       .eq("movement_type", "cuota")
       .gte("movement_date", currentMonthStart),
+    supabase.auth.getUser(),
   ]);
+  // Para el mensaje de invitación al dar de alta (mismo criterio que
+  // /usuarios): la propia ficha de socio si está vinculada, si no el
+  // nombre delante del @ del email.
+  const { data: myProfile } = authData.user
+    ? await supabase.from("profiles").select("email, members(full_name)").eq("id", authData.user.id).single()
+    : { data: null };
+  const myProfileMember = myProfile?.members as unknown as { full_name: string } | null;
+  const inviterName =
+    myProfileMember?.full_name ??
+    (myProfile?.email ? myProfile.email.split("@")[0].replace(/^./, (c: string) => c.toUpperCase()) : "Un socio del club");
 
   const paidIds = new Set((cuotas ?? []).map((c) => c.member_id));
   const rows = (members ?? []).map((m) => ({ ...m, cuotaAlDia: paidIds.has(m.id) }));
@@ -160,7 +171,7 @@ export default async function SociosPage() {
       {ACCOUNT_CREATE_ROLES.includes(demoRole) && (
         <>
           <p className="mb-2.5 text-xs font-bold uppercase tracking-wide text-muted">Dar de alta un socio</p>
-          <MemberForm suggestedKeyNumber={nextKeyNumber(rows)} />
+          <MemberForm suggestedKeyNumber={nextKeyNumber(rows)} inviterName={inviterName} />
         </>
       )}
     </div>
